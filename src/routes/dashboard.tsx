@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
+  Ban,
   Building2,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  CircleCheck,
   ClipboardCheck,
   FileText,
   LayoutGrid,
@@ -69,10 +71,10 @@ const INITIAL_PENAKSIR_TARGETS: PenaksirTarget[] = [
 
 const INITIAL_SALES_TARGETS: SalesOfficerTarget[] = [
   {
-    salesName: "Andi Pratama",
+    salesName: "Udin",
     so: "Trainee",
     unit: "Rawamangun",
-    grade: "A",
+    grade: "Trainee",
     booking: "Rp32.000.000",
     total: 40,
     monthly: 40,
@@ -85,10 +87,10 @@ const INITIAL_SALES_TARGETS: SalesOfficerTarget[] = [
     configured: true,
   },
   {
-    salesName: "Siti Rahma",
+    salesName: "Akbar",
     so: "Silver",
     unit: "Rawamangun",
-    grade: "A",
+    grade: "Silver",
     booking: "Rp32.000.000",
     total: 40,
     monthly: 40,
@@ -101,10 +103,10 @@ const INITIAL_SALES_TARGETS: SalesOfficerTarget[] = [
     configured: false,
   },
   {
-    salesName: "Budi Santoso",
+    salesName: "Marta",
     so: "Gold",
     unit: "Rawamangun",
-    grade: "A",
+    grade: "Gold",
     booking: "Rp32.000.000",
     total: 40,
     monthly: 40,
@@ -117,10 +119,26 @@ const INITIAL_SALES_TARGETS: SalesOfficerTarget[] = [
     configured: false,
   },
   {
-    salesName: "Dewi Lestari",
+    salesName: "Maldini",
     so: "Platinum",
     unit: "Rawamangun",
-    grade: "A",
+    grade: "Platinum",
+    booking: "Rp32.000.000",
+    total: 40,
+    monthly: 40,
+    weekly: 10,
+    daily: 5,
+    leads: 15,
+    closingLeads: 4,
+    ado: formatRupiah(10),
+    gram: 5,
+    configured: false,
+  },
+  {
+    salesName: "Ronaldo",
+    so: "-",
+    unit: "Rawamangun",
+    grade: "-",
     booking: "Rp32.000.000",
     total: 40,
     monthly: 40,
@@ -159,7 +177,7 @@ function isEditableTargetPeriod(period: string) {
 function Dashboard() {
   const [tab, setTab] = useState("Kepala KCP");
   const [unit, setUnit] = useState("Semua Unit");
-  const [period, setPeriod] = useState("September 2026");
+  const [period, setPeriod] = useState("Februari 2026");
   const [targets, setTargets] = useState(INITIAL_TARGETS);
   const [penaksirTargets, setPenaksirTargets] = useState(INITIAL_PENAKSIR_TARGETS);
   const [salesTargets, setSalesTargets] = useState(INITIAL_SALES_TARGETS);
@@ -376,8 +394,8 @@ function Dashboard() {
                           onClick={() =>
                             setEdit({
                               unit: item.unit,
-                               total: String(item.monthly),
-                               monthly: String(item.monthly),
+                              total: String(item.monthly),
+                              monthly: String(item.monthly),
                               weekly: String(item.weekly),
                               daily: String(item.daily),
                               active: item.configured,
@@ -449,7 +467,12 @@ function Dashboard() {
         (tab === "Sales Officer" ? (
           <SalesEditModalFlowKacabNoGram edit={edit} setEdit={setEdit} onSave={saveTarget} />
         ) : (
-          <EditModalFlow edit={edit} setEdit={setEdit} onSave={saveTarget} includeDaily={tab === "Penaksir"} />
+          <EditModalFlow
+            edit={edit}
+            setEdit={setEdit}
+            onSave={saveTarget}
+            includeDaily={tab === "Penaksir"}
+          />
         ))}
       {successUnit && <SuccessModalFlow unit={successUnit} onClose={() => setSuccessUnit(null)} />}
     </div>
@@ -496,60 +519,47 @@ function SalesOfficerKacabTable({
         />
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[1320px] table-fixed border-collapse text-left">
-          <colgroup>
-            <col className="w-[64px]" />
-            <col className="w-[210px]" />
-            <col className="w-[150px]" />
-            <col className="w-[190px]" />
-            <col className="w-[150px]" />
-            <col className="w-[150px]" />
-            <col className="w-[150px]" />
-            <col className="w-[110px]" />
-            <col className="w-[150px]" />
-            <col className="w-[120px]" />
-          </colgroup>
+        <table className="w-full min-w-[1080px] border-collapse text-left">
           <thead className="border-y border-slate-200 text-[14px] text-slate-400">
             <tr>
               <th className="whitespace-nowrap px-5 py-5 font-medium">No</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Nama Sales</th>
+              <th className="whitespace-nowrap px-5 py-5 font-medium">Name</th>
               <th className="whitespace-nowrap px-5 py-5 font-medium">Grade</th>
               <th className="whitespace-nowrap px-5 py-5 font-medium">Unit</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Target Bulanan</th>
               <th className="whitespace-nowrap px-5 py-5 font-medium">Target Mingguan</th>
               <th className="whitespace-nowrap px-5 py-5 font-medium">Target Harian</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Leads</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Closing Leads</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Gram</th>
               <th className="whitespace-nowrap px-5 py-5 font-medium">Status</th>
-              <th className="whitespace-nowrap px-5 py-5 text-right font-medium">Aksi</th>
+              <th className="whitespace-nowrap px-5 py-5 font-medium">Aksi</th>
             </tr>
           </thead>
           <tbody>
             {visible.map((item, index) => (
               <tr
-                key={`${item.unit}-${item.so}`}
+                key={`${item.unit}-${item.so}-${item.salesName}`}
                 className="border-b border-slate-100 last:border-0"
               >
-                <td className="whitespace-nowrap px-5 py-7">{index + 1}</td>
-                <td className="whitespace-nowrap px-5 py-7 font-medium">{item.salesName}</td>
-                <td className="whitespace-nowrap px-5 py-7">{item.so}</td>
-                <td className="whitespace-nowrap px-5 py-7">{item.unit}</td>
-                <td className="whitespace-nowrap px-5 py-7 font-semibold">{item.monthly}</td>
-                <td className="whitespace-nowrap px-5 py-7">{item.weekly}</td>
-                <td className="whitespace-nowrap px-5 py-7">{item.daily}</td>
-                <td className="whitespace-nowrap px-5 py-7">{item.leads}</td>
-                <td className="whitespace-nowrap px-5 py-7">{item.closingLeads}</td>
-                <td className="whitespace-nowrap px-5 py-7">{item.gram}</td>
-                <td
-                  className={`whitespace-nowrap px-5 py-7 text-[14px] ${item.configured ? "text-green-700" : "text-slate-500"}`}
-                >
-                  {item.configured ? "Active" : "Inactive"}
+                <td className="whitespace-nowrap px-5 py-6">{index + 1}</td>
+                <td className="whitespace-nowrap px-5 py-6">{item.salesName}</td>
+                <td className="whitespace-nowrap px-5 py-6">{item.so}</td>
+                <td className="whitespace-nowrap px-5 py-6">{item.unit}</td>
+                <td className="whitespace-nowrap px-5 py-6">{item.weekly}</td>
+                <td className="whitespace-nowrap px-5 py-6">{item.daily}</td>
+                <td className="whitespace-nowrap px-5 py-6">
+                  <span
+                    className={`inline-flex items-center gap-2 text-[14px] font-medium ${item.configured ? "text-[#0a7d2c]" : "text-slate-500"}`}
+                  >
+                    {item.configured ? (
+                      <CircleCheck className="h-5 w-5" />
+                    ) : (
+                      <Ban className="h-5 w-5" />
+                    )}
+                    {item.configured ? "Active" : "Inactive"}
+                  </span>
                 </td>
-                <td className="whitespace-nowrap px-5 py-7 text-right">
+                <td className="whitespace-nowrap px-5 py-6">
                   <button
                     onClick={() => onEdit(item)}
-                    className="rounded-lg border border-[#292663] px-5 py-2.5 text-[14px] font-medium text-[#292663]"
+                    className="rounded-lg border border-[#292663] px-5 py-2 text-[14px] font-medium text-[#292663]"
                   >
                     Edit
                   </button>
@@ -558,15 +568,18 @@ function SalesOfficerKacabTable({
             ))}
           </tbody>
         </table>
-        <div className="flex min-w-[1320px] items-center justify-end gap-5 px-7 py-6 text-[14px] text-slate-400">
-          <span>
-            Rows per page: <strong className="ml-2 text-slate-600">10</strong>
+        <div className="flex items-center justify-end gap-4 px-7 py-6 text-[14px] text-slate-400">
+          <span className="flex items-center gap-2">
+            Rows per page:
+            <span className="inline-flex items-center gap-1 font-medium text-slate-600">
+              10 <ChevronDown className="h-4 w-4" />
+            </span>
           </span>
-          <button disabled className="rounded-lg border border-slate-200 p-2">
+          <button disabled className="rounded-lg border border-slate-200 p-2 opacity-50">
             <ChevronLeft className="h-5 w-5" />
           </button>
-          <span className="rounded-lg bg-green-600 px-3 py-2 font-semibold text-white">1</span>
-          <button className="rounded-lg border border-slate-200 p-2">
+          <span className="rounded-lg bg-[#199900] px-3 py-2 font-semibold text-white">1</span>
+          <button className="rounded-lg border border-slate-200 p-2 opacity-50">
             <ChevronRight className="h-5 w-5" />
           </button>
         </div>
@@ -1219,8 +1232,10 @@ function targetValidationError(edit: EditTarget, includeDaily: boolean) {
   const leads = Number(edit.leads) || 0;
   const closingLeads = Number(edit.closingLeads) || 0;
   if (weekly > monthly) return "Target mingguan tidak boleh lebih besar dari target bulanan.";
-  if (includeDaily && daily > weekly) return "Target harian tidak boleh lebih besar dari target mingguan.";
-  if (edit.leads !== undefined && closingLeads > leads) return "Closing Leads tidak boleh lebih besar dari Leads.";
+  if (includeDaily && daily > weekly)
+    return "Target harian tidak boleh lebih besar dari target mingguan.";
+  if (edit.leads !== undefined && closingLeads > leads)
+    return "Closing Leads tidak boleh lebih besar dari Leads.";
   return "";
 }
 function SalesEditModalFlowKacabNoGram({
@@ -1278,7 +1293,9 @@ function SalesEditModalFlowKacabNoGram({
               onChange={(value) => setEdit({ ...edit, closingLeads: value })}
             />
           </div>
-          {validationError && <p className="text-[13px] font-medium text-red-600">{validationError}</p>}
+          {validationError && (
+            <p className="text-[13px] font-medium text-red-600">{validationError}</p>
+          )}
           <StatusFields active={edit.active} onChange={(active) => setEdit({ ...edit, active })} />
         </div>
         <div className="flex justify-end gap-3 border-t border-slate-200 px-8 py-4">
@@ -1593,8 +1610,17 @@ function EditModalFlow({
               onChange={(value) => setEdit({ ...edit, weekly: value })}
             />
           </div>
-          {includeDaily && <Input label="Target Harian" required value={edit.daily} onChange={(value) => setEdit({ ...edit, daily: value })} />}
-          {validationError && <p className="text-[13px] font-medium text-red-600">{validationError}</p>}
+          {includeDaily && (
+            <Input
+              label="Target Harian"
+              required
+              value={edit.daily}
+              onChange={(value) => setEdit({ ...edit, daily: value })}
+            />
+          )}
+          {validationError && (
+            <p className="text-[13px] font-medium text-red-600">{validationError}</p>
+          )}
           <div>
             <p className="text-[16px] font-medium text-slate-700">
               Status<span className="text-red-500">*</span>
@@ -1638,10 +1664,10 @@ function EditModalFlow({
           >
             Batalkan
           </button>
-            <button
-              onClick={() => setStep("confirm")}
-              disabled={Boolean(validationError)}
-              className="rounded-lg bg-[#199900] px-6 py-2 text-[14px] font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
+          <button
+            onClick={() => setStep("confirm")}
+            disabled={Boolean(validationError)}
+            className="rounded-lg bg-[#199900] px-6 py-2 text-[14px] font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
           >
             Simpan
           </button>
