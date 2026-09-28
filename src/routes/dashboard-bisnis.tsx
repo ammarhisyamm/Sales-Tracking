@@ -97,7 +97,13 @@ const INITIAL_TARGETS: BusinessSalesTarget[] = [
   },
 ];
 
-type BusinessEdit = { key: string; ado: string; booking: string; gram?: string };
+type BusinessEdit = {
+  key: string;
+  ado: string;
+  booking: string;
+  gram?: string;
+  active: boolean;
+};
 
 function DashboardBisnis() {
   const [period, setPeriod] = useState("Februari 2026");
@@ -122,6 +128,7 @@ function DashboardBisnis() {
               ado: parseAmount(edit.ado),
               booking: parseAmount(edit.booking),
               ...(edit.gram === undefined ? {} : { gram: parseAmount(edit.gram) }),
+              active: edit.active,
             }
           : item,
       ),
@@ -256,6 +263,7 @@ function DashboardBisnis() {
                               ado: formatAmount(item.ado),
                               booking: formatAmount(item.booking),
                               gram: formatAmount(item.gram),
+                              active: item.active,
                             })
                           }
                           className="rounded-lg border border-[#292663] px-5 py-2 text-[14px] font-medium text-[#292663]"
@@ -328,6 +336,41 @@ function BusinessEditModal({
             value={edit.gram ?? ""}
             onChange={(value) => setEdit({ ...edit, gram: value })}
           />
+          <div>
+            <p className="text-[14px] font-medium text-slate-700">
+              Status<span className="text-red-500">*</span>
+            </p>
+            <div className="mt-1.5 grid gap-2 md:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => setEdit({ ...edit, active: true })}
+                className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 text-left text-[14px] ${edit.active ? "border-2 border-[#199900] text-[#199900]" : "border-slate-200 text-slate-600"}`}
+              >
+                <span
+                  className={`h-5 w-5 rounded-full border-2 ${edit.active ? "border-[#199900]" : "border-slate-400"}`}
+                >
+                  {edit.active && (
+                    <span className="mx-auto mt-0.5 block h-2.5 w-2.5 rounded-full bg-[#199900]" />
+                  )}
+                </span>
+                Active
+              </button>
+              <button
+                type="button"
+                onClick={() => setEdit({ ...edit, active: false })}
+                className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 text-left text-[14px] ${!edit.active ? "border-2 border-slate-500 text-slate-700" : "border-slate-200 text-slate-600"}`}
+              >
+                <span
+                  className={`h-5 w-5 rounded-full border-2 ${!edit.active ? "border-slate-500" : "border-slate-400"}`}
+                >
+                  {!edit.active && (
+                    <span className="mx-auto mt-0.5 block h-2.5 w-2.5 rounded-full bg-slate-500" />
+                  )}
+                </span>
+                Inactive
+              </button>
+            </div>
+          </div>
         </div>
         <div className="flex justify-end gap-3 border-t border-slate-200 px-8 py-4">
           <button
