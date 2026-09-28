@@ -26,8 +26,11 @@ import {
   MapPin,
   Plus,
   Scale,
+  Signal,
   UserRound,
   Wallet,
+  Wifi,
+  BatteryFull,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -72,11 +75,22 @@ function Home() {
 
   return (
     <MobileShell hideFab>
-      <header className="relative overflow-hidden px-5 pb-20 pt-12 text-white" style={{ background: "var(--gradient-brand)" }}>
+      <header
+        className="relative overflow-hidden px-5 pb-20 pt-[68px] text-white"
+        style={{ background: "linear-gradient(180deg, #28285f 0%, #4d529d 72%, #7b8bd0 100%)" }}
+      >
+        <div className="absolute inset-x-6 top-5 flex items-center justify-between text-white">
+          <span className="text-[15px] font-semibold tracking-tight">9:41</span>
+          <span className="flex items-center gap-1.5">
+            <Signal className="h-4 w-4" strokeWidth={3} />
+            <Wifi className="h-4 w-4" strokeWidth={2.5} />
+            <BatteryFull className="h-5 w-5" strokeWidth={2.5} />
+          </span>
+        </div>
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/25">
-              <UserRound className="h-7 w-7 text-white" />
+            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#dce6ff]">
+              <UserRound className="h-7 w-7 text-[#2953A4]" strokeWidth={2.5} />
             </span>
             <div>
               <p className="text-[13px] text-white/75">Selamat datang</p>
