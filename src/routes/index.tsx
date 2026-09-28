@@ -88,39 +88,48 @@ function Home() {
           </Link>
         </div>
 
-        <div className="relative z-10 mt-4 rounded-xl bg-white p-4 text-slate-900">
-          <div className="grid grid-cols-2 gap-3">
+        <div className="relative z-10 mt-4 rounded-2xl bg-white p-4 text-slate-900 shadow-[0_2px_12px_rgba(25,42,77,0.06)]">
+          <div className="grid grid-cols-2">
             <div className="border-r border-slate-200 pr-3">
-              <p className="flex items-center gap-1.5 text-[13px] text-slate-500">
-                <Wallet className="h-4 w-4 text-[#2953A4]" /> Booking (Amount)
+              <p className="flex items-center gap-2 text-[13px] text-slate-500">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#e9f1fd] text-[#2953A4]">
+                  <Wallet className="h-4 w-4" />
+                </span>
+                Booking (Amount)
               </p>
-              <p className="mt-1.5 text-[17px] font-bold">
+              <p className="mt-2 text-[19px] font-bold leading-tight">
                 {rp(profile.booking)} <span className="font-normal text-slate-400">/</span>
               </p>
-              <p className="text-[13px] text-slate-400">{rp(profile.bookingEstimate)}</p>
+              <p className="text-[14px] text-slate-400">{rp(profile.bookingEstimate)}</p>
             </div>
-            <div className="pl-1">
-              <p className="flex items-center gap-1.5 text-[13px] text-slate-500">
-                <Scale className="h-4 w-4 text-[#2953A4]" /> Gram (New CIF)
+            <div className="pl-3">
+              <p className="flex items-center gap-2 text-[13px] text-slate-500">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#e9f1fd] text-[#2953A4]">
+                  <Scale className="h-4 w-4" />
+                </span>
+                Gram (New CIF)
               </p>
-              <p className="mt-1.5 text-[17px] font-bold">
+              <p className="mt-2 text-[19px] font-bold leading-tight">
                 {grams.current}g <span className="font-normal text-slate-400">/ {grams.target}g</span>
               </p>
             </div>
           </div>
           <div className="mt-3 border-t border-slate-200 pt-3">
-            <p className="flex items-center gap-1.5 text-[13px] text-slate-500">
-              <Banknote className="h-4 w-4 text-[#2953A4]" /> Estimasi Insentif
+            <p className="flex items-center gap-2 text-[13px] text-slate-500">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#e9f1fd] text-[#2953A4]">
+                <Banknote className="h-4 w-4" />
+              </span>
+              Estimasi Insentif
             </p>
-            <p className="mt-1.5 text-[17px] font-bold">{rp(profile.estimasiInsentif)}</p>
+            <p className="mt-2 text-[19px] font-bold leading-tight">{rp(profile.estimasiInsentif)}</p>
           </div>
         </div>
 
-        <div className="relative z-10 mt-2.5 flex items-center justify-between gap-2 rounded-xl bg-slate-100 px-4 py-3 text-slate-900">
+        <div className="relative z-10 mt-2.5 flex items-center justify-between gap-2 rounded-lg bg-[#edf2f7] px-4 py-3 text-slate-900">
           <p className="flex items-center gap-1.5 text-[13px] text-slate-500">
             <Mail className="h-4 w-4 text-[#2953A4]" /> ADO
           </p>
-          <p className="text-[15px] font-bold">
+          <p className="text-[16px] font-bold">
             {rp(ado.current)}
             <span className="font-normal text-slate-400">/{rp(ado.target)}</span>
           </p>
