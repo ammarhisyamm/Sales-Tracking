@@ -566,21 +566,21 @@ function SalesOfficerKacabTable({
         />
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[1500px] border-collapse text-left">
+        <table className="w-full border-collapse text-left">
           <thead className="border-y border-slate-200 bg-white text-[14px] text-slate-400">
             <tr>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">No</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Name</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Grade</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Unit</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Leads Bulanan</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Closing Bulanan</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Leads Mingguan</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Closing Mingguan</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Leads Harian</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Closing Harian</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Status</th>
-              <th className="sticky right-0 whitespace-nowrap bg-white px-5 py-5 font-medium shadow-[-8px_0_12px_rgba(23,24,45,0.06)]">
+              <th className="whitespace-nowrap px-3 py-4 font-medium">No</th>
+              <th className="whitespace-nowrap px-3 py-4 font-medium">Name</th>
+              <th className="whitespace-nowrap px-3 py-4 font-medium">Grade</th>
+              <th className="whitespace-nowrap px-3 py-4 font-medium">Unit</th>
+              <th className="px-3 py-4 font-medium leading-tight">Leads Bulanan</th>
+              <th className="px-3 py-4 font-medium leading-tight">Closing Bulanan</th>
+              <th className="px-3 py-4 font-medium leading-tight">Leads Mingguan</th>
+              <th className="px-3 py-4 font-medium leading-tight">Closing Mingguan</th>
+              <th className="px-3 py-4 font-medium leading-tight">Leads Harian</th>
+              <th className="px-3 py-4 font-medium leading-tight">Closing Harian</th>
+              <th className="whitespace-nowrap px-3 py-4 font-medium">Status</th>
+              <th className="sticky right-0 whitespace-nowrap bg-white px-3 py-4 font-medium shadow-[-8px_0_12px_rgba(23,24,45,0.06)]">
                 Aksi
               </th>
             </tr>
@@ -591,32 +591,32 @@ function SalesOfficerKacabTable({
                 key={`${item.unit}-${item.so}-${item.salesName}`}
                 className="border-b border-slate-100 last:border-0"
               >
-                <td className="whitespace-nowrap px-5 py-6">{index + 1}</td>
-                <td className="whitespace-nowrap px-5 py-6">{item.salesName}</td>
-                <td className="whitespace-nowrap px-5 py-6">{item.so}</td>
-                <td className="whitespace-nowrap px-5 py-6">{item.unit}</td>
-                <td className="whitespace-nowrap px-5 py-6">{item.leadsMonthly}</td>
-                <td className="whitespace-nowrap px-5 py-6">{item.closingMonthly}</td>
-                <td className="whitespace-nowrap px-5 py-6">{item.leadsWeekly}</td>
-                <td className="whitespace-nowrap px-5 py-6">{item.closingWeekly}</td>
-                <td className="whitespace-nowrap px-5 py-6">{item.leadsDaily}</td>
-                <td className="whitespace-nowrap px-5 py-6">{item.closingDaily}</td>
-                <td className="whitespace-nowrap px-5 py-6">
+                <td className="whitespace-nowrap px-3 py-4">{index + 1}</td>
+                <td className="whitespace-nowrap px-3 py-4">{item.salesName}</td>
+                <td className="whitespace-nowrap px-3 py-4">{item.so}</td>
+                <td className="whitespace-nowrap px-3 py-4">{item.unit}</td>
+                <td className="whitespace-nowrap px-3 py-4 tabular-nums">{item.leadsMonthly}</td>
+                <td className="whitespace-nowrap px-3 py-4 tabular-nums">{item.closingMonthly}</td>
+                <td className="whitespace-nowrap px-3 py-4 tabular-nums">{item.leadsWeekly}</td>
+                <td className="whitespace-nowrap px-3 py-4 tabular-nums">{item.closingWeekly}</td>
+                <td className="whitespace-nowrap px-3 py-4 tabular-nums">{item.leadsDaily}</td>
+                <td className="whitespace-nowrap px-3 py-4 tabular-nums">{item.closingDaily}</td>
+                <td className="whitespace-nowrap px-3 py-4">
                   <span
-                    className={`inline-flex items-center gap-2 text-[14px] font-medium ${item.configured ? "text-[#0a7d2c]" : "text-slate-500"}`}
+                    className={`inline-flex items-center gap-1.5 text-[14px] font-medium ${item.configured ? "text-[#0a7d2c]" : "text-slate-500"}`}
                   >
                     {item.configured ? (
-                      <CircleCheck className="h-5 w-5" />
+                      <CircleCheck className="h-5 w-5 shrink-0" />
                     ) : (
-                      <Ban className="h-5 w-5" />
+                      <Ban className="h-5 w-5 shrink-0" />
                     )}
                     {item.configured ? "Active" : "Inactive"}
                   </span>
                 </td>
-                <td className="sticky right-0 whitespace-nowrap bg-white px-5 py-6 shadow-[-8px_0_12px_rgba(23,24,45,0.06)]">
+                <td className="sticky right-0 whitespace-nowrap bg-white px-3 py-4 shadow-[-8px_0_12px_rgba(23,24,45,0.06)]">
                   <button
                     onClick={() => onEdit(item)}
-                    className="rounded-lg border border-[#292663] px-5 py-2 text-[14px] font-medium text-[#292663]"
+                    className="rounded-lg border border-[#292663] px-4 py-2 text-[14px] font-medium text-[#292663]"
                   >
                     Edit
                   </button>
