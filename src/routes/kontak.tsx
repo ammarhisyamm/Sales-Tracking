@@ -3,7 +3,7 @@ import { MobileShell } from "@/components/mobile-shell";
 import { ScreenLoader } from "@/components/motion";
 import { KontakSkeleton } from "@/components/skeletons";
 import { contacts, shortLocation } from "@/lib/mock-data";
-import { MapPin, MessageCircle, Phone, Search, UserRound } from "lucide-react";
+import { Check, MapPin, MessageCircle, Phone, Search, Ticket, UserRound } from "lucide-react";
 import { useState } from "react";
 
 export const Route = createFileRoute("/kontak")({
@@ -23,6 +23,7 @@ const STATUS_COLOR: Record<string, string> = {
 function ContactsPage() {
   const [tab, setTab] = useState<(typeof TABS)[number]>("Semua");
   const [q, setQ] = useState("");
+  const [voucherFor, setVoucherFor] = useState<string | null>(null);
 
   const filtered = contacts.filter((c) => {
     if (tab === "Belum Closing" && c.status === "Closing") return false;
@@ -115,6 +116,14 @@ function ContactsPage() {
                     <MessageCircle className="h-4 w-4" /> Whatsapp
                   </a>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() => setVoucherFor(c.name)}
+                  className="mt-2.5 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-[#2953A4] bg-white py-2.5 text-[14px] font-medium text-[#2953A4] transition-transform duration-100 active:scale-[0.98]"
+                >
+                  <Ticket className="h-4 w-4" /> Generate Voucher
+                </button>
               </div>
               <div className="flex items-center gap-1.5 bg-[#2953A4]/10 px-4 py-2.5 text-[13px] font-medium text-[#2953A4]">
                 <MapPin className="h-4 w-4 flex-shrink-0" />
@@ -130,6 +139,35 @@ function ContactsPage() {
         </ScreenLoader>
         </div>
       </div>
+
+      {voucherFor && (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/50"
+          onClick={() => setVoucherFor(null)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-[440px] rounded-t-3xl bg-white px-6 pb-8 pt-10 text-center"
+          >
+            <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-amber-100">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-400">
+                <Check className="h-6 w-6 text-white" strokeWidth={3} />
+              </span>
+            </span>
+            <h2 className="mt-4 text-[20px] font-bold text-slate-900">Voucher berhasil Dikirim</h2>
+            <p className="mt-2 text-[14px] text-slate-500">
+              Voucher telah berhasil dikirim ke {voucherFor}.
+            </p>
+            <button
+              type="button"
+              onClick={() => setVoucherFor(null)}
+              className="mt-6 w-full rounded-xl bg-[#2953A4] py-3.5 text-[15px] font-semibold text-white transition-transform duration-100 active:scale-[0.98]"
+            >
+              Selesai
+            </button>
+          </div>
+        </div>
+      )}
     </MobileShell>
   );
 }

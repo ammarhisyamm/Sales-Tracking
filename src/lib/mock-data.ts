@@ -90,15 +90,15 @@ export const profile: SalesProfile = {
   grade: "Gold",
   gradeProgress: 72,
   quadrant: "IV",
-  booking: 14250000,
-  bookingEstimate: 22000000,
+  booking: 12000000,
+  bookingEstimate: 16000000,
   estimasiInsentif: 1840000,
 };
 
 export const targets = {
   leads: { today: { current: 90, target: 100 }, week: { current: 240, target: 500 }, month: { current: 880, target: 2000 } },
   closingLeads: { today: { current: 12, target: 24 }, week: { current: 42, target: 120 }, month: { current: 165, target: 480 } },
-  ado: { today: { current: 4800000, target: 8000000 }, week: { current: 14250000, target: 22000000 }, month: { current: 14250000, target: 22000000 } },
+  ado: { today: { current: 16000000, target: 32000000 }, week: { current: 14250000, target: 22000000 }, month: { current: 14250000, target: 22000000 } },
   grams: { today: { current: 42, target: 100 }, week: { current: 180, target: 400 }, month: { current: 320, target: 1000 } },
 };
 

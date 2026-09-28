@@ -22,6 +22,7 @@ import {
   ClipboardList,
   Crosshair,
   LogOut,
+  Mail,
   MapPin,
   Plus,
   Scale,
@@ -38,7 +39,7 @@ const PRIMARY = "#2953A4";
 const rp = (n: number) =>
   new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 })
     .format(n)
-    .replace("Rp", "Rp");
+    .replace(/\s/g, "");
 
 type Range = "today" | "week" | "month";
 
@@ -87,36 +88,42 @@ function Home() {
           </Link>
         </div>
 
-        <div className="relative z-10 mt-4 grid grid-cols-2 gap-x-3 gap-y-4 rounded-xl bg-white p-4 text-slate-900">
-          <div className="border-r border-slate-200 pr-3">
-            <p className="flex items-center gap-1.5 text-[13px] text-slate-500">
-              <Wallet className="h-4 w-4 text-[#2953A4]" /> Booking (Amount)
-            </p>
-            <p className="mt-1.5 text-[17px] font-bold">
-              {rp(profile.booking)} <span className="font-normal text-slate-400">/</span>
-            </p>
-            <p className="text-[13px] text-slate-400">{rp(profile.bookingEstimate)}</p>
+        <div className="relative z-10 mt-4 rounded-xl bg-white p-4 text-slate-900">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="border-r border-slate-200 pr-3">
+              <p className="flex items-center gap-1.5 text-[13px] text-slate-500">
+                <Wallet className="h-4 w-4 text-[#2953A4]" /> Booking (Amount)
+              </p>
+              <p className="mt-1.5 text-[17px] font-bold">
+                {rp(profile.booking)} <span className="font-normal text-slate-400">/</span>
+              </p>
+              <p className="text-[13px] text-slate-400">{rp(profile.bookingEstimate)}</p>
+            </div>
+            <div className="pl-1">
+              <p className="flex items-center gap-1.5 text-[13px] text-slate-500">
+                <Scale className="h-4 w-4 text-[#2953A4]" /> Gram (New CIF)
+              </p>
+              <p className="mt-1.5 text-[17px] font-bold">
+                {grams.current}g <span className="font-normal text-slate-400">/ {grams.target}g</span>
+              </p>
+            </div>
           </div>
-          <div className="pl-1">
+          <div className="mt-3 border-t border-slate-200 pt-3">
             <p className="flex items-center gap-1.5 text-[13px] text-slate-500">
               <Banknote className="h-4 w-4 text-[#2953A4]" /> Estimasi Insentif
             </p>
             <p className="mt-1.5 text-[17px] font-bold">{rp(profile.estimasiInsentif)}</p>
           </div>
-          <div className="border-r border-slate-200 pr-3">
-            <p className="flex items-center gap-1.5 text-[13px] text-slate-500">
-              <Wallet className="h-4 w-4 text-[#2953A4]" /> ADO
-            </p>
-            <p className="mt-1.5 text-[17px] font-bold">{formatCompactRupiah(ado.current)}</p>
-            <p className="text-[12px] text-slate-400">Target {formatCompactRupiah(ado.target)}</p>
-          </div>
-          <div className="pl-1">
-            <p className="flex items-center gap-1.5 text-[13px] text-slate-500">
-              <Scale className="h-4 w-4 text-[#2953A4]" /> Gram (New CIF)
-            </p>
-            <p className="mt-1.5 text-[17px] font-bold">{formatCompactGram(grams.current)}</p>
-            <p className="text-[12px] text-slate-400">Target {formatCompactGram(grams.target)}</p>
-          </div>
+        </div>
+
+        <div className="relative z-10 mt-2.5 flex items-center justify-between gap-2 rounded-xl bg-slate-100 px-4 py-3 text-slate-900">
+          <p className="flex items-center gap-1.5 text-[13px] text-slate-500">
+            <Mail className="h-4 w-4 text-[#2953A4]" /> ADO
+          </p>
+          <p className="text-[15px] font-bold">
+            {rp(ado.current)}
+            <span className="font-normal text-slate-400">/{rp(ado.target)}</span>
+          </p>
         </div>
 
         <svg className="absolute bottom-0 left-0 h-[70px] w-full" viewBox="0 0 440 70" preserveAspectRatio="none">
@@ -129,7 +136,7 @@ function Home() {
       <div className="space-y-6 bg-white px-5 pb-8 pt-5">
       <ScreenLoader skeleton={<HomeSkeleton />}>
         <section>
-           <h2 className="text-[17px] font-bold text-slate-900">Target Aktivitas</h2>
+           <h2 className="text-[17px] font-bold text-slate-900">Target Leads dan Closing</h2>
            <div className="mt-2.5 flex gap-2">
              {([["today", "Hari ini"], ["week", "Minggu ini"], ["month", "Bulan ini"]] as const).map(([r, label]) => (
                <button
@@ -233,7 +240,7 @@ function Home() {
                     <div className="mt-3 flex items-center justify-between gap-2 rounded-lg border border-slate-200 px-3 py-2.5">
                       <span className="inline-flex items-center gap-1.5 text-[13px] text-slate-500">
                         <Crosshair className="h-4 w-4 text-[#2953A4]" />
-                        {a.leadsCount}/{a.leadsTarget} Leads
+                        {a.leadsCount} Leads
                       </span>
                       {status === "completed" ? (
                         <span className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-3 py-1.5 text-[12px] font-medium text-slate-500">
@@ -303,23 +310,6 @@ function TargetCard({ icon, label, hint, current, target, format = String }: { i
       </div>
     </div>
   );
-}
-
-function formatCompactRupiah(value: number) {
-  if (value >= 1_000_000) {
-    return `Rp${(value / 1_000_000).toLocaleString("id-ID", { maximumFractionDigits: 1 })} jt`;
-  }
-  if (value >= 1_000) {
-    return `Rp${(value / 1_000).toLocaleString("id-ID", { maximumFractionDigits: 1 })} rb`;
-  }
-  return `Rp${value.toLocaleString("id-ID")}`;
-}
-
-function formatCompactGram(value: number) {
-  if (value >= 1_000) {
-    return `${(value / 1_000).toLocaleString("id-ID", { maximumFractionDigits: 1 })} kg`;
-  }
-  return `${value.toLocaleString("id-ID")} g`;
 }
 
 function StatusText({ status }: { status: ActivityStatus }) {
