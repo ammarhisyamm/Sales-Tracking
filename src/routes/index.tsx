@@ -89,15 +89,18 @@ function Home() {
         </div>
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#dce6ff]">
-              <UserRound className="h-7 w-7 text-[#2953A4]" strokeWidth={2.5} />
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white">
+              <svg viewBox="0 0 24 24" className="h-7 w-7" fill="#2953A4" aria-hidden="true">
+                <circle cx="12" cy="7.5" r="4" />
+                <path d="M4.5 19.5c.8-3.8 3.9-6 7.5-6s6.7 2.2 7.5 6v.5h-15v-.5z" />
+              </svg>
             </span>
             <div>
-              <p className="text-[13px] text-white/75">Selamat datang</p>
-              <p className="text-[17px] font-bold">Sales Gadai Mas</p>
+              <p className="text-[15px] text-white/90">Selamat datang</p>
+              <p className="text-[20px] font-bold leading-tight">Sales Gadai Mas</p>
             </div>
           </div>
-          <Link to="/notifikasi" className="relative flex h-11 w-11 items-center justify-center rounded-full bg-white text-slate-700">
+          <Link to="/notifikasi" className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#2953A4]">
             <Bell className="h-5 w-5" />
           </Link>
         </div>
@@ -111,7 +114,7 @@ function Home() {
                 </span>
                 Booking (Amount)
               </p>
-              <p className="mt-2 text-[20px] font-bold leading-tight">
+              <p className="mt-2 text-[21px] font-bold leading-tight tracking-tight">
                 {rp(profile.booking)} <span className="font-normal text-slate-400">/</span>
               </p>
               <p className="text-[14px] text-slate-400">{rp(profile.bookingEstimate)}</p>
@@ -123,7 +126,7 @@ function Home() {
                 </span>
                 Gram (New CIF)
               </p>
-              <p className="mt-2 text-[20px] font-bold leading-tight">
+              <p className="mt-2 text-[21px] font-bold leading-tight tracking-tight">
                 {grams.current}g <span className="font-normal text-slate-400">/ {grams.target}g</span>
               </p>
             </div>
@@ -135,18 +138,19 @@ function Home() {
               </span>
               Estimasi Insentif
             </p>
-            <p className="mt-2 text-[20px] font-bold leading-tight">{rp(profile.estimasiInsentif)}</p>
+            <p className="mt-2 text-[21px] font-bold leading-tight tracking-tight">{rp(profile.estimasiInsentif)}</p>
           </div>
-        </div>
-
-        <div className="relative z-10 mt-2 flex items-center justify-between gap-2 rounded-xl bg-[#edf2f7] px-4 py-3.5 text-slate-900">
-          <p className="flex items-center gap-1.5 text-[13px] text-slate-500">
-            <Mail className="h-4 w-4 text-[#2953A4]" /> ADO
-          </p>
-          <p className="text-[17px] font-bold">
-            {rp(ado.current)}
-            <span className="font-normal text-slate-400">/{rp(ado.target)}</span>
-          </p>
+          <div className="mt-3 border-t border-slate-200 pt-3">
+            <div className="flex items-center justify-between gap-2">
+              <p className="flex items-center gap-2 text-[14px] text-slate-500">
+                <Mail className="h-[18px] w-[18px] text-[#2953A4]" /> ADO
+              </p>
+              <p className="text-[17px] font-bold">
+                {rp(ado.current)}
+                <span className="font-normal text-slate-400">/{rp(ado.target)}</span>
+              </p>
+            </div>
+          </div>
         </div>
 
         <svg className="absolute bottom-0 left-0 h-[70px] w-full" viewBox="0 0 440 70" preserveAspectRatio="none">
