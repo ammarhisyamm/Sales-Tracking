@@ -57,27 +57,42 @@ function KacabHome() {
 
   return (
     <MobileShell role="kacab" hideFab>
-      <header className="relative h-[222px] overflow-visible px-5 pt-12 text-white" style={{ background: "var(--gradient-brand)" }}>
+      <header
+        className="relative h-[222px] overflow-visible px-5 pt-12 text-white"
+        style={{ background: "var(--gradient-brand)" }}
+      >
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex min-w-0 items-center gap-3">
             <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-white/25">
               <UserRound className="h-7 w-7 text-white" />
             </span>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="text-[13px] text-white/75">Selamat datang</p>
-              <p className="truncate text-[17px] font-bold">KACAB (MAS MONANG-MANING)</p>
+              <p className="line-clamp-2 text-[16px] font-bold leading-tight">KACAB ({kcp.name})</p>
             </div>
           </div>
-          <button className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-white text-[#2953A4]" aria-label="Notifikasi">
+          <button
+            className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-white text-[#2953A4]"
+            aria-label="Notifikasi"
+          >
             <Bell className="h-5 w-5" />
           </button>
         </div>
 
         <div className="absolute left-4 right-4 top-[154px] z-20 grid grid-cols-2 divide-x divide-slate-200 rounded-2xl bg-white p-4 text-slate-900 shadow-[0_12px_24px_rgba(25,42,77,0.10)]">
-          <SummaryMetric icon={<MapPin />} label="Visit" value={`${kcp.visit[period][0]}`} target={`/${kcp.visit[period][1]}`} />
+          <SummaryMetric
+            icon={<MapPin />}
+            label="Visit"
+            value={`${kcp.visit[period][0]}`}
+            target={`/${kcp.visit[period][1]}`}
+          />
           <SummaryMetric icon={<ClipboardCheck />} label="Waskat" value={`${kcp.waskat[period]}`} />
         </div>
-        <svg className="absolute bottom-0 left-0 h-[70px] w-full" viewBox="0 0 440 70" preserveAspectRatio="none">
+        <svg
+          className="absolute bottom-0 left-0 h-[70px] w-full"
+          viewBox="0 0 440 70"
+          preserveAspectRatio="none"
+        >
           <path d="M0,38 C110,72 230,72 440,14 L440,70 L0,70 Z" fill="#8fa3d9" opacity="0.5" />
           <path d="M0,48 C130,78 260,76 440,28 L440,70 L0,70 Z" fill="#c3d0f0" opacity="0.75" />
           <path d="M0,56 C140,82 280,80 440,40 L440,70 L0,70 Z" fill="#eef2fd" />
@@ -86,14 +101,19 @@ function KacabHome() {
 
       <main className="space-y-5 bg-white px-5 pb-8 pt-[64px]">
         <section>
-          <label className="block text-[14px] font-medium text-slate-700">Pilih KCP</label>
+          <h2 className="text-[20px] font-bold text-slate-900">Monitoring Aktivitas</h2>
+          <label className="mt-3 block text-[14px] font-medium text-slate-700">Pilih KCP</label>
           <span className="relative mt-1.5 block">
             <select
               value={selectedKcp}
               onChange={(e) => setSelectedKcp(Number(e.target.value))}
               className="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-[14px] font-medium text-slate-900 outline-none"
             >
-              {KCP_DATA.map((item, index) => <option key={item.name} value={index}>{item.name}</option>)}
+              {KCP_DATA.map((item, index) => (
+                <option key={item.name} value={index}>
+                  {item.name}
+                </option>
+              ))}
             </select>
             <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
           </span>
@@ -101,26 +121,56 @@ function KacabHome() {
 
         <section>
           <div className="flex gap-2 overflow-x-auto pb-1">
-            {([ ["today", "Hari ini"], ["week", "Minggu ini"], ["month", "Bulan ini"] ] as const).map(([value, label]) => (
-              <button key={value} onClick={() => setPeriod(value)} className={`flex-shrink-0 rounded-full border px-4 py-2 text-[13px] font-medium ${period === value ? "border-[#2953A4] bg-[#2953A4] text-white" : "border-slate-200 bg-white text-slate-500"}`}>
+            {(
+              [
+                ["today", "Hari ini"],
+                ["week", "Minggu ini"],
+                ["month", "Bulan ini"],
+              ] as const
+            ).map(([value, label]) => (
+              <button
+                key={value}
+                onClick={() => setPeriod(value)}
+                className={`flex-shrink-0 rounded-full border px-4 py-2 text-[13px] font-medium ${period === value ? "border-[#2953A4] bg-[#2953A4] text-white" : "border-slate-200 bg-white text-slate-500"}`}
+              >
                 {label}
               </button>
             ))}
           </div>
           <div className="mt-3 space-y-3">
             <MetricGroup icon={<UserRound className="h-4 w-4" />} title="Kepala KCP">
-              <MetricRow icon={<Megaphone className="h-4 w-4" />} label="Marketing" value={kcp.marketing.kepala[period]} />
+              <MetricRow
+                icon={<Megaphone className="h-4 w-4" />}
+                label="Marketing"
+                value={kcp.marketing.kepala[period]}
+              />
             </MetricGroup>
             <MetricGroup icon={<UsersRound className="h-4 w-4" />} title="Penaksir Kasir">
               <div className="grid grid-cols-2 gap-2.5">
-                <MetricRow icon={<FileText className="h-4 w-4" />} label="Follow Up RO" value={kcp.marketing.ro[period]} />
-                <MetricRow icon={<Clock3 className="h-4 w-4" />} label="Follow Up OVD" value={kcp.marketing.ovd[period]} />
+                <MetricRow
+                  icon={<FileText className="h-4 w-4" />}
+                  label="Follow Up RO"
+                  value={kcp.marketing.ro[period]}
+                />
+                <MetricRow
+                  icon={<Clock3 className="h-4 w-4" />}
+                  label="Follow Up OVD"
+                  value={kcp.marketing.ovd[period]}
+                />
               </div>
             </MetricGroup>
             <MetricGroup icon={<UsersRound className="h-4 w-4" />} title="Sales Officer">
               <div className="grid grid-cols-2 gap-2.5">
-                <MetricRow icon={<Crosshair className="h-4 w-4" />} label="Leads" value={kcp.marketing.leads[period]} />
-                <MetricRow icon={<UserRound className="h-4 w-4" />} label="Closing Leads" value={kcp.marketing.closing[period]} />
+                <MetricRow
+                  icon={<Crosshair className="h-4 w-4" />}
+                  label="Leads"
+                  value={kcp.marketing.leads[period]}
+                />
+                <MetricRow
+                  icon={<UserRound className="h-4 w-4" />}
+                  label="Closing Leads"
+                  value={kcp.marketing.closing[period]}
+                />
               </div>
             </MetricGroup>
           </div>
@@ -129,13 +179,27 @@ function KacabHome() {
         <section>
           <div className="mb-2.5 flex items-center justify-between">
             <h2 className="text-[17px] font-bold text-slate-900">Aktivitas Hari Ini</h2>
-            <Link to="/kacab-aktivitas" className="inline-flex items-center gap-0.5 text-[13px] font-medium text-slate-500">Lihat Semua <ChevronRight className="h-4 w-4" /></Link>
+            <Link
+              to="/kacab-aktivitas"
+              className="inline-flex items-center gap-0.5 text-[13px] font-medium text-slate-500"
+            >
+              Lihat Semua <ChevronRight className="h-4 w-4" />
+            </Link>
           </div>
           <div className="py-3 text-center">
             <img src="/empty-activity.svg" alt="" className="mx-auto h-28 w-40 object-contain" />
-            <p className="mt-4 text-[17px] font-bold text-slate-900">Belum Ada Aktivitas Marketing</p>
-            <p className="mt-1 text-[13px] text-slate-500">Aktivitas yang tersedia akan muncul disini</p>
-            <a href="/kacab-aktivitas/buat" className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-[#2953A4] bg-white px-4 py-2.5 text-[14px] font-medium text-[#2953A4]"><Plus className="h-4 w-4" /> Tambah Aktivitas</a>
+            <p className="mt-4 text-[17px] font-bold text-slate-900">
+              Belum Ada Aktivitas Marketing
+            </p>
+            <p className="mt-1 text-[13px] text-slate-500">
+              Aktivitas yang tersedia akan muncul disini
+            </p>
+            <a
+              href="/kacab-aktivitas/buat"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-[#2953A4] bg-white px-4 py-2.5 text-[14px] font-medium text-[#2953A4]"
+            >
+              <Plus className="h-4 w-4" /> Tambah Aktivitas
+            </a>
           </div>
         </section>
       </main>
@@ -143,29 +207,85 @@ function KacabHome() {
   );
 }
 
-function SummaryMetric({ icon, label, value, target }: { icon: React.ReactNode; label: string; value: string; target?: string }) {
+function SummaryMetric({
+  icon,
+  label,
+  value,
+  target,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  target?: string;
+}) {
   return (
     <div className="flex items-center gap-2 px-1 first:pr-3 last:pl-3">
-      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#eef5ff] text-[#607b9d]">{icon}</span>
+      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#eef5ff] text-[#607b9d]">
+        {icon}
+      </span>
       <div>
         <p className="text-[13px] text-slate-500">{label}</p>
-        <p className="mt-1 text-[18px] font-bold text-slate-900">{value}<span className="font-normal text-slate-400">{target}</span></p>
+        <p className="mt-1 text-[18px] font-bold text-slate-900">
+          {value}
+          <span className="font-normal text-slate-400">{target}</span>
+        </p>
       </div>
     </div>
   );
 }
 
-function MetricGroup({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
-  return <div className="rounded-xl border border-slate-200 bg-white p-2.5"><p className="mb-2.5 flex items-center gap-2 px-1 text-[16px] font-bold text-slate-900"><span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#eef5ff] text-[#2953A4]">{icon}</span>{title}</p>{children}</div>;
+function MetricGroup({
+  icon,
+  title,
+  children,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-3">
+      <p className="mb-3 flex items-center gap-2 px-1 text-[15px] font-bold text-slate-900">
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#eef5ff] text-[#2953A4]">
+          {icon}
+        </span>
+        {title}
+      </p>
+      {children}
+    </div>
+  );
 }
 
-function MetricRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: readonly [number, number] }) {
+function MetricRow({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: readonly [number, number];
+}) {
   const percent = value[1] ? Math.min(100, Math.round((value[0] / value[1]) * 100)) : 0;
   return (
-    <div className="rounded-xl border border-slate-200 px-3 py-3">
-      <p className="flex items-center gap-2 text-[14px] text-[#292667]"><span className="text-[#2953A4]">{icon}</span>{label}</p>
-      <p className="mt-2 text-[20px] font-bold text-slate-900">{value[0]}<span className="font-normal text-slate-400">/{value[1]}</span></p>
-      {value[1] > 0 && <div className="mt-2.5 flex items-center gap-2"><div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#edf3fb]"><div className="h-full rounded-full bg-[#2953A4]" style={{ width: `${percent}%` }} /></div><span className="text-[12px] font-medium text-slate-600">{percent}%</span></div>}
+    <div className="rounded-xl border border-slate-200 bg-white px-3 py-3">
+      <p className="flex items-center gap-2 text-[14px] font-medium text-slate-700">
+        <span className="text-[#2953A4]">{icon}</span>
+        <span className="truncate">{label}</span>
+      </p>
+      <p className="mt-2 text-[20px] font-bold leading-none text-slate-900">
+        {value[0]}
+        <span className="font-normal text-slate-400">/{value[1]}</span>
+      </p>
+      {value[1] > 0 && (
+        <div className="mt-3 flex items-center gap-2">
+          <div className="h-2 flex-1 overflow-hidden rounded-full bg-[#edf3fb]">
+            <div className="h-full rounded-full bg-[#2953A4]" style={{ width: `${percent}%` }} />
+          </div>
+          <span className="w-9 shrink-0 text-right text-[12px] font-medium text-slate-600">
+            {percent}%
+          </span>
+        </div>
+      )}
     </div>
   );
 }
