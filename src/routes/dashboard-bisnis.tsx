@@ -329,16 +329,19 @@ function BusinessEditModal({
         <div className="grid gap-4 px-8 py-6">
           <AmountField
             label="ADO"
+            required
             value={edit.ado}
             onChange={(value) => setEdit({ ...edit, ado: value })}
           />
           <AmountField
             label="Booking Amount"
+            required
             value={edit.booking}
             onChange={(value) => setEdit({ ...edit, booking: value })}
           />
           <AmountField
             label="Gram (New CIF)"
+            required
             value={edit.gram ?? ""}
             onChange={(value) => setEdit({ ...edit, gram: value })}
           />
@@ -401,14 +404,17 @@ function AmountField({
   label,
   value,
   onChange,
+  required = false,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  required?: boolean;
 }) {
   return (
     <label className="block text-[14px] font-medium text-slate-700">
       {label}
+      {required && <span className="text-red-500">*</span>}
       <input
         inputMode="numeric"
         value={value}

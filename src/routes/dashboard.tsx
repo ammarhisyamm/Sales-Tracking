@@ -92,14 +92,14 @@ const INITIAL_SALES_TARGETS: SalesOfficerTarget[] = [
     monthly: 40,
     weekly: 10,
     daily: 3,
-    leads: 20,
-    closingLeads: 8,
-    leadsMonthly: 20,
-    closingMonthly: 8,
-    leadsWeekly: 5,
-    closingWeekly: 2,
-    leadsDaily: 2,
-    closingDaily: 1,
+    leads: 12,
+    closingLeads: 12,
+    leadsMonthly: 12,
+    closingMonthly: 12,
+    leadsWeekly: 10,
+    closingWeekly: 10,
+    leadsDaily: 3,
+    closingDaily: 3,
     ado: formatRupiah(10),
     gram: 3,
     configured: true,
@@ -114,14 +114,14 @@ const INITIAL_SALES_TARGETS: SalesOfficerTarget[] = [
     monthly: 40,
     weekly: 10,
     daily: 5,
-    leads: 18,
-    closingLeads: 6,
-    leadsMonthly: 18,
-    closingMonthly: 6,
-    leadsWeekly: 4,
-    closingWeekly: 2,
-    leadsDaily: 2,
-    closingDaily: 1,
+    leads: 12,
+    closingLeads: 12,
+    leadsMonthly: 12,
+    closingMonthly: 12,
+    leadsWeekly: 10,
+    closingWeekly: 10,
+    leadsDaily: 5,
+    closingDaily: 5,
     ado: formatRupiah(10),
     gram: 5,
     configured: false,
@@ -136,14 +136,14 @@ const INITIAL_SALES_TARGETS: SalesOfficerTarget[] = [
     monthly: 40,
     weekly: 10,
     daily: 5,
-    leads: 16,
-    closingLeads: 5,
-    leadsMonthly: 16,
-    closingMonthly: 5,
-    leadsWeekly: 4,
-    closingWeekly: 1,
-    leadsDaily: 1,
-    closingDaily: 1,
+    leads: 12,
+    closingLeads: 12,
+    leadsMonthly: 12,
+    closingMonthly: 12,
+    leadsWeekly: 10,
+    closingWeekly: 10,
+    leadsDaily: 5,
+    closingDaily: 5,
     ado: formatRupiah(10),
     gram: 5,
     configured: false,
@@ -158,14 +158,14 @@ const INITIAL_SALES_TARGETS: SalesOfficerTarget[] = [
     monthly: 40,
     weekly: 10,
     daily: 5,
-    leads: 15,
-    closingLeads: 4,
-    leadsMonthly: 15,
-    closingMonthly: 4,
-    leadsWeekly: 3,
-    closingWeekly: 1,
-    leadsDaily: 1,
-    closingDaily: 1,
+    leads: 12,
+    closingLeads: 12,
+    leadsMonthly: 12,
+    closingMonthly: 12,
+    leadsWeekly: 10,
+    closingWeekly: 10,
+    leadsDaily: 5,
+    closingDaily: 5,
     ado: formatRupiah(10),
     gram: 5,
     configured: false,
@@ -180,14 +180,14 @@ const INITIAL_SALES_TARGETS: SalesOfficerTarget[] = [
     monthly: 40,
     weekly: 10,
     daily: 5,
-    leads: 15,
-    closingLeads: 4,
-    leadsMonthly: 15,
-    closingMonthly: 4,
-    leadsWeekly: 3,
-    closingWeekly: 1,
-    leadsDaily: 1,
-    closingDaily: 1,
+    leads: 12,
+    closingLeads: 12,
+    leadsMonthly: 12,
+    closingMonthly: 12,
+    leadsWeekly: 10,
+    closingWeekly: 10,
+    leadsDaily: 5,
+    closingDaily: 5,
     ado: formatRupiah(10),
     gram: 5,
     configured: false,
@@ -574,11 +574,11 @@ function SalesOfficerKacabTable({
               <th className="whitespace-nowrap px-5 py-5 font-medium">Grade</th>
               <th className="whitespace-nowrap px-5 py-5 font-medium">Unit</th>
               <th className="whitespace-nowrap px-5 py-5 font-medium">Leads Bulanan</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Closing Leads Bulanan</th>
+              <th className="whitespace-nowrap px-5 py-5 font-medium">Closing Bulanan</th>
               <th className="whitespace-nowrap px-5 py-5 font-medium">Leads Mingguan</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Closing Leads Mingguan</th>
+              <th className="whitespace-nowrap px-5 py-5 font-medium">Closing Mingguan</th>
               <th className="whitespace-nowrap px-5 py-5 font-medium">Leads Harian</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Closing Leads Harian</th>
+              <th className="whitespace-nowrap px-5 py-5 font-medium">Closing Harian</th>
               <th className="whitespace-nowrap px-5 py-5 font-medium">Status</th>
               <th className="sticky right-0 whitespace-nowrap bg-white px-5 py-5 font-medium shadow-[-8px_0_12px_rgba(23,24,45,0.06)]">
                 Aksi
@@ -1305,7 +1305,7 @@ function salesLeadsValidationError(edit: EditTarget) {
   ];
   for (const [leads, closing, label] of pairs) {
     if (leads !== undefined && closing !== undefined && Number(closing) > Number(leads)) {
-      return `Closing Leads ${label} tidak boleh lebih besar dari Leads ${label}.`;
+      return `Closing ${label} tidak boleh lebih besar dari Leads ${label}.`;
     }
   }
   return "";
@@ -1341,7 +1341,7 @@ function SalesEditModalFlowKacabNoGram({
               onChange={(value) => setEdit({ ...edit, leadsMonthly: value })}
             />
             <Input
-              label="Closing Leads Bulanan"
+              label="Closing Bulanan"
               required
               value={edit.closingMonthly ?? ""}
               onChange={(value) => setEdit({ ...edit, closingMonthly: value })}
@@ -1353,7 +1353,7 @@ function SalesEditModalFlowKacabNoGram({
               onChange={(value) => setEdit({ ...edit, leadsWeekly: value })}
             />
             <Input
-              label="Closing Leads Mingguan"
+              label="Closing Mingguan"
               required
               value={edit.closingWeekly ?? ""}
               onChange={(value) => setEdit({ ...edit, closingWeekly: value })}
@@ -1365,7 +1365,7 @@ function SalesEditModalFlowKacabNoGram({
               onChange={(value) => setEdit({ ...edit, leadsDaily: value })}
             />
             <Input
-              label="Closing Leads Harian"
+              label="Closing Harian"
               required
               value={edit.closingDaily ?? ""}
               onChange={(value) => setEdit({ ...edit, closingDaily: value })}
