@@ -102,7 +102,7 @@ function Home() {
           </Link>
         </div>
 
-        <div className="relative z-10 mt-4 rounded-2xl bg-white p-4 text-slate-900 shadow-[0_2px_12px_rgba(25,42,77,0.06)]">
+        <div className="relative z-10 mt-4 rounded-xl bg-white p-4 text-slate-900 shadow-[0_2px_12px_rgba(25,42,77,0.06)]">
           <div className="grid grid-cols-2">
             <div className="border-r border-slate-200 pr-3">
               <p className="flex items-center gap-2 text-[13px] text-slate-500">
@@ -111,7 +111,7 @@ function Home() {
                 </span>
                 Booking (Amount)
               </p>
-              <p className="mt-2 text-[19px] font-bold leading-tight">
+              <p className="mt-2 text-[20px] font-bold leading-tight">
                 {rp(profile.booking)} <span className="font-normal text-slate-400">/</span>
               </p>
               <p className="text-[14px] text-slate-400">{rp(profile.bookingEstimate)}</p>
@@ -123,7 +123,7 @@ function Home() {
                 </span>
                 Gram (New CIF)
               </p>
-              <p className="mt-2 text-[19px] font-bold leading-tight">
+              <p className="mt-2 text-[20px] font-bold leading-tight">
                 {grams.current}g <span className="font-normal text-slate-400">/ {grams.target}g</span>
               </p>
             </div>
@@ -135,15 +135,15 @@ function Home() {
               </span>
               Estimasi Insentif
             </p>
-            <p className="mt-2 text-[19px] font-bold leading-tight">{rp(profile.estimasiInsentif)}</p>
+            <p className="mt-2 text-[20px] font-bold leading-tight">{rp(profile.estimasiInsentif)}</p>
           </div>
         </div>
 
-        <div className="relative z-10 mt-2.5 flex items-center justify-between gap-2 rounded-lg bg-[#edf2f7] px-4 py-3 text-slate-900">
+        <div className="relative z-10 mt-2 flex items-center justify-between gap-2 rounded-xl bg-[#edf2f7] px-4 py-3.5 text-slate-900">
           <p className="flex items-center gap-1.5 text-[13px] text-slate-500">
             <Mail className="h-4 w-4 text-[#2953A4]" /> ADO
           </p>
-          <p className="text-[16px] font-bold">
+          <p className="text-[17px] font-bold">
             {rp(ado.current)}
             <span className="font-normal text-slate-400">/{rp(ado.target)}</span>
           </p>

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
-import { ScreenLoader } from "@/components/motion";
+import { OverlayPortal, ScreenLoader } from "@/components/motion";
 import { KontakSkeleton } from "@/components/skeletons";
 import { contacts, shortLocation } from "@/lib/mock-data";
 import { Check, MapPin, MessageCircle, Phone, Search, Ticket, UserRound } from "lucide-react";
@@ -141,32 +141,34 @@ function ContactsPage() {
       </div>
 
       {voucherFor && (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/50"
-          onClick={() => setVoucherFor(null)}
-        >
+        <OverlayPortal>
           <div
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-[440px] rounded-t-3xl bg-white px-6 pb-8 pt-10 text-center"
+            className="fixed inset-0 z-[80] flex items-end justify-center bg-black/50"
+            onClick={() => setVoucherFor(null)}
           >
-            <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-amber-100">
-              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-400">
-                <Check className="h-6 w-6 text-white" strokeWidth={3} />
-              </span>
-            </span>
-            <h2 className="mt-4 text-[20px] font-bold text-slate-900">Voucher berhasil Dikirim</h2>
-            <p className="mt-2 text-[14px] text-slate-500">
-              Voucher telah berhasil dikirim ke {voucherFor}.
-            </p>
-            <button
-              type="button"
-              onClick={() => setVoucherFor(null)}
-              className="mt-6 w-full rounded-xl bg-[#2953A4] py-3.5 text-[15px] font-semibold text-white transition-transform duration-100 active:scale-[0.98]"
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="max-h-[90dvh] w-full max-w-[440px] overflow-y-auto rounded-t-3xl bg-white px-6 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-10 text-center"
             >
-              Selesai
-            </button>
+              <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-amber-100">
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-400">
+                  <Check className="h-6 w-6 text-white" strokeWidth={3} />
+                </span>
+              </span>
+              <h2 className="mt-4 text-[20px] font-bold text-slate-900">Voucher berhasil Dikirim</h2>
+              <p className="mt-2 text-[14px] text-slate-500">
+                Voucher telah berhasil dikirim ke {voucherFor}.
+              </p>
+              <button
+                type="button"
+                onClick={() => setVoucherFor(null)}
+                className="mt-6 w-full rounded-xl bg-[#2953A4] py-3.5 text-[15px] font-semibold text-white transition-transform duration-100 active:scale-[0.98]"
+              >
+                Selesai
+              </button>
+            </div>
           </div>
-        </div>
+        </OverlayPortal>
       )}
     </MobileShell>
   );
