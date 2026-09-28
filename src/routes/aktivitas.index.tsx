@@ -160,7 +160,7 @@ function ActivityList() {
                 <div className="mt-3 flex items-center justify-between gap-2 rounded-lg border border-slate-200 px-3 py-2.5">
                   <span className="inline-flex items-center gap-1.5 text-[13px] text-slate-500">
                     <Crosshair className="h-4 w-4 text-[#2953A4]" />
-                    {a.leadsCount}/{a.leadsTarget} Leads
+                    {a.leadsCount} Leads
                   </span>
                   {status === "completed" ? (
                     <span className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-3 py-1.5 text-[12px] font-medium text-slate-500">
