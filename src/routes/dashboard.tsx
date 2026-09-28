@@ -46,6 +46,12 @@ type EditTarget = {
   so?: string;
   leads?: string;
   closingLeads?: string;
+  leadsMonthly?: string;
+  closingMonthly?: string;
+  leadsWeekly?: string;
+  closingWeekly?: string;
+  leadsDaily?: string;
+  closingDaily?: string;
 };
 type PenaksirTarget = TargetRow & { grade: string };
 type SalesOfficerTarget = TargetRow & {
@@ -57,6 +63,12 @@ type SalesOfficerTarget = TargetRow & {
   gram: number;
   leads: number;
   closingLeads: number;
+  leadsMonthly: number;
+  closingMonthly: number;
+  leadsWeekly: number;
+  closingWeekly: number;
+  leadsDaily: number;
+  closingDaily: number;
 };
 
 const INITIAL_TARGETS: TargetRow[] = [
@@ -82,6 +94,12 @@ const INITIAL_SALES_TARGETS: SalesOfficerTarget[] = [
     daily: 3,
     leads: 20,
     closingLeads: 8,
+    leadsMonthly: 20,
+    closingMonthly: 8,
+    leadsWeekly: 5,
+    closingWeekly: 2,
+    leadsDaily: 2,
+    closingDaily: 1,
     ado: formatRupiah(10),
     gram: 3,
     configured: true,
@@ -98,6 +116,12 @@ const INITIAL_SALES_TARGETS: SalesOfficerTarget[] = [
     daily: 5,
     leads: 18,
     closingLeads: 6,
+    leadsMonthly: 18,
+    closingMonthly: 6,
+    leadsWeekly: 4,
+    closingWeekly: 2,
+    leadsDaily: 2,
+    closingDaily: 1,
     ado: formatRupiah(10),
     gram: 5,
     configured: false,
@@ -114,6 +138,12 @@ const INITIAL_SALES_TARGETS: SalesOfficerTarget[] = [
     daily: 5,
     leads: 16,
     closingLeads: 5,
+    leadsMonthly: 16,
+    closingMonthly: 5,
+    leadsWeekly: 4,
+    closingWeekly: 1,
+    leadsDaily: 1,
+    closingDaily: 1,
     ado: formatRupiah(10),
     gram: 5,
     configured: false,
@@ -130,6 +160,12 @@ const INITIAL_SALES_TARGETS: SalesOfficerTarget[] = [
     daily: 5,
     leads: 15,
     closingLeads: 4,
+    leadsMonthly: 15,
+    closingMonthly: 4,
+    leadsWeekly: 3,
+    closingWeekly: 1,
+    leadsDaily: 1,
+    closingDaily: 1,
     ado: formatRupiah(10),
     gram: 5,
     configured: false,
@@ -146,6 +182,12 @@ const INITIAL_SALES_TARGETS: SalesOfficerTarget[] = [
     daily: 5,
     leads: 15,
     closingLeads: 4,
+    leadsMonthly: 15,
+    closingMonthly: 4,
+    leadsWeekly: 3,
+    closingWeekly: 1,
+    leadsDaily: 1,
+    closingDaily: 1,
     ado: formatRupiah(10),
     gram: 5,
     configured: false,
@@ -213,13 +255,14 @@ function Dashboard() {
           item.unit === salesUnit && item.so === salesSo
             ? {
                 ...item,
-                total: Number(edit.monthly ?? edit.total) || 0,
-                monthly: Number(edit.monthly ?? edit.total) || 0,
-                weekly: Number(edit.weekly) || 0,
-                daily: Number(edit.daily) || 0,
-                leads: Number(edit.leads) || 0,
-                closingLeads: Number(edit.closingLeads) || 0,
-                gram: Number(edit.gram) || 0,
+                leadsMonthly: Number(edit.leadsMonthly) || 0,
+                closingMonthly: Number(edit.closingMonthly) || 0,
+                leadsWeekly: Number(edit.leadsWeekly) || 0,
+                closingWeekly: Number(edit.closingWeekly) || 0,
+                leadsDaily: Number(edit.leadsDaily) || 0,
+                closingDaily: Number(edit.closingDaily) || 0,
+                leads: Number(edit.leadsMonthly) || 0,
+                closingLeads: Number(edit.closingMonthly) || 0,
                 configured: edit.active,
               }
             : item,
@@ -447,12 +490,16 @@ function Dashboard() {
               onEdit={(item) =>
                 setEdit({
                   unit: `${item.unit}::${item.so}`,
-                  total: String(item.monthly),
-                  monthly: String(item.monthly),
-                  weekly: String(item.weekly),
-                  daily: String(item.daily),
-                  leads: String(item.leads),
-                  closingLeads: String(item.closingLeads),
+                  total: String(item.leadsMonthly),
+                  monthly: String(item.leadsMonthly),
+                  weekly: String(item.leadsWeekly),
+                  daily: String(item.leadsDaily),
+                  leadsMonthly: String(item.leadsMonthly),
+                  closingMonthly: String(item.closingMonthly),
+                  leadsWeekly: String(item.leadsWeekly),
+                  closingWeekly: String(item.closingWeekly),
+                  leadsDaily: String(item.leadsDaily),
+                  closingDaily: String(item.closingDaily),
                   active: item.configured,
                 })
               }
@@ -519,17 +566,23 @@ function SalesOfficerKacabTable({
         />
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[1080px] border-collapse text-left">
-          <thead className="border-y border-slate-200 text-[14px] text-slate-400">
+        <table className="w-full min-w-[1500px] border-collapse text-left">
+          <thead className="border-y border-slate-200 bg-white text-[14px] text-slate-400">
             <tr>
               <th className="whitespace-nowrap px-5 py-5 font-medium">No</th>
               <th className="whitespace-nowrap px-5 py-5 font-medium">Name</th>
               <th className="whitespace-nowrap px-5 py-5 font-medium">Grade</th>
               <th className="whitespace-nowrap px-5 py-5 font-medium">Unit</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Target Mingguan</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Target Harian</th>
+              <th className="whitespace-nowrap px-5 py-5 font-medium">Leads Bulanan</th>
+              <th className="whitespace-nowrap px-5 py-5 font-medium">Closing Leads Bulanan</th>
+              <th className="whitespace-nowrap px-5 py-5 font-medium">Leads Mingguan</th>
+              <th className="whitespace-nowrap px-5 py-5 font-medium">Closing Leads Mingguan</th>
+              <th className="whitespace-nowrap px-5 py-5 font-medium">Leads Harian</th>
+              <th className="whitespace-nowrap px-5 py-5 font-medium">Closing Leads Harian</th>
               <th className="whitespace-nowrap px-5 py-5 font-medium">Status</th>
-              <th className="whitespace-nowrap px-5 py-5 font-medium">Aksi</th>
+              <th className="sticky right-0 whitespace-nowrap bg-white px-5 py-5 font-medium shadow-[-8px_0_12px_rgba(23,24,45,0.06)]">
+                Aksi
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -542,8 +595,12 @@ function SalesOfficerKacabTable({
                 <td className="whitespace-nowrap px-5 py-6">{item.salesName}</td>
                 <td className="whitespace-nowrap px-5 py-6">{item.so}</td>
                 <td className="whitespace-nowrap px-5 py-6">{item.unit}</td>
-                <td className="whitespace-nowrap px-5 py-6">{item.weekly}</td>
-                <td className="whitespace-nowrap px-5 py-6">{item.daily}</td>
+                <td className="whitespace-nowrap px-5 py-6">{item.leadsMonthly}</td>
+                <td className="whitespace-nowrap px-5 py-6">{item.closingMonthly}</td>
+                <td className="whitespace-nowrap px-5 py-6">{item.leadsWeekly}</td>
+                <td className="whitespace-nowrap px-5 py-6">{item.closingWeekly}</td>
+                <td className="whitespace-nowrap px-5 py-6">{item.leadsDaily}</td>
+                <td className="whitespace-nowrap px-5 py-6">{item.closingDaily}</td>
                 <td className="whitespace-nowrap px-5 py-6">
                   <span
                     className={`inline-flex items-center gap-2 text-[14px] font-medium ${item.configured ? "text-[#0a7d2c]" : "text-slate-500"}`}
@@ -556,7 +613,7 @@ function SalesOfficerKacabTable({
                     {item.configured ? "Active" : "Inactive"}
                   </span>
                 </td>
-                <td className="whitespace-nowrap px-5 py-6">
+                <td className="sticky right-0 whitespace-nowrap bg-white px-5 py-6 shadow-[-8px_0_12px_rgba(23,24,45,0.06)]">
                   <button
                     onClick={() => onEdit(item)}
                     className="rounded-lg border border-[#292663] px-5 py-2 text-[14px] font-medium text-[#292663]"
@@ -568,6 +625,8 @@ function SalesOfficerKacabTable({
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="border-t border-slate-100">
         <div className="flex items-center justify-end gap-4 px-7 py-6 text-[14px] text-slate-400">
           <span className="flex items-center gap-2">
             Rows per page:
@@ -1238,6 +1297,19 @@ function targetValidationError(edit: EditTarget, includeDaily: boolean) {
     return "Closing Leads tidak boleh lebih besar dari Leads.";
   return "";
 }
+function salesLeadsValidationError(edit: EditTarget) {
+  const pairs: Array<[string | undefined, string | undefined, string]> = [
+    [edit.leadsMonthly, edit.closingMonthly, "Bulanan"],
+    [edit.leadsWeekly, edit.closingWeekly, "Mingguan"],
+    [edit.leadsDaily, edit.closingDaily, "Harian"],
+  ];
+  for (const [leads, closing, label] of pairs) {
+    if (leads !== undefined && closing !== undefined && Number(closing) > Number(leads)) {
+      return `Closing Leads ${label} tidak boleh lebih besar dari Leads ${label}.`;
+    }
+  }
+  return "";
+}
 function SalesEditModalFlowKacabNoGram({
   edit,
   setEdit,
@@ -1248,7 +1320,7 @@ function SalesEditModalFlowKacabNoGram({
   onSave: () => void;
 }) {
   const [step, setStep] = useState<"form" | "confirm">("form");
-  const validationError = targetValidationError(edit, true);
+  const validationError = salesLeadsValidationError(edit);
   if (step === "confirm")
     return <ConfirmTargetModal onCancel={() => setStep("form")} onConfirm={onSave} />;
   return (
@@ -1260,37 +1332,43 @@ function SalesEditModalFlowKacabNoGram({
             <X className="h-6 w-6 text-slate-500" />
           </button>
         </div>
-        <div className="space-y-4 px-8 py-6">
+        <div className="max-h-[calc(100vh-220px)] space-y-4 overflow-y-auto px-8 py-6">
           <div className="grid gap-4 md:grid-cols-2">
             <Input
-              label="Target Bulanan"
+              label="Leads Bulanan"
               required
-              value={edit.monthly ?? edit.total}
-              onChange={(value) => setEdit({ ...edit, total: value, monthly: value })}
+              value={edit.leadsMonthly ?? ""}
+              onChange={(value) => setEdit({ ...edit, leadsMonthly: value })}
             />
             <Input
-              label="Weekly Activity"
+              label="Closing Leads Bulanan"
               required
-              value={edit.weekly}
-              onChange={(value) => setEdit({ ...edit, weekly: value })}
+              value={edit.closingMonthly ?? ""}
+              onChange={(value) => setEdit({ ...edit, closingMonthly: value })}
             />
             <Input
-              label="Daily Activity"
+              label="Leads Mingguan"
               required
-              value={edit.daily}
-              onChange={(value) => setEdit({ ...edit, daily: value })}
+              value={edit.leadsWeekly ?? ""}
+              onChange={(value) => setEdit({ ...edit, leadsWeekly: value })}
             />
             <Input
-              label="Leads"
+              label="Closing Leads Mingguan"
               required
-              value={edit.leads ?? ""}
-              onChange={(value) => setEdit({ ...edit, leads: value })}
+              value={edit.closingWeekly ?? ""}
+              onChange={(value) => setEdit({ ...edit, closingWeekly: value })}
             />
             <Input
-              label="Closing Leads"
+              label="Leads Harian"
               required
-              value={edit.closingLeads ?? ""}
-              onChange={(value) => setEdit({ ...edit, closingLeads: value })}
+              value={edit.leadsDaily ?? ""}
+              onChange={(value) => setEdit({ ...edit, leadsDaily: value })}
+            />
+            <Input
+              label="Closing Leads Harian"
+              required
+              value={edit.closingDaily ?? ""}
+              onChange={(value) => setEdit({ ...edit, closingDaily: value })}
             />
           </div>
           {validationError && (

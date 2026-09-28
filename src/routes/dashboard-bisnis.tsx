@@ -212,8 +212,8 @@ function DashboardBisnis() {
               />
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[1120px] border-collapse text-left">
-                <thead className="border-y border-slate-200 text-[14px] text-slate-400">
+              <table className="w-full min-w-[1000px] border-collapse text-left">
+                <thead className="border-y border-slate-200 bg-white text-[14px] text-slate-400">
                   <tr>
                     <th className="whitespace-nowrap px-5 py-5 font-medium">No</th>
                     <th className="whitespace-nowrap px-5 py-5 font-medium">Name</th>
@@ -223,7 +223,9 @@ function DashboardBisnis() {
                     <th className="whitespace-nowrap px-5 py-5 font-medium">ADO</th>
                     <th className="whitespace-nowrap px-5 py-5 font-medium">Gram</th>
                     <th className="whitespace-nowrap px-5 py-5 font-medium">Status</th>
-                    <th className="whitespace-nowrap px-5 py-5 font-medium">Aksi</th>
+                    <th className="sticky right-0 whitespace-nowrap bg-white px-5 py-5 font-medium shadow-[-8px_0_12px_rgba(23,24,45,0.06)]">
+                      Aksi
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -255,7 +257,7 @@ function DashboardBisnis() {
                           {item.active ? "Active" : "Inactive"}
                         </span>
                       </td>
-                      <td className="whitespace-nowrap px-5 py-6">
+                      <td className="sticky right-0 whitespace-nowrap bg-white px-5 py-6 shadow-[-8px_0_12px_rgba(23,24,45,0.06)]">
                         <button
                           onClick={() =>
                             setEdit({
@@ -276,20 +278,24 @@ function DashboardBisnis() {
                 </tbody>
               </table>
             </div>
-            <div className="flex items-center justify-end gap-4 px-7 py-6 text-[14px] text-slate-400">
-              <span className="flex items-center gap-2">
-                Rows per page:
-                <span className="inline-flex items-center gap-1 font-medium text-slate-600">
-                  10 <ChevronDown className="h-4 w-4" />
+            <div className="border-t border-slate-100">
+              <div className="flex items-center justify-end gap-4 px-7 py-6 text-[14px] text-slate-400">
+                <span className="flex items-center gap-2">
+                  Rows per page:
+                  <span className="inline-flex items-center gap-1 font-medium text-slate-600">
+                    10 <ChevronDown className="h-4 w-4" />
+                  </span>
                 </span>
-              </span>
-              <button disabled className="rounded-lg border border-slate-200 p-2 opacity-50">
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              <span className="rounded-lg bg-[#199900] px-3 py-2 font-semibold text-white">1</span>
-              <button className="rounded-lg border border-slate-200 p-2 opacity-50">
-                <ChevronRight className="h-5 w-5" />
-              </button>
+                <button disabled className="rounded-lg border border-slate-200 p-2 opacity-50">
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <span className="rounded-lg bg-[#199900] px-3 py-2 font-semibold text-white">
+                  1
+                </span>
+                <button className="rounded-lg border border-slate-200 p-2 opacity-50">
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </div>
             </div>
           </section>
         </div>
