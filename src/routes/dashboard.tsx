@@ -1695,7 +1695,7 @@ function EditModalFlow({
               onChange={(value) => setEdit({ ...edit, total: value, monthly: value })}
             />
             <Input
-              label="Weekly Activity"
+              label="Target Mingguan"
               required
               value={edit.weekly}
               onChange={(value) => setEdit({ ...edit, weekly: value })}
@@ -1923,11 +1923,13 @@ function Input({
   value,
   onChange,
   required = false,
+  placeholder = "0",
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   required?: boolean;
+  placeholder?: string;
 }) {
   const isRupiah = label === "ADO";
   return (
@@ -1938,11 +1940,12 @@ function Input({
         type={isRupiah ? "text" : "number"}
         inputMode={isRupiah ? "numeric" : undefined}
         min="0"
+        placeholder={placeholder}
         value={isRupiah ? formatRupiahInput(value) : value}
         onChange={(event) =>
           onChange(isRupiah ? formatRupiahInput(event.target.value) : event.target.value)
         }
-        className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-[14px] outline-none focus:border-[#199900]"
+        className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-[14px] outline-none placeholder:text-slate-400 focus:border-[#199900]"
       />
     </label>
   );

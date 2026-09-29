@@ -327,21 +327,25 @@ function BusinessEditModal({
           </button>
         </div>
         <div className="grid gap-4 px-8 py-6">
-          <AmountField
-            label="ADO"
-            required
-            value={edit.ado}
-            onChange={(value) => setEdit({ ...edit, ado: value })}
-          />
-          <AmountField
-            label="Booking Amount"
-            required
-            value={edit.booking}
-            onChange={(value) => setEdit({ ...edit, booking: value })}
-          />
+          <div className="grid gap-4 md:grid-cols-2">
+            <AmountField
+              label="Booking Amount"
+              required
+              placeholder="Rp"
+              value={edit.booking}
+              onChange={(value) => setEdit({ ...edit, booking: value })}
+            />
+            <AmountField
+              label="ADO"
+              required
+              placeholder="Rp"
+              value={edit.ado}
+              onChange={(value) => setEdit({ ...edit, ado: value })}
+            />
+          </div>
           <AmountField
             label="Gram (New CIF)"
-            required
+            placeholder="0"
             value={edit.gram ?? ""}
             onChange={(value) => setEdit({ ...edit, gram: value })}
           />
@@ -405,11 +409,13 @@ function AmountField({
   value,
   onChange,
   required = false,
+  placeholder = "0",
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   required?: boolean;
+  placeholder?: string;
 }) {
   return (
     <label className="block text-[14px] font-medium text-slate-700">
@@ -418,8 +424,9 @@ function AmountField({
       <input
         inputMode="numeric"
         value={value}
+        placeholder={placeholder}
         onChange={(event) => onChange(formatAmountInput(event.target.value))}
-        className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-[14px] outline-none focus:border-[#199900]"
+        className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-[14px] outline-none placeholder:text-slate-400 focus:border-[#199900]"
       />
     </label>
   );
