@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
 import { CameraModal } from "@/components/camera-modal";
+import { ActivityKindBadge } from "@/components/activity-kind-badge";
 import {
   formatTanggalPanjang,
   profile,
@@ -301,12 +302,12 @@ function Home() {
                           <p className="truncate text-[16px] font-bold text-slate-900">
                             {a.locationName}
                           </p>
-                          <p className="mt-0.5 truncate text-[13px] text-slate-500">
-                            {a.address}
-                            <span className="ml-1.5 text-[11px] font-semibold text-[#2953A4]">
-                              · {a.kind === "digital" ? "Digital" : "Lapangan"}
-                            </span>
-                          </p>
+                          <div className="mt-1 flex min-w-0 flex-wrap items-center gap-2">
+                            <p className="min-w-0 truncate text-[13px] text-slate-500">
+                              {a.address}
+                            </p>
+                            <ActivityKindBadge kind={a.kind} />
+                          </div>
                         </div>
                         <CaretRight size={22} weight="regular" color={PRIMARY} />
                       </Link>
