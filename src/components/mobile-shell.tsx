@@ -1,23 +1,40 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, ListChecks, Users, CalendarRange, User, Plus } from "lucide-react";
+import {
+  CalendarDots,
+  ClipboardText,
+  House,
+  Plus,
+  UserCircle,
+  UsersThree,
+} from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 import { PageTransition } from "./motion";
 
 const salesTabs = [
-  { to: "/", label: "Home", icon: Home },
-  { to: "/aktivitas", label: "Aktivitas", icon: ListChecks },
-  { to: "/kontak", label: "Kontak", icon: Users },
-  { to: "/program", label: "Program", icon: CalendarRange },
-  { to: "/profile", label: "Profil", icon: User },
+  { to: "/", label: "Home", icon: House },
+  { to: "/aktivitas", label: "Aktivitas", icon: ClipboardText },
+  { to: "/kontak", label: "Kontak", icon: UsersThree },
+  { to: "/program", label: "Program", icon: CalendarDots },
+  { to: "/profile", label: "Profil", icon: UserCircle },
 ] as const;
 
 const kacabTabs = [
-  { to: "/kacab", label: "Home", icon: Home },
-  { to: "/kacab-aktivitas", label: "Aktivitas", icon: ListChecks },
-  { to: "/kacab-profile", label: "Profil", icon: User },
+  { to: "/kacab", label: "Home", icon: House },
+  { to: "/kacab-aktivitas", label: "Aktivitas", icon: ClipboardText },
+  { to: "/kacab-profile", label: "Profil", icon: UserCircle },
 ] as const;
 
-export function MobileShell({ children, hideNav = false, hideFab = false, role = "sales" }: { children: ReactNode; hideNav?: boolean; hideFab?: boolean; role?: "sales" | "kacab" }) {
+export function MobileShell({
+  children,
+  hideNav = false,
+  hideFab = false,
+  role = "sales",
+}: {
+  children: ReactNode;
+  hideNav?: boolean;
+  hideFab?: boolean;
+  role?: "sales" | "kacab";
+}) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const tabs = role === "kacab" ? kacabTabs : salesTabs;
 
@@ -29,19 +46,22 @@ export function MobileShell({ children, hideNav = false, hideFab = false, role =
       {!hideNav && (
         <>
           <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[440px] -translate-x-1/2 border-t border-border bg-card/95 backdrop-blur">
-            <ul className={`grid ${role === "kacab" ? "grid-cols-3" : "grid-cols-5"} px-2 pb-3 pt-2`}>
+            <ul
+              className={`grid ${role === "kacab" ? "grid-cols-3" : "grid-cols-5"} px-2 pb-3 pt-2`}
+            >
               {tabs.map((t) => {
                 const Icon = t.icon;
-                const active = t.to === "/" || t.to === "/kacab" ? pathname === t.to : pathname.startsWith(t.to);
+                const active =
+                  t.to === "/" || t.to === "/kacab" ? pathname === t.to : pathname.startsWith(t.to);
                 return (
                   <li key={t.to} className="flex justify-center">
                     <Link
                       to={t.to}
-                      className={`flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[10px] font-medium transition-colors ${
+                      className={`flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[13px] font-medium transition-colors ${
                         active ? "text-brand" : "text-muted-foreground"
                       }`}
                     >
-                      <Icon className="h-5 w-5" strokeWidth={active ? 2.4 : 1.8} />
+                      <Icon size={23} weight="regular" />
                       <span>{t.label}</span>
                     </Link>
                   </li>
@@ -50,15 +70,16 @@ export function MobileShell({ children, hideNav = false, hideFab = false, role =
             </ul>
           </nav>
           {!hideFab && (
-          <Link
-            to="/aktivitas/buat"
-            className="fixed bottom-12 left-1/2 z-50 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full text-accent-foreground shadow-lg shadow-amber-500/40 ring-4 ring-card transition-transform active:scale-95"
-            style={{ background: "var(--gradient-accent)" }}
-            aria-label="Buat aktivitas"
-          >
-            <Plus className="h-7 w-7" strokeWidth={2.6} />
-          </Link>
-          )}        </>
+            <Link
+              to="/aktivitas/buat"
+              className="fixed bottom-12 left-1/2 z-50 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full text-accent-foreground shadow-lg shadow-amber-500/40 ring-4 ring-card transition-transform active:scale-95"
+              style={{ background: "var(--gradient-accent)" }}
+              aria-label="Buat aktivitas"
+            >
+              <Plus className="h-7 w-7" strokeWidth={2.6} />
+            </Link>
+          )}{" "}
+        </>
       )}
     </div>
   );
@@ -83,7 +104,10 @@ export function ScreenHeader({
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
           {back && (
-            <Link to={back} className="-ml-2 rounded-full p-2 text-brand-foreground/80 hover:bg-white/10">
+            <Link
+              to={back}
+              className="-ml-2 rounded-full p-2 text-brand-foreground/80 hover:bg-white/10"
+            >
               ←
             </Link>
           )}

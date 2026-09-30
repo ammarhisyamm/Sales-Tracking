@@ -14,24 +14,25 @@ import { HomeSkeleton } from "@/components/skeletons";
 import { toast } from "@/components/motion";
 import { useState } from "react";
 import {
-  Banknote,
-  Bell,
-  CalendarX2,
-  ChevronRight,
-  CircleCheck,
-  ClipboardList,
-  Crosshair,
-  LogOut,
-  Mail,
-  MapPin,
-  Plus,
-  Scale,
-  Signal,
-  UserRound,
-  Wallet,
-  Wifi,
   BatteryFull,
-} from "lucide-react";
+  Bell,
+  CalendarX,
+  CaretRight,
+  CellSignalFull,
+  CheckCircle,
+  ClipboardText,
+  Crosshair,
+  EnvelopeSimple,
+  MapPin,
+  Money,
+  Plus,
+  Scales,
+  SignOut,
+  User,
+  Wallet,
+  WifiHigh,
+} from "@phosphor-icons/react";
+import type { ReactNode } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [{ title: "Beranda — Sales Tracking" }] }),
@@ -64,7 +65,7 @@ function Home() {
 
   const allActivities = useActivities();
   const todayActivities = allActivities.filter(
-    (a) => new Date(a.date).toDateString() === new Date().toDateString()
+    (a) => new Date(a.date).toDateString() === new Date().toDateString(),
   );
   const ongoingProgram = programs.find((p) => p.status === "Berlangsung");
 
@@ -76,76 +77,81 @@ function Home() {
   return (
     <MobileShell hideFab>
       <header
-        className="relative overflow-hidden px-5 pb-20 pt-[68px] text-white"
+        className="relative h-[170px] overflow-visible px-4 pt-[56px] text-white"
         style={{ background: "linear-gradient(180deg, #28285f 0%, #4d529d 72%, #7b8bd0 100%)" }}
       >
         <div className="absolute inset-x-6 top-5 flex items-center justify-between text-white">
           <span className="text-[15px] font-semibold tracking-tight">9:41</span>
           <span className="flex items-center gap-1.5">
-            <Signal className="h-4 w-4" strokeWidth={3} />
-            <Wifi className="h-4 w-4" strokeWidth={2.5} />
-            <BatteryFull className="h-5 w-5" strokeWidth={2.5} />
+            <CellSignalFull size={17} weight="bold" />
+            <WifiHigh size={18} weight="bold" />
+            <BatteryFull size={20} weight="bold" />
           </span>
         </div>
-        <div className="relative z-10 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white">
-              <svg viewBox="0 0 24 24" className="h-7 w-7" fill="#2953A4" aria-hidden="true">
-                <circle cx="12" cy="7.5" r="4" />
-                <path d="M4.5 19.5c.8-3.8 3.9-6 7.5-6s6.7 2.2 7.5 6v.5h-15v-.5z" />
-              </svg>
+        <div className="relative z-10 flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#dbeafe] text-[#2953A4]">
+              <User size={31} weight="fill" />
             </span>
-            <div>
+            <div className="min-w-0">
               <p className="text-[15px] text-white/90">Selamat datang</p>
-              <p className="text-[20px] font-bold leading-tight">Sales Gadai Mas</p>
+              <p className="truncate text-[20px] font-bold leading-tight">Sales Gadai Mas</p>
             </div>
           </div>
-          <Link to="/notifikasi" className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#2953A4]">
-            <Bell className="h-5 w-5" />
+          <Link
+            to="/notifikasi"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#2953A4]"
+          >
+            <Bell size={22} weight="regular" />
           </Link>
         </div>
 
-        <div className="relative z-10 mt-4 rounded-xl bg-white p-4 text-slate-900 shadow-[0_2px_12px_rgba(25,42,77,0.06)]">
-          <div className="grid grid-cols-2">
-            <div className="border-r border-slate-200 pr-3">
-              <p className="flex items-center gap-2 text-[13px] text-slate-500">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#e9f1fd] text-[#2953A4]">
-                  <Wallet className="h-4 w-4" />
-                </span>
-                Booking (Amount)
-              </p>
-              <p className="mt-2 text-[21px] font-bold leading-tight tracking-tight">
-                {rp(profile.booking)} <span className="font-normal text-slate-400">/</span>
-              </p>
-              <p className="text-[14px] text-slate-400">{rp(profile.bookingEstimate)}</p>
+        <div className="absolute left-4 right-4 top-[96px] z-20 text-slate-900">
+          <div className="rounded-t-2xl bg-white px-3 pb-1.5 pt-1.5 shadow-[0_10px_24px_rgba(25,42,77,0.08)]">
+            <div className="grid grid-cols-2">
+              <div className="min-w-0 border-r border-slate-200 pr-3">
+                <p className="flex min-w-0 items-center gap-2 text-[11px] leading-3 text-slate-500">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#e9f1fd] text-[#2953A4]">
+                    <Wallet size={16} weight="regular" />
+                  </span>
+                  Booking (Amount)
+                </p>
+                <p className="mt-0.5 whitespace-nowrap text-[17px] font-bold leading-tight tracking-tight">
+                  {rp(profile.booking)} <span className="font-normal text-slate-400">/</span>
+                </p>
+                <p className="text-[12px] text-slate-400">{rp(profile.bookingEstimate)}</p>
+              </div>
+              <div className="min-w-0 pl-3">
+                <p className="flex min-w-0 items-center gap-2 text-[11px] leading-3 text-slate-500">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#e9f1fd] text-[#2953A4]">
+                    <Scales size={17} weight="regular" />
+                  </span>
+                  <span className="truncate">Gram (New CIF)</span>
+                </p>
+                <p className="mt-0.5 whitespace-nowrap text-[17px] font-bold leading-tight tracking-tight">
+                  {grams.current}g{" "}
+                  <span className="font-normal text-slate-400">/ {grams.target}g</span>
+                </p>
+              </div>
             </div>
-            <div className="pl-3">
-              <p className="flex items-center gap-2 text-[13px] text-slate-500">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#e9f1fd] text-[#2953A4]">
-                  <Scale className="h-4 w-4" />
+            <div className="mt-1.5 border-t border-slate-200 pt-1.5">
+              <p className="flex items-center gap-2 text-[11px] text-slate-500">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#e9f1fd] text-[#2953A4]">
+                  <Money size={16} weight="regular" />
                 </span>
-                Gram (New CIF)
+                Estimasi Insentif
               </p>
-              <p className="mt-2 text-[21px] font-bold leading-tight tracking-tight">
-                {grams.current}g <span className="font-normal text-slate-400">/ {grams.target}g</span>
+              <p className="mt-0.5 text-[17px] font-bold leading-tight tracking-tight">
+                {rp(profile.estimasiInsentif)}
               </p>
             </div>
           </div>
-          <div className="mt-3 border-t border-slate-200 pt-3">
-            <p className="flex items-center gap-2 text-[13px] text-slate-500">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#e9f1fd] text-[#2953A4]">
-                <Banknote className="h-4 w-4" />
-              </span>
-              Estimasi Insentif
-            </p>
-            <p className="mt-2 text-[21px] font-bold leading-tight tracking-tight">{rp(profile.estimasiInsentif)}</p>
-          </div>
-          <div className="mt-3 border-t border-slate-200 pt-3">
+          <div className="rounded-b-2xl bg-[#eff5fb] px-3 py-1">
             <div className="flex items-center justify-between gap-2">
-              <p className="flex items-center gap-2 text-[14px] text-slate-500">
-                <Mail className="h-[18px] w-[18px] text-[#2953A4]" /> ADO
+              <p className="flex items-center gap-2 text-[12px] text-slate-500">
+                <EnvelopeSimple size={19} weight="regular" color={PRIMARY} /> ADO
               </p>
-              <p className="text-[17px] font-bold">
+              <p className="whitespace-nowrap text-[15px] font-bold">
                 {rp(ado.current)}
                 <span className="font-normal text-slate-400">/{rp(ado.target)}</span>
               </p>
@@ -153,156 +159,195 @@ function Home() {
           </div>
         </div>
 
-        <svg className="absolute bottom-0 left-0 h-[70px] w-full" viewBox="0 0 440 70" preserveAspectRatio="none">
+        <svg
+          className="pointer-events-none absolute bottom-0 left-0 h-[70px] w-full"
+          viewBox="0 0 440 70"
+          preserveAspectRatio="none"
+        >
           <path d="M0,38 C110,72 230,72 440,14 L440,70 L0,70 Z" fill="#8fa3d9" opacity="0.5" />
           <path d="M0,48 C130,78 260,76 440,28 L440,70 L0,70 Z" fill="#c3d0f0" opacity="0.75" />
           <path d="M0,56 C140,82 280,80 440,40 L440,70 L0,70 Z" fill="#eef2fd" />
         </svg>
       </header>
 
-      <div className="space-y-6 bg-white px-5 pb-8 pt-5">
-      <ScreenLoader skeleton={<HomeSkeleton />}>
-        <section>
-           <h2 className="text-[17px] font-bold text-slate-900">Target Leads dan Closing</h2>
-           <div className="mt-2.5 flex gap-2">
-             {([["today", "Hari ini"], ["week", "Minggu ini"], ["month", "Bulan ini"]] as const).map(([r, label]) => (
-               <button
-                 key={r}
-                 onClick={() => setRange(r)}
-                 className={`rounded-full border px-4 py-2 text-[13px] font-medium ${
-                   range === r
-                     ? "border-[#2953A4] bg-[#2953A4] text-white"
-                    : "border-slate-200 bg-white text-slate-500"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-           <div className="mt-3 grid grid-cols-2 gap-3">
-              <TargetCard icon={<Crosshair className="h-4 w-4 text-[#2953A4]" />} label="Leads" current={lead.current} target={lead.target} />
-              <TargetCard icon={<UserRound className="h-4 w-4 text-[#2953A4]" />} label="Closing Leads" current={closing.current} target={closing.target} />
-           </div>
-        </section>
-
-        <section>
-          <div className="mb-2.5 flex items-center justify-between">
-            <h2 className="text-[17px] font-bold text-slate-900">Program Berlangsung</h2>
-            <Link to="/program" className="inline-flex items-center gap-0.5 text-[13px] font-medium text-slate-500">
-              Lihat Semua <ChevronRight className="h-4 w-4" />
-            </Link>
-          </div>
-          {ongoingProgram ? (
-            <Link to="/program" className="block rounded-xl border border-slate-200 bg-white p-4">
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-[13px] font-semibold" style={{ color: PRIMARY }}>
-                  {formatTanggalPanjang(ongoingProgram.date)}
-                </p>
-                <ChevronRight className="h-5 w-5 flex-shrink-0" style={{ color: PRIMARY }} />
-              </div>
-              <p className="mt-1 text-[17px] font-bold text-slate-900">{ongoingProgram.name}</p>
-              <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-slate-500">
-                <span className="inline-flex items-center gap-1.5">
-                  <Crosshair className="h-4 w-4 text-[#2953A4]" />
-                  {ongoingProgram.currentLeads}/{ongoingProgram.targetLeads} Leads
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <MapPin className="h-4 w-4 text-[#2953A4]" />
-                  {ongoingProgram.location}
-                </span>
-              </div>
-            </Link>
-          ) : (
-            <EmptyState
-              icon={<CalendarX2 className="h-12 w-12 text-slate-400" />}
-              title="Belum Ada Program Berlangsung"
-              desc="Program yang tersedia akan muncul disini"
-            />
-          )}
-        </section>
-
-        <section>
-          <div className="mb-2.5 flex items-center justify-between">
-            <h2 className="text-[17px] font-bold text-slate-900">Aktivitas Hari Ini</h2>
-            <Link to="/aktivitas" className="inline-flex items-center gap-0.5 text-[13px] font-medium text-slate-500">
-              Lihat Semua <ChevronRight className="h-4 w-4" />
-            </Link>
-          </div>
-          {todayActivities.length === 0 ? (
-            <>
-              <EmptyState
-                icon={<ClipboardList className="h-12 w-12 text-slate-400" />}
-                title="Belum Ada Aktivitas Hari ini"
-                desc="Aktivitas yang tersedia akan muncul disini"
-              />
-              <div className="mt-3 flex justify-center">
-                <TambahButton />
-              </div>
-            </>
-          ) : (
-            <div className="space-y-3">
-              {todayActivities.map((a) => {
-                const status = a.status;
-                return (
-                  <div key={a.id} className="rounded-xl border border-slate-200 bg-white p-4">
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-[13px] text-slate-500">
-                        {a.startTime ?? a.timeRange.split(" - ")[0]} WIB
-                      </p>
-                      <StatusText status={status} />
-                    </div>
-                    <div className="my-2.5 border-t border-slate-100" />
-                    <Link to="/aktivitas/$id" params={{ id: a.id }} className="flex items-center justify-between gap-2">
-                      <div className="min-w-0">
-                        <p className="truncate text-[16px] font-bold text-slate-900">{a.locationName}</p>
-                        <p className="mt-0.5 truncate text-[13px] text-slate-500">
-                          {a.address}
-                          <span className="ml-1.5 text-[11px] font-semibold text-[#2953A4]">
-                            · {a.kind === "digital" ? "Digital" : "Lapangan"}
-                          </span>
-                        </p>
-                      </div>
-                      <ChevronRight className="h-5 w-5 flex-shrink-0" style={{ color: PRIMARY }} />
-                    </Link>
-                    <div className="mt-3 flex items-center justify-between gap-2 rounded-lg border border-slate-200 px-3 py-2.5">
-                      <span className="inline-flex items-center gap-1.5 text-[13px] text-slate-500">
-                        <Crosshair className="h-4 w-4 text-[#2953A4]" />
-                        {a.leadsCount} Leads
-                      </span>
-                      {status === "completed" ? (
-                        <span className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-3 py-1.5 text-[12px] font-medium text-slate-500">
-                          <CircleCheck className="h-3.5 w-3.5" /> Finished {a.checkOutTime ?? ""}
-                        </span>
-                      ) : status === "checked_in" ? (
-                        <button
-                          onClick={() => {
-                            const t = nowHHMM();
-                            updateActivity(a.id, { status: "completed", checkOutTime: t });
-                            toast(`Check-out tersimpan · Finished ${t}`);
-                          }}
-                          className="inline-flex items-center gap-1.5 rounded-lg bg-red-500 px-3.5 py-2 text-[12px] font-semibold text-white transition-transform duration-100 active:scale-[0.98]"
-                        >
-                          <LogOut className="h-3.5 w-3.5" /> Check Out {a.checkInTime ?? ""}
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => setCheckinId(a.id)}
-                          className="inline-flex items-center gap-1.5 rounded-lg bg-[#2953A4] px-4 py-2 text-[12px] font-semibold text-white transition-transform duration-100 active:scale-[0.98]"
-                        >
-                          <MapPin className="h-3.5 w-3.5" /> Check In
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-              <div className="flex justify-center pt-1">
-                <TambahButton />
-              </div>
+      <div className="space-y-6 bg-white px-4 pb-28 pt-[92px]">
+        <ScreenLoader skeleton={<HomeSkeleton />}>
+          <section>
+            <h2 className="text-[18px] font-semibold text-slate-900">Target Leads dan Closing</h2>
+            <div className="mt-3 flex gap-2">
+              {(
+                [
+                  ["today", "Hari ini"],
+                  ["week", "Minggu ini"],
+                  ["month", "Bulan ini"],
+                ] as const
+              ).map(([r, label]) => (
+                <button
+                  key={r}
+                  onClick={() => setRange(r)}
+                  className={`h-9 rounded-full border px-4 text-[14px] font-medium ${
+                    range === r
+                      ? "border-[#2953A4] bg-[#2953A4] text-white"
+                      : "border-slate-200 bg-white text-slate-500"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
-          )}
-        </section>
-      </ScreenLoader>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <TargetCard
+                icon={<Crosshair size={19} weight="regular" color={PRIMARY} />}
+                label="Leads"
+                current={lead.current}
+                target={lead.target}
+              />
+              <TargetCard
+                icon={<User size={19} weight="regular" color={PRIMARY} />}
+                label="Closing Leads"
+                current={closing.current}
+                target={closing.target}
+              />
+            </div>
+          </section>
+
+          <section>
+            <div className="mb-2.5 flex items-center justify-between">
+              <h2 className="text-[17px] font-bold text-slate-900">Program Berlangsung</h2>
+              <Link
+                to="/program"
+                className="inline-flex items-center gap-0.5 text-[14px] font-medium text-slate-500"
+              >
+                Lihat Semua <CaretRight size={18} weight="regular" />
+              </Link>
+            </div>
+            {ongoingProgram ? (
+              <Link
+                to="/program"
+                className="block rounded-xl border border-slate-200 bg-white p-4 shadow-[0_2px_8px_rgba(25,42,77,0.05)]"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-[13px] font-semibold" style={{ color: PRIMARY }}>
+                    {formatTanggalPanjang(ongoingProgram.date)}
+                  </p>
+                  <CaretRight size={21} weight="regular" color={PRIMARY} />
+                </div>
+                <p className="mt-1 text-[17px] font-bold text-slate-900">{ongoingProgram.name}</p>
+                <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-slate-500">
+                  <span className="inline-flex items-center gap-1.5">
+                    <Crosshair size={18} weight="regular" color={PRIMARY} />
+                    {ongoingProgram.currentLeads}/{ongoingProgram.targetLeads} Leads
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <MapPin size={18} weight="regular" color={PRIMARY} />
+                    {ongoingProgram.location}
+                  </span>
+                </div>
+              </Link>
+            ) : (
+              <EmptyState
+                icon={<CalendarX size={48} weight="regular" color="#94a3b8" />}
+                title="Belum Ada Program Berlangsung"
+                desc="Program yang tersedia akan muncul disini"
+              />
+            )}
+          </section>
+
+          <section>
+            <div className="mb-2.5 flex items-center justify-between">
+              <h2 className="text-[17px] font-bold text-slate-900">Aktivitas Hari Ini</h2>
+              <Link
+                to="/aktivitas"
+                className="inline-flex items-center gap-0.5 text-[14px] font-medium text-slate-500"
+              >
+                Lihat Semua <CaretRight size={18} weight="regular" />
+              </Link>
+            </div>
+            {todayActivities.length === 0 ? (
+              <>
+                <EmptyState
+                  icon={<ClipboardText size={48} weight="regular" color="#94a3b8" />}
+                  title="Belum Ada Aktivitas Hari ini"
+                  desc="Aktivitas yang tersedia akan muncul disini"
+                />
+                <div className="mt-3 flex justify-center">
+                  <TambahButton />
+                </div>
+              </>
+            ) : (
+              <div className="space-y-3">
+                {todayActivities.map((a) => {
+                  const status = a.status;
+                  return (
+                    <div
+                      key={a.id}
+                      className="rounded-xl border border-slate-200 bg-white p-3 shadow-[0_2px_8px_rgba(25,42,77,0.04)]"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-[13px] text-slate-500">
+                          {a.startTime ?? a.timeRange.split(" - ")[0]} WIB
+                        </p>
+                        <StatusText status={status} />
+                      </div>
+                      <div className="my-2.5 border-t border-slate-100" />
+                      <Link
+                        to="/aktivitas/$id"
+                        params={{ id: a.id }}
+                        className="flex items-center justify-between gap-2"
+                      >
+                        <div className="min-w-0">
+                          <p className="truncate text-[16px] font-bold text-slate-900">
+                            {a.locationName}
+                          </p>
+                          <p className="mt-0.5 truncate text-[13px] text-slate-500">
+                            {a.address}
+                            <span className="ml-1.5 text-[11px] font-semibold text-[#2953A4]">
+                              · {a.kind === "digital" ? "Digital" : "Lapangan"}
+                            </span>
+                          </p>
+                        </div>
+                        <CaretRight size={22} weight="regular" color={PRIMARY} />
+                      </Link>
+                      <div className="mt-3 flex items-center justify-between gap-2 rounded-lg border border-slate-200 px-3 py-2.5">
+                        <span className="inline-flex items-center gap-1.5 text-[13px] text-slate-500">
+                          <Crosshair size={18} weight="regular" color={PRIMARY} />
+                          {a.leadsCount} Leads
+                        </span>
+                        {status === "completed" ? (
+                          <span className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-3 py-1.5 text-[12px] font-medium text-slate-500">
+                            <CheckCircle size={16} weight="regular" /> Finished{" "}
+                            {a.checkOutTime ?? ""}
+                          </span>
+                        ) : status === "checked_in" ? (
+                          <button
+                            onClick={() => {
+                              const t = nowHHMM();
+                              updateActivity(a.id, { status: "completed", checkOutTime: t });
+                              toast(`Check-out tersimpan · Finished ${t}`);
+                            }}
+                            className="inline-flex items-center gap-1.5 rounded-lg bg-red-500 px-3.5 py-2 text-[12px] font-semibold text-white transition-transform duration-100 active:scale-[0.98]"
+                          >
+                            <SignOut size={16} weight="regular" /> Check Out {a.checkInTime ?? ""}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => setCheckinId(a.id)}
+                            className="inline-flex items-center gap-1.5 rounded-lg bg-[#2953A4] px-4 py-2 text-[12px] font-semibold text-white transition-transform duration-100 active:scale-[0.98]"
+                          >
+                            <MapPin size={16} weight="regular" /> Check In
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+                <div className="flex justify-center pt-1">
+                  <TambahButton />
+                </div>
+              </div>
+            )}
+          </section>
+        </ScreenLoader>
       </div>
 
       {checkinId && (
@@ -317,23 +362,40 @@ function Home() {
   );
 }
 
-function TargetCard({ icon, label, hint, current, target, format = String }: { icon: React.ReactNode; label: string; hint?: string; current: number; target: number; format?: (value: number) => string }) {
+function TargetCard({
+  icon,
+  label,
+  hint,
+  current,
+  target,
+  format = String,
+}: {
+  icon: ReactNode;
+  label: string;
+  hint?: string;
+  current: number;
+  target: number;
+  format?: (value: number) => string;
+}) {
   const pct = Math.min(100, Math.round((current / target) * 100));
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-3.5">
-      <p className="flex items-center gap-1.5 text-[14px] text-slate-700">
+    <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-[0_2px_8px_rgba(25,42,77,0.03)]">
+      <p className="flex items-center gap-2 text-[16px] text-[#29225f]">
         {icon} {label}
         {hint && <span className="text-[10px] text-slate-400">({hint})</span>}
       </p>
-      <p className="mt-1.5 truncate text-[18px] font-bold text-slate-900">
+      <p className="mt-2 truncate text-[24px] font-bold leading-none text-slate-900">
         {format(current)}
-        <span className="text-[13px] font-normal text-slate-400">/{format(target)}</span>
+        <span className="text-[17px] font-normal text-slate-400">/{format(target)}</span>
       </p>
       <div className="mt-2 flex items-center gap-2">
         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100">
-          <div className="motion-bar-grow h-full rounded-full bg-[#2953A4]" style={{ width: `${pct}%` }} />
+          <div
+            className="motion-bar-grow h-full rounded-full bg-[#2953A4]"
+            style={{ width: `${pct}%` }}
+          />
         </div>
-        <span className="text-[12px] text-slate-500">{pct}%</span>
+        <span className="text-[14px] text-slate-700">{pct}%</span>
       </div>
     </div>
   );
@@ -341,11 +403,12 @@ function TargetCard({ icon, label, hint, current, target, format = String }: { i
 
 function StatusText({ status }: { status: ActivityStatus }) {
   if (status === "completed") return <span className="text-[13px] text-slate-400">Berakhir</span>;
-  if (status === "checked_in") return <span className="text-[13px] font-medium text-green-500">Berjalan</span>;
+  if (status === "checked_in")
+    return <span className="text-[13px] font-medium text-green-500">Berjalan</span>;
   return <span className="text-[13px] font-medium text-amber-500">Segera</span>;
 }
 
-function EmptyState({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
+function EmptyState({ icon, title, desc }: { icon: ReactNode; title: string; desc: string }) {
   return (
     <div className="py-6 text-center">
       <span className="mx-auto flex h-24 w-24 items-center justify-center rounded-2xl bg-slate-100">
