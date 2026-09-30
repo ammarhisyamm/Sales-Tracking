@@ -270,7 +270,7 @@ function PenaksirHome() {
               </div>
               <div className="mt-3 flex justify-center">
                 <Link
-                  to="/aktivitas/buat"
+                  to="/penaksir-aktivitas/buat"
                   className="inline-flex items-center gap-1.5 rounded-lg border border-[#2953A4] bg-white px-4 py-2 text-[14px] font-medium text-[#2953A4] transition-transform duration-100 active:scale-[0.98]"
                 >
                   <PhosphorPlus size={20} weight="regular" /> Tambah Aktivitas

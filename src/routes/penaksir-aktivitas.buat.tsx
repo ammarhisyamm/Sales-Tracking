@@ -1,0 +1,408 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { ArrowLeft, CalendarDots, CaretDown, Check, X } from "@phosphor-icons/react";
+import { useState, type FormEvent, type ReactNode } from "react";
+import { CameraModal } from "@/components/camera-modal";
+import { MobileShell } from "@/components/mobile-shell";
+import { OverlayPortal, Spinner, useMinBusy } from "@/components/motion";
+
+export const Route = createFileRoute("/penaksir-aktivitas/buat")({
+  head: () => ({ meta: [{ title: "Tambah Aktivitas Penaksir" }] }),
+  component: CreatePenaksirActivity,
+});
+
+const PRIMARY = "#2953A4";
+const ACTIVITY_OPTIONS = ["Follow Up RO", "Follow Up OVD"] as const;
+const MEDIA_OPTIONS = ["Visit", "Telepon", "Whatsapp"] as const;
+const RESULT_OPTIONS = [
+  "Deal Transaksi",
+  "Masih Dipertimbangkan",
+  "Tidak Dapat Dihubungi",
+  "Belum Ada Respon",
+] as const;
+const SBG_OPTIONS = [
+  "001568002500007 - Follow Up ke 1",
+  "001568002500006 - Follow Up ke 2",
+  "001568002500005 - Follow Up ke 1",
+  "001568002500002 - Follow Up ke 5",
+] as const;
+
+type ActivityName = (typeof ACTIVITY_OPTIONS)[number];
+type Picker = "activity" | "media" | "result" | "sbg" | null;
+
+function CreatePenaksirActivity() {
+  const navigate = useNavigate();
+  const [activity, setActivity] = useState<ActivityName | "">("");
+  const [cif, setCif] = useState("");
+  const [date, setDate] = useState("");
+  const [media, setMedia] = useState<(typeof MEDIA_OPTIONS)[number] | "">("");
+  const [result, setResult] = useState<(typeof RESULT_OPTIONS)[number] | "">("");
+  const [selectedSbg, setSelectedSbg] = useState<string[]>([]);
+  const [photoName, setPhotoName] = useState("");
+  const [photoUrl, setPhotoUrl] = useState("");
+  const [picker, setPicker] = useState<Picker>(null);
+  const [cameraOpen, setCameraOpen] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [busy, runSave] = useMinBusy();
+
+  const isOvd = activity === "Follow Up OVD";
+  const valid = Boolean(
+    activity && cif.trim() && date && media && result && (!isOvd || selectedSbg.length),
+  );
+
+  const chooseActivity = (value: ActivityName) => {
+    setActivity(value);
+    setResult("");
+    setSelectedSbg([]);
+    setPicker(null);
+  };
+
+  const save = (event: FormEvent) => {
+    event.preventDefault();
+    if (!valid || busy) return;
+    runSave(() => setSaved(true));
+  };
+
+  return (
+    <MobileShell hideNav>
+      <header className="flex h-[101px] items-end bg-white px-4 pb-4 pt-10">
+        <button
+          type="button"
+          onClick={() => navigate({ to: "/penaksir" })}
+          className="inline-flex items-center gap-3 text-[17px] font-medium text-[#131324]"
+        >
+          <ArrowLeft size={21} weight="regular" />
+          Tambah Aktivitas
+        </button>
+      </header>
+
+      <form onSubmit={save} className="space-y-3 bg-white px-4 pb-32 pt-5">
+        <div className="mb-6">
+          <h1 className="text-[20px] font-semibold leading-6 text-[#131324]">Buat Aktivitas</h1>
+          <p className="mt-1 text-[14px] text-[#5a5a66]">Isi detail kegiatan</p>
+        </div>
+
+        <Field label="Aktivitas">
+          <PickerField
+            value={activity}
+            placeholder="Pilih Aktivitas"
+            onClick={() => setPicker("activity")}
+          />
+        </Field>
+
+        {activity && (
+          <>
+            <Field label="CIF (Nama Nasabah)">
+              <input
+                value={cif}
+                onChange={(event) => setCif(event.target.value)}
+                placeholder="Masukkan CIF"
+                className="h-12 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-[14px] text-[#131324] outline-none placeholder:text-[#90a1b9] focus:border-[#2953A4]"
+              />
+            </Field>
+
+            {isOvd ? (
+              <Field label="Nomor SBG">
+                <PickerField
+                  value={selectedSbg.length ? `${selectedSbg.length} nomor SBG dipilih` : ""}
+                  placeholder="Pilih Nomor SBG"
+                  onClick={() => setPicker("sbg")}
+                />
+                {selectedSbg.length > 0 && (
+                  <div className="mt-2 space-y-2">
+                    {selectedSbg.map((item) => (
+                      <div
+                        key={item}
+                        className="flex items-center justify-between rounded-lg bg-[#eef5ff] px-3 py-2 text-[13px] text-[#415574]"
+                      >
+                        <span className="truncate pr-2">{item}</span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSelectedSbg((current) => current.filter((value) => value !== item))
+                          }
+                          className="shrink-0 rounded-full p-1 text-[#62748e] hover:bg-[#dce9fb]"
+                          aria-label={`Hapus ${item}`}
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Field>
+            ) : (
+              <Field label="Follow Up Ke">
+                <div className="flex h-12 items-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] px-3 text-[14px] text-[#62748e]">
+                  1
+                </div>
+              </Field>
+            )}
+
+            <Field label="Tanggal Pelaksanaan">
+              <div className="relative">
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(event) => setDate(event.target.value)}
+                  className={`penaksir-date-input h-12 w-full appearance-none rounded-lg border border-[#e2e8f0] bg-white px-3 pr-11 text-[14px] outline-none focus:border-[#2953A4] ${date ? "text-[#131324]" : "text-[#90a1b9]"}`}
+                />
+                <CalendarDots
+                  className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#62748e]"
+                  size={19}
+                />
+              </div>
+            </Field>
+
+            <Field label="Media Follow Up">
+              <PickerField
+                value={media}
+                placeholder="Pilih Media"
+                onClick={() => setPicker("media")}
+              />
+            </Field>
+
+            <Field label="Foto Kegiatan">
+              <button
+                type="button"
+                onClick={() => setCameraOpen(true)}
+                className={`flex h-12 w-full items-center justify-between rounded-lg border border-[#e2e8f0] px-3 text-left text-[14px] ${photoName ? "text-[#2953A4]" : "text-[#90a1b9]"}`}
+              >
+                <span className="truncate">{photoName || "Unggah foto kegiatan"}</span>
+                {photoName && <Check size={18} weight="bold" />}
+              </button>
+              {photoUrl && (
+                <img
+                  src={photoUrl}
+                  alt="Preview foto kegiatan"
+                  className="mt-2 h-24 w-full rounded-lg object-cover"
+                />
+              )}
+            </Field>
+
+            <Field label="Hasil Aktivitas">
+              <PickerField
+                value={result}
+                placeholder="Pilih Hasil"
+                onClick={() => setPicker("result")}
+              />
+            </Field>
+          </>
+        )}
+
+        <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-[440px] -translate-x-1/2 border-t border-[#f1f5f9] bg-white px-4 pb-6 pt-3">
+          <button
+            type="submit"
+            disabled={!valid || busy}
+            className="flex h-12 w-full items-center justify-center rounded-lg text-[15px] font-semibold transition-colors disabled:bg-[#f1f5f9] disabled:text-[#62748e]"
+            style={valid && !busy ? { backgroundColor: PRIMARY, color: "white" } : undefined}
+          >
+            {busy && <Spinner className="mr-2 h-4 w-4" />}
+            {busy ? "Menyimpan…" : "Simpan Aktivitas"}
+          </button>
+          <div className="mx-auto mt-4 h-1 w-32 rounded-full bg-[#131324]" />
+        </div>
+      </form>
+
+      {picker && (
+        <PickerSheet
+          picker={picker}
+          activity={activity}
+          media={media}
+          result={result}
+          selectedSbg={selectedSbg}
+          onClose={() => setPicker(null)}
+          onActivity={chooseActivity}
+          onMedia={(value) => {
+            setMedia(value);
+            setPicker(null);
+          }}
+          onResult={(value) => {
+            setResult(value);
+            setPicker(null);
+          }}
+          onSbg={setSelectedSbg}
+        />
+      )}
+
+      {cameraOpen && (
+        <CameraModal
+          mode="photo"
+          onClose={() => setCameraOpen(false)}
+          onSkip={() => setCameraOpen(false)}
+          onSave={(url) => {
+            setPhotoUrl(url);
+            setPhotoName("Foto kegiatan tersimpan");
+            setCameraOpen(false);
+          }}
+        />
+      )}
+
+      {saved && (
+        <OverlayPortal>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-5">
+            <div className="motion-modal-in w-full max-w-[360px] rounded-2xl bg-white px-5 pb-5 pt-7 text-center shadow-2xl">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#eaf1ff] text-[#2953A4]">
+                <Check size={30} weight="bold" />
+              </div>
+              <h2 className="mt-4 text-[19px] font-semibold text-[#131324]">
+                Aktivitas Berhasil Disimpan
+              </h2>
+              <p className="mt-2 text-[13px] leading-5 text-[#62748e]">
+                Aktivitas Penaksir sudah tersimpan.
+              </p>
+              <button
+                type="button"
+                onClick={() => navigate({ to: "/penaksir" })}
+                className="mt-5 h-12 w-full rounded-lg bg-[#2953A4] text-[14px] font-semibold text-white"
+              >
+                Kembali ke Penaksir
+              </button>
+            </div>
+          </div>
+        </OverlayPortal>
+      )}
+    </MobileShell>
+  );
+}
+
+function Field({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-[14px] text-[#131324]">{label}</span>
+      {children}
+    </label>
+  );
+}
+
+function PickerField({
+  value,
+  placeholder,
+  onClick,
+}: {
+  value: string;
+  placeholder: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex h-12 w-full items-center justify-between rounded-lg border border-[#e2e8f0] bg-white px-3 text-left text-[14px] ${value ? "text-[#131324]" : "text-[#90a1b9]"}`}
+    >
+      <span className="truncate">{value || placeholder}</span>
+      <CaretDown className="ml-3 shrink-0 text-[#62748e]" size={18} />
+    </button>
+  );
+}
+
+function PickerSheet({
+  picker,
+  activity,
+  media,
+  result,
+  selectedSbg,
+  onClose,
+  onActivity,
+  onMedia,
+  onResult,
+  onSbg,
+}: {
+  picker: Exclude<Picker, null>;
+  activity: ActivityName | "";
+  media: (typeof MEDIA_OPTIONS)[number] | "";
+  result: (typeof RESULT_OPTIONS)[number] | "";
+  selectedSbg: string[];
+  onClose: () => void;
+  onActivity: (value: ActivityName) => void;
+  onMedia: (value: (typeof MEDIA_OPTIONS)[number]) => void;
+  onResult: (value: (typeof RESULT_OPTIONS)[number]) => void;
+  onSbg: (values: string[]) => void;
+}) {
+  const title =
+    picker === "activity"
+      ? "Aktivitas"
+      : picker === "media"
+        ? "Media Follow Up"
+        : picker === "result"
+          ? "Hasil Aktivitas"
+          : "Nomor SBG";
+  const options =
+    picker === "activity"
+      ? ACTIVITY_OPTIONS
+      : picker === "media"
+        ? MEDIA_OPTIONS
+        : picker === "result"
+          ? RESULT_OPTIONS
+          : SBG_OPTIONS;
+
+  return (
+    <OverlayPortal>
+      <div
+        className="fixed inset-0 z-50 flex items-end justify-center bg-black/45"
+        onClick={onClose}
+      >
+        <div
+          className="motion-sheet-in w-full max-w-[440px] rounded-t-2xl bg-white px-5 pb-7 pt-5"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-[17px] font-semibold text-[#131324]">{title}</h2>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Tutup"
+              className="rounded-full p-1 text-[#62748e]"
+            >
+              <X size={20} />
+            </button>
+          </div>
+          <div className="max-h-[48vh] overflow-y-auto">
+            {options.map((option) => {
+              const selected =
+                picker === "sbg"
+                  ? selectedSbg.includes(option)
+                  : option ===
+                    (picker === "activity" ? activity : picker === "media" ? media : result);
+              return (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => {
+                    if (picker === "activity") onActivity(option as ActivityName);
+                    else if (picker === "media") onMedia(option as (typeof MEDIA_OPTIONS)[number]);
+                    else if (picker === "result")
+                      onResult(option as (typeof RESULT_OPTIONS)[number]);
+                    else
+                      onSbg(
+                        selected
+                          ? selectedSbg.filter((item) => item !== option)
+                          : [...selectedSbg, option],
+                      );
+                  }}
+                  className="flex w-full items-center justify-between border-b border-[#f1f5f9] py-3.5 text-left text-[14px] text-[#131324]"
+                >
+                  {option}
+                  <span
+                    className={`flex h-5 w-5 items-center justify-center rounded-full border ${selected ? "border-[#2953A4] bg-[#2953A4] text-white" : "border-[#b8c4d4]"}`}
+                  >
+                    {selected && <Check size={13} weight="bold" />}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          {picker === "sbg" && (
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={!selectedSbg.length}
+              className="mt-5 h-12 w-full rounded-lg bg-[#2953A4] text-[14px] font-semibold text-white disabled:bg-[#f1f5f9] disabled:text-[#62748e]"
+            >
+              Pilih Nomor SBG
+            </button>
+          )}
+        </div>
+      </div>
+    </OverlayPortal>
+  );
+}
