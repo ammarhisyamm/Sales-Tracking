@@ -10,6 +10,7 @@ import {
   ClipboardList,
   Eye,
   FileMinus,
+  FileImage,
   FileText,
   Home,
   Plus,
@@ -365,23 +366,23 @@ function ActivityCard({ activity }: { activity: PenaksirActivity }) {
   const hasExtra = activity.extraSbg.length > 0;
   const showWhatsapp = !hasExtra || !open;
   const showVisit = hasExtra && open;
-  const showPhoto = !hasExtra || open;
+  const showPhoto = hasExtra && open;
   const detailsId = `sbg-details-${activity.id}`;
 
   return (
-    <div className="rounded-2xl border border-[#dde3ee] bg-[#edf1f7] p-3">
-      <p className="flex items-center gap-2 px-1 py-1 text-[17px] font-medium text-slate-900">
-        <SquareUserRound className="h-[22px] w-[22px]" style={{ color: PRIMARY }} />
+    <div className="rounded-lg border border-[#e2e8f0] bg-[#eff6ff] p-3">
+      <p className="flex items-center gap-2 text-[13px] font-medium text-slate-900">
+        <SquareUserRound className="h-4 w-4" style={{ color: PRIMARY }} />
         {activity.sbg}
       </p>
-      <div className="mt-2 rounded-xl bg-white px-4 py-4">
+      <div className="mt-3 rounded-lg border border-[#e2e8f0] bg-white p-3">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-[17px] text-slate-600">{activity.name}</p>
-          <p className="shrink-0 text-[15px] text-slate-500">{activity.date}</p>
+          <p className="text-[14px] text-[#45556c]">{activity.name}</p>
+          <p className="shrink-0 text-[12px] text-[#45556c]">{activity.date}</p>
         </div>
-        <div className="my-3 border-t border-slate-200" />
-        <p className="text-[21px] font-bold leading-snug text-black">{activity.title}</p>
-        <p className={`mt-1 text-[19px] ${TONE_CLASS[activity.tone]}`}>{activity.status}</p>
+        <div className="my-3 border-t border-[#eeeeee]" />
+        <p className="text-[16px] font-medium leading-snug text-[#131324]">{activity.title}</p>
+        <p className={`mt-1 text-[14px] ${TONE_CLASS[activity.tone]}`}>{activity.status}</p>
 
         {hasExtra && !open && (
           <button
@@ -389,31 +390,31 @@ function ActivityCard({ activity }: { activity: PenaksirActivity }) {
             onClick={() => setOpen(true)}
             aria-expanded={open}
             aria-controls={detailsId}
-            className="mt-2.5 flex w-full items-center justify-between py-1 text-left text-[16px] text-slate-500"
+            className="mt-2.5 flex w-full items-center justify-between py-1 text-left text-[12px] text-[#62748e]"
           >
             <span>+{activity.extraSbg.length} Nomor SBG Lainnya</span>
-            <ChevronDown className="h-6 w-6 text-slate-400" />
+            <ChevronDown className="h-4 w-4 text-[#62748e]" />
           </button>
         )}
         {hasExtra && open && (
-          <div id={detailsId} className="mt-3 rounded-xl bg-[#e5ebf8] p-3">
+          <div id={detailsId} className="mt-3 rounded-lg bg-[#eff6ff] p-3">
             <button
               type="button"
               onClick={() => setOpen(false)}
               aria-expanded={open}
               aria-controls={detailsId}
-              className="flex w-full items-center justify-between py-1 text-left text-[16px] text-slate-500"
+              className="flex w-full items-center justify-between py-1 text-left text-[12px] text-[#62748e]"
             >
               <span>+{activity.extraSbg.length} Nomor SBG Lainnya</span>
-              <ChevronDown className="h-6 w-6 rotate-180 text-slate-400" />
+              <ChevronDown className="h-4 w-4 rotate-180 text-[#62748e]" />
             </button>
-            <ul className="mt-1 space-y-2.5 pb-1 pt-1">
+            <ul className="mt-1 space-y-2 pb-1 pt-1">
               {activity.extraSbg.map((item, index) => (
                 <li key={item.number} className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-[16px] font-medium text-black">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-[12px] font-medium text-[#131324]">
                     {index + 1}
                   </span>
-                  <span className="text-[16px] text-slate-700">
+                  <span className="text-[12px] text-[#45556c]">
                     {item.number} - {item.followUp}
                   </span>
                 </li>
@@ -426,33 +427,33 @@ function ActivityCard({ activity }: { activity: PenaksirActivity }) {
           <button
             type="button"
             aria-label="Hubungi nasabah melalui Whatsapp"
-            className="mt-3.5 flex w-full items-center gap-3 rounded-xl border border-slate-300 px-4 py-3.5 text-left transition-transform duration-100 active:scale-[0.99]"
+            className="mt-3 flex w-full items-center gap-2 rounded-lg border border-[#e2e8f0] p-2 text-left transition-transform duration-100 active:scale-[0.99]"
           >
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#eef2f7]">
-              <FileMinus className="h-5 w-5 text-slate-500" />
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f0f7fe]">
+              <FileImage className="h-4 w-4 text-[#62748e]" />
             </span>
-            <span className="text-[17px] text-black">Whatsapp</span>
+            <span className="text-[13px] text-[#131324]">Whatsapp</span>
           </button>
         )}
         {showVisit && (
           <button
             type="button"
             aria-label="Kunjungi nasabah"
-            className="mt-3 flex w-full items-center gap-3 rounded-xl border border-slate-300 px-4 py-3.5 text-left transition-transform duration-100 active:scale-[0.99]"
+            className="mt-3 flex w-full items-center gap-2 rounded-lg border border-[#e2e8f0] p-2 text-left transition-transform duration-100 active:scale-[0.99]"
           >
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#eef2f7]">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f0f7fe]">
               <FileMinus className="h-5 w-5 text-slate-500" />
             </span>
-            <span className="text-[17px] text-black">Visit</span>
+            <span className="text-[13px] text-[#131324]">Visit</span>
           </button>
         )}
         {showPhoto && (
           <button
             type="button"
             aria-label="Lihat foto aktivitas"
-            className="mt-3 flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#2953A4] py-4 text-[18px] font-medium text-white transition-transform duration-100 active:scale-[0.99]"
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-[#2953A4] py-3 text-[14px] font-medium text-white transition-transform duration-100 active:scale-[0.99]"
           >
-            <Eye className="h-6 w-6" />
+            <Eye className="h-4 w-4" />
             Lihat Foto
           </button>
         )}
