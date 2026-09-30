@@ -12,6 +12,7 @@ import {
 import { useState, type FormEvent, type ReactNode } from "react";
 import { MobileShell } from "@/components/mobile-shell";
 import { OverlayPortal, Spinner, useMinBusy } from "@/components/motion";
+import { todayInputDate } from "@/lib/date-utils";
 
 export const Route = createFileRoute("/penaksir-aktivitas/buat")({
   head: () => ({ meta: [{ title: "Tambah Aktivitas Penaksir" }] }),
@@ -41,7 +42,7 @@ function CreatePenaksirActivity() {
   const navigate = useNavigate();
   const [activity, setActivity] = useState<ActivityName | "">("");
   const [cif, setCif] = useState("");
-  const [date, setDate] = useState("");
+  const [date] = useState(todayInputDate);
   const [media, setMedia] = useState<(typeof MEDIA_OPTIONS)[number] | "">("");
   const [result, setResult] = useState<(typeof RESULT_OPTIONS)[number] | "">("");
   const [selectedSbg, setSelectedSbg] = useState<string[]>([]);
@@ -155,8 +156,8 @@ function CreatePenaksirActivity() {
               <input
                 type="date"
                 value={date}
-                onChange={(event) => setDate(event.target.value)}
-                className={`penaksir-date-input h-14 w-full appearance-none rounded-[14px] border border-[#dfe7f2] bg-[#f8fafc] px-4 pr-12 text-[16px] outline-none focus:border-[#2953A4] ${date ? "text-[#131324]" : "text-[#90a1b9]"}`}
+                disabled
+                className="penaksir-date-input h-14 w-full appearance-none rounded-[14px] border border-[#dfe7f2] bg-[#f8fafc] px-4 pr-12 text-[16px] text-[#45556c] outline-none disabled:cursor-not-allowed disabled:opacity-100"
               />
               <CalendarDots
                 className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#62748e]"
@@ -166,11 +167,19 @@ function CreatePenaksirActivity() {
           </Field>
 
           <Field label="Media Follow Up">
-            <PickerField value={media} placeholder="Pilih Media" onClick={() => setPicker("media")} />
+            <PickerField
+              value={media}
+              placeholder="Pilih Media"
+              onClick={() => setPicker("media")}
+            />
           </Field>
 
           <Field label="Hasil Aktivitas">
-            <PickerField value={result} placeholder="Pilih Hasil" onClick={() => setPicker("result")} />
+            <PickerField
+              value={result}
+              placeholder="Pilih Hasil"
+              onClick={() => setPicker("result")}
+            />
           </Field>
         </div>
 

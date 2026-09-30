@@ -3,6 +3,7 @@ import { MobileShell } from "@/components/mobile-shell";
 import { CameraModal } from "@/components/camera-modal";
 import { OverlayPortal, Spinner, useMinBusy } from "@/components/motion";
 import { createActivity } from "@/lib/activity-store";
+import { inputDateToLocalIso, todayInputDate } from "@/lib/date-utils";
 import { KELURAHAN_WILAYAH, type Activity, type ActivityType } from "@/lib/mock-data";
 import { useMemo, useState } from "react";
 import {
@@ -50,13 +51,13 @@ const PRIORITIES = ["High", "Low"] as const;
 const KELURAHAN_OPTIONS = [
   ...new Set([...Object.keys(KELURAHAN_WILAYAH), ...KCP_OPTIONS.map((item) => item.kelurahan)]),
 ];
-type Picker = "activity" | "priority" | "date" | "kelurahan" | null;
+type Picker = "activity" | "priority" | "kelurahan" | null;
 
 function CreateKacabActivity() {
   const navigate = useNavigate();
   const [selectedTypes, setSelectedTypes] = useState<ActivityType[]>([]);
   const [priority, setPriority] = useState<(typeof PRIORITIES)[number] | "">("");
-  const [date, setDate] = useState("");
+  const [date] = useState(todayInputDate);
   const [kcpName, setKcpName] = useState("");
   const [place, setPlace] = useState("");
   const [kelurahan, setKelurahan] = useState("");
@@ -66,9 +67,6 @@ function CreateKacabActivity() {
   const [photoUrl, setPhotoUrl] = useState("");
   const [cameraOpen, setCameraOpen] = useState(false);
   const [picker, setPicker] = useState<Picker>(null);
-  const [dateDay, setDateDay] = useState("01");
-  const [dateMonth, setDateMonth] = useState("01");
-  const [dateYear, setDateYear] = useState("2026");
   const [kelurahanSearch, setKelurahanSearch] = useState("");
   const [created, setCreated] = useState<Activity | null>(null);
   const [busy, runSave] = useMinBusy();
@@ -95,7 +93,7 @@ function CreateKacabActivity() {
         address: place.trim() || kcp.address,
         kelurahan,
         wilayah: KELURAHAN_WILAYAH[kelurahan] || kcp.wilayah,
-        date: new Date(date).toISOString(),
+        date: inputDateToLocalIso(date),
         timeRange: `${from} - ${to}`,
         startTime: from,
         endTime: to,
@@ -175,10 +173,10 @@ function CreateKacabActivity() {
         <Field label="Tanggal Pelaksanaan">
           <button
             type="button"
-            onClick={() => setPicker("date")}
-            className={`flex w-full items-center justify-between rounded-xl border px-3.5 py-3 text-left text-[14px] ${date ? "text-slate-900" : "text-slate-400"}`}
+            disabled
+            className="flex w-full cursor-not-allowed items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-left text-[14px] text-slate-700 disabled:opacity-100"
           >
-            {date ? formatDateInput(date) : "DD/MM/YYYY"}
+            {formatDateInput(date)}
             <CalendarDays className="h-4 w-4 text-slate-500" />
           </button>
         </Field>
@@ -283,12 +281,6 @@ function CreateKacabActivity() {
           kelurahan={kelurahan}
           search={kelurahanSearch}
           setSearch={setKelurahanSearch}
-          dateDay={dateDay}
-          dateMonth={dateMonth}
-          dateYear={dateYear}
-          setDateDay={setDateDay}
-          setDateMonth={setDateMonth}
-          setDateYear={setDateYear}
           onClose={() => setPicker(null)}
           onActivity={(value) =>
             setSelectedTypes((current) =>
@@ -299,10 +291,6 @@ function CreateKacabActivity() {
           }
           onPriority={(value) => {
             setPriority(value);
-          }}
-          onDate={() => {
-            setDate(`${dateYear}-${dateMonth}-${dateDay}`);
-            setPicker(null);
           }}
           onKelurahan={(value) => {
             setKelurahan(value);
@@ -359,16 +347,9 @@ function PickerOverlay({
   kelurahan,
   search,
   setSearch,
-  dateDay,
-  dateMonth,
-  dateYear,
-  setDateDay,
-  setDateMonth,
-  setDateYear,
   onClose,
   onActivity,
   onPriority,
-  onDate,
   onKelurahan,
 }: {
   picker: Exclude<Picker, null>;
@@ -377,26 +358,13 @@ function PickerOverlay({
   kelurahan: string;
   search: string;
   setSearch: (value: string) => void;
-  dateDay: string;
-  dateMonth: string;
-  dateYear: string;
-  setDateDay: (value: string) => void;
-  setDateMonth: (value: string) => void;
-  setDateYear: (value: string) => void;
   onClose: () => void;
   onActivity: (value: ActivityType) => void;
   onPriority: (value: (typeof PRIORITIES)[number]) => void;
-  onDate: () => void;
   onKelurahan: (value: string) => void;
 }) {
   const title =
-    picker === "activity"
-      ? "Kegiatan"
-      : picker === "priority"
-        ? "Priority"
-        : picker === "date"
-          ? "Tanggal Pelaksanaan"
-          : "Kelurahan";
+    picker === "activity" ? "Kegiatan" : picker === "priority" ? "Priority" : "Kelurahan";
   return (
     <OverlayPortal>
       <div
@@ -404,13 +372,13 @@ function PickerOverlay({
         onClick={onClose}
       >
         <div
-          className={`motion-backdrop-in w-full bg-white ${picker === "date" ? "max-w-[880px] rounded-t-[28px] px-10 pb-12 pt-10" : "max-w-[440px] rounded-t-2xl px-5 pb-6 pt-5"}`}
+          className="motion-backdrop-in w-full max-w-[440px] rounded-t-2xl bg-white px-5 pb-6 pt-5"
           onClick={(event) => event.stopPropagation()}
         >
           <div className="flex items-center justify-between">
-            <h2 className={`${picker === "date" ? "text-[24px]" : "text-[17px]"} font-bold text-slate-900`}>{title}</h2>
+            <h2 className="text-[17px] font-bold text-slate-900">{title}</h2>
             <button type="button" onClick={onClose} aria-label="Tutup">
-              <X className={`${picker === "date" ? "h-8 w-8" : "h-5 w-5"} text-slate-500`} />
+              <X className="h-5 w-5 text-slate-500" />
             </button>
           </div>
           {picker === "kelurahan" && (
@@ -425,74 +393,6 @@ function PickerOverlay({
               />
             </div>
           )}
-          {picker === "date" && (
-            <div className="mt-12 grid grid-cols-3 gap-4">
-              <select
-                value={dateDay}
-                onChange={(event) => setDateDay(event.target.value)}
-                className="h-24 rounded-[28px] border-2 border-[#dfe7f3] bg-white px-3 py-3 text-center text-[22px] text-slate-900 outline-none"
-              >
-                <option value="01">01</option>
-                <option value="02">02</option>
-                <option value="03">03</option>
-                <option value="04">04</option>
-                <option value="05">05</option>
-                <option value="06">06</option>
-                <option value="07">07</option>
-                <option value="08">08</option>
-                <option value="09">09</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16">16</option>
-                <option value="17">17</option>
-                <option value="18">18</option>
-                <option value="19">19</option>
-                <option value="20">20</option>
-                <option value="21">21</option>
-                <option value="22">22</option>
-                <option value="23">23</option>
-                <option value="24">24</option>
-                <option value="25">25</option>
-                <option value="26">26</option>
-                <option value="27">27</option>
-                <option value="28">28</option>
-                <option value="29">29</option>
-                <option value="30">30</option>
-                <option value="31">31</option>
-              </select>
-              <select
-                value={dateMonth}
-                onChange={(event) => setDateMonth(event.target.value)}
-                className="h-24 rounded-[28px] border-2 border-[#dfe7f3] bg-white px-3 py-3 text-center text-[22px] text-slate-900 outline-none"
-              >
-                <option value="01">Januari</option>
-                <option value="02">Februari</option>
-                <option value="03">Maret</option>
-                <option value="04">April</option>
-                <option value="05">Mei</option>
-                <option value="06">Juni</option>
-                <option value="07">Juli</option>
-                <option value="08">Agustus</option>
-                <option value="09">September</option>
-                <option value="10">Oktober</option>
-                <option value="11">November</option>
-                <option value="12">Desember</option>
-              </select>
-              <select
-                value={dateYear}
-                onChange={(event) => setDateYear(event.target.value)}
-                className="h-24 rounded-[28px] border-2 border-[#dfe7f3] bg-white px-3 py-3 text-center text-[22px] text-slate-900 outline-none"
-              >
-                <option>2026</option>
-                <option>2027</option>
-                <option>2028</option>
-              </select>
-            </div>
-          )}
           <div className="mt-3 max-h-[45vh] overflow-y-auto">
             {picker === "activity" &&
               ACTIVITIES.map((item) => (
@@ -503,16 +403,16 @@ function PickerOverlay({
                   onClick={() => onActivity(item)}
                 />
               ))}
-              {picker === "activity" && (
-                <button
-                  type="button"
-                  onClick={onClose}
-                  disabled={!selectedTypes.length}
-                  className="mt-4 w-full rounded-xl bg-[#2953A4] py-3 text-[14px] font-semibold text-white disabled:bg-slate-100 disabled:text-slate-400"
-                >
-                  Pilih Kegiatan
-                </button>
-              )}
+            {picker === "activity" && (
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={!selectedTypes.length}
+                className="mt-4 w-full rounded-xl bg-[#2953A4] py-3 text-[14px] font-semibold text-white disabled:bg-slate-100 disabled:text-slate-400"
+              >
+                Pilih Kegiatan
+              </button>
+            )}
             {picker === "priority" &&
               PRIORITIES.map((item) => (
                 <PickerRow
@@ -530,15 +430,6 @@ function PickerOverlay({
                 className="mt-4 w-full rounded-xl bg-[#2953A4] py-3 text-[14px] font-semibold text-white disabled:bg-slate-100 disabled:text-slate-400"
               >
                 Pilih Priority
-              </button>
-            )}
-            {picker === "date" && (
-              <button
-                type="button"
-                onClick={onDate}
-                className="mt-14 h-[90px] w-full rounded-[28px] bg-[#315bac] text-[20px] font-semibold text-white"
-              >
-                Pilih Tanggal Pelaksanaan
               </button>
             )}
             {picker === "kelurahan" &&
