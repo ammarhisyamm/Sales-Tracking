@@ -9,9 +9,9 @@ import {
   ChevronRight,
   ClipboardList,
   Eye,
+  FileMinus,
   FileText,
   Home,
-  Image as ImageIcon,
   Plus,
   ScanEye,
   Signal,
@@ -35,7 +35,13 @@ const HEADER_SUMMARY = {
 };
 
 /** pct ditulis eksplisit agar sama persis dengan desain (minggu: 2/15 tampil 90%). */
-const RANGE_SUMMARY: Record<Range, { ro: { current: number; target: number; pct: number }; ovd: { current: number; target: number; pct: number } }> = {
+const RANGE_SUMMARY: Record<
+  Range,
+  {
+    ro: { current: number; target: number; pct: number };
+    ovd: { current: number; target: number; pct: number };
+  }
+> = {
   today: {
     ro: { current: 0, target: 5, pct: 0 },
     ovd: { current: 0, target: 5, pct: 0 },
@@ -191,7 +197,11 @@ function PenaksirHome() {
           </div>
         </div>
 
-        <svg className="absolute bottom-0 left-0 h-[70px] w-full" viewBox="0 0 440 70" preserveAspectRatio="none">
+        <svg
+          className="absolute bottom-0 left-0 h-[70px] w-full"
+          viewBox="0 0 440 70"
+          preserveAspectRatio="none"
+        >
           <path d="M0,38 C110,72 230,72 440,14 L440,70 L0,70 Z" fill="#8fa3d9" opacity="0.5" />
           <path d="M0,48 C130,78 260,76 440,28 L440,70 L0,70 Z" fill="#c3d0f0" opacity="0.75" />
           <path d="M0,56 C140,82 280,80 440,40 L440,70 L0,70 Z" fill="#eef2fd" />
@@ -240,7 +250,10 @@ function PenaksirHome() {
         <section>
           <div className="mb-2.5 flex items-center justify-between">
             <h2 className="text-[17px] font-bold text-slate-900">Aktivitas Hari Ini</h2>
-            <Link to="/aktivitas" className="inline-flex items-center gap-0.5 text-[13px] font-medium text-slate-500">
+            <Link
+              to="/aktivitas"
+              className="inline-flex items-center gap-0.5 text-[13px] font-medium text-slate-500"
+            >
               Lihat Semua <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
@@ -257,8 +270,12 @@ function PenaksirHome() {
                   <span className="absolute left-3 top-14 text-[#5b6b84]">✦</span>
                   <span className="absolute right-16 top-3 text-[10px] text-[#8fa0b8]">✦</span>
                 </div>
-                <p className="mt-4 text-[17px] font-bold text-slate-900">Belum Ada Aktivitas Hari Ini</p>
-                <p className="mt-1 text-[13px] text-slate-500">Aktivitas yang tersedia akan muncul disini</p>
+                <p className="mt-4 text-[17px] font-bold text-slate-900">
+                  Belum Ada Aktivitas Hari Ini
+                </p>
+                <p className="mt-1 text-[13px] text-slate-500">
+                  Aktivitas yang tersedia akan muncul disini
+                </p>
               </div>
               <div className="mt-3 flex justify-center">
                 <Link
@@ -311,7 +328,19 @@ function PenaksirHome() {
   );
 }
 
-function SummaryCard({ icon, label, current, target, pct }: { icon: React.ReactNode; label: string; current: number; target: number; pct: number }) {
+function SummaryCard({
+  icon,
+  label,
+  current,
+  target,
+  pct,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  current: number;
+  target: number;
+  pct: number;
+}) {
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-3.5">
       <p className="flex items-center gap-1.5 text-[14px] text-slate-700">
@@ -337,6 +366,8 @@ function ActivityCard({ activity }: { activity: PenaksirActivity }) {
   const showWhatsapp = !hasExtra || !open;
   const showVisit = hasExtra && open;
   const showPhoto = !hasExtra || open;
+  const detailsId = `sbg-details-${activity.id}`;
+
   return (
     <div className="rounded-2xl border border-[#dde3ee] bg-[#edf1f7] p-3">
       <p className="flex items-center gap-2 px-1 py-1 text-[17px] font-medium text-slate-900">
@@ -354,7 +385,10 @@ function ActivityCard({ activity }: { activity: PenaksirActivity }) {
 
         {hasExtra && !open && (
           <button
+            type="button"
             onClick={() => setOpen(true)}
+            aria-expanded={open}
+            aria-controls={detailsId}
             className="mt-2.5 flex w-full items-center justify-between py-1 text-left text-[16px] text-slate-500"
           >
             <span>+{activity.extraSbg.length} Nomor SBG Lainnya</span>
@@ -362,9 +396,12 @@ function ActivityCard({ activity }: { activity: PenaksirActivity }) {
           </button>
         )}
         {hasExtra && open && (
-          <div className="mt-3 rounded-xl bg-[#e5ebf8] p-3">
+          <div id={detailsId} className="mt-3 rounded-xl bg-[#e5ebf8] p-3">
             <button
+              type="button"
               onClick={() => setOpen(false)}
+              aria-expanded={open}
+              aria-controls={detailsId}
               className="flex w-full items-center justify-between py-1 text-left text-[16px] text-slate-500"
             >
               <span>+{activity.extraSbg.length} Nomor SBG Lainnya</span>
@@ -386,23 +423,35 @@ function ActivityCard({ activity }: { activity: PenaksirActivity }) {
         )}
 
         {showWhatsapp && (
-          <button className="mt-3.5 flex w-full items-center gap-3 rounded-xl border border-slate-300 px-4 py-3.5 text-left transition-transform duration-100 active:scale-[0.99]">
+          <button
+            type="button"
+            aria-label="Hubungi nasabah melalui Whatsapp"
+            className="mt-3.5 flex w-full items-center gap-3 rounded-xl border border-slate-300 px-4 py-3.5 text-left transition-transform duration-100 active:scale-[0.99]"
+          >
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#eef2f7]">
-              <ImageIcon className="h-5 w-5 text-slate-500" />
+              <FileMinus className="h-5 w-5 text-slate-500" />
             </span>
             <span className="text-[17px] text-black">Whatsapp</span>
           </button>
         )}
         {showVisit && (
-          <button className="mt-3 flex w-full items-center gap-3 rounded-xl border border-slate-300 px-4 py-3.5 text-left transition-transform duration-100 active:scale-[0.99]">
+          <button
+            type="button"
+            aria-label="Kunjungi nasabah"
+            className="mt-3 flex w-full items-center gap-3 rounded-xl border border-slate-300 px-4 py-3.5 text-left transition-transform duration-100 active:scale-[0.99]"
+          >
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#eef2f7]">
-              <ImageIcon className="h-5 w-5 text-slate-500" />
+              <FileMinus className="h-5 w-5 text-slate-500" />
             </span>
             <span className="text-[17px] text-black">Visit</span>
           </button>
         )}
         {showPhoto && (
-          <button className="mt-3 flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#2953A4] py-4 text-[18px] font-medium text-white transition-transform duration-100 active:scale-[0.99]">
+          <button
+            type="button"
+            aria-label="Lihat foto aktivitas"
+            className="mt-3 flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#2953A4] py-4 text-[18px] font-medium text-white transition-transform duration-100 active:scale-[0.99]"
+          >
             <Eye className="h-6 w-6" />
             Lihat Foto
           </button>
