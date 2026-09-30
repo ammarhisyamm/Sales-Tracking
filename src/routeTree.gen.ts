@@ -28,6 +28,7 @@ import { Route as AktivitasIdRouteImport } from './routes/aktivitas.$id'
 import { Route as AktivitasBuatRouteImport } from './routes/aktivitas.buat'
 import { Route as IsiIdRouteImport } from './routes/isi.$id'
 import { Route as KacabAktivitasBuatRouteImport } from './routes/kacab-aktivitas.buat'
+import { Route as PenaksirAktivitasBuatRouteImport } from './routes/penaksir-aktivitas.buat'
 import { Route as TambahLeadsActivityIdRouteImport } from './routes/tambah-leads.$activityId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -125,6 +126,11 @@ const KacabAktivitasBuatRoute = KacabAktivitasBuatRouteImport.update({
   path: '/buat',
   getParentRoute: () => KacabAktivitasRoute,
 } as any)
+const PenaksirAktivitasBuatRoute = PenaksirAktivitasBuatRouteImport.update({
+  id: '/penaksir-aktivitas/buat',
+  path: '/penaksir-aktivitas/buat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TambahLeadsActivityIdRoute = TambahLeadsActivityIdRouteImport.update({
   id: '/tambah-leads/$activityId',
   path: '/tambah-leads/$activityId',
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/aktivitas/buat': typeof AktivitasBuatRoute
   '/isi/$id': typeof IsiIdRoute
   '/kacab-aktivitas/buat': typeof KacabAktivitasBuatRoute
+  '/penaksir-aktivitas/buat': typeof PenaksirAktivitasBuatRoute
   '/tambah-leads/$activityId': typeof TambahLeadsActivityIdRoute
   '/aktivitas/': typeof AktivitasIndexRoute
 }
@@ -171,6 +178,7 @@ export interface FileRoutesByTo {
   '/aktivitas/buat': typeof AktivitasBuatRoute
   '/isi/$id': typeof IsiIdRoute
   '/kacab-aktivitas/buat': typeof KacabAktivitasBuatRoute
+  '/penaksir-aktivitas/buat': typeof PenaksirAktivitasBuatRoute
   '/tambah-leads/$activityId': typeof TambahLeadsActivityIdRoute
   '/aktivitas': typeof AktivitasIndexRoute
 }
@@ -194,6 +202,7 @@ export interface FileRoutesById {
   '/aktivitas/buat': typeof AktivitasBuatRoute
   '/isi/$id': typeof IsiIdRoute
   '/kacab-aktivitas/buat': typeof KacabAktivitasBuatRoute
+  '/penaksir-aktivitas/buat': typeof PenaksirAktivitasBuatRoute
   '/tambah-leads/$activityId': typeof TambahLeadsActivityIdRoute
   '/aktivitas/': typeof AktivitasIndexRoute
 }
@@ -218,6 +227,7 @@ export interface FileRouteTypes {
     | '/aktivitas/buat'
     | '/isi/$id'
     | '/kacab-aktivitas/buat'
+    | '/penaksir-aktivitas/buat'
     | '/tambah-leads/$activityId'
     | '/aktivitas/'
   fileRoutesByTo: FileRoutesByTo
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/aktivitas/buat'
     | '/isi/$id'
     | '/kacab-aktivitas/buat'
+    | '/penaksir-aktivitas/buat'
     | '/tambah-leads/$activityId'
     | '/aktivitas'
   id:
@@ -261,6 +272,7 @@ export interface FileRouteTypes {
     | '/aktivitas/buat'
     | '/isi/$id'
     | '/kacab-aktivitas/buat'
+    | '/penaksir-aktivitas/buat'
     | '/tambah-leads/$activityId'
     | '/aktivitas/'
   fileRoutesById: FileRoutesById
@@ -281,6 +293,7 @@ export interface RootRouteChildren {
   ProgramRoute: typeof ProgramRoute
   UbahPasswordRoute: typeof UbahPasswordRoute
   IsiIdRoute: typeof IsiIdRoute
+  PenaksirAktivitasBuatRoute: typeof PenaksirAktivitasBuatRoute
   TambahLeadsActivityIdRoute: typeof TambahLeadsActivityIdRoute
 }
 
@@ -419,6 +432,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KacabAktivitasBuatRouteImport
       parentRoute: typeof KacabAktivitasRoute
     }
+    '/penaksir-aktivitas/buat': {
+      id: '/penaksir-aktivitas/buat'
+      path: '/penaksir-aktivitas/buat'
+      fullPath: '/penaksir-aktivitas/buat'
+      preLoaderRoute: typeof PenaksirAktivitasBuatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tambah-leads/$activityId': {
       id: '/tambah-leads/$activityId'
       path: '/tambah-leads/$activityId'
@@ -473,6 +493,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProgramRoute: ProgramRoute,
   UbahPasswordRoute: UbahPasswordRoute,
   IsiIdRoute: IsiIdRoute,
+  PenaksirAktivitasBuatRoute: PenaksirAktivitasBuatRoute,
   TambahLeadsActivityIdRoute: TambahLeadsActivityIdRoute,
 }
 export const routeTree = rootRouteImport
