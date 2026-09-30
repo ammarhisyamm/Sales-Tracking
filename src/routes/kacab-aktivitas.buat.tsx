@@ -3,7 +3,7 @@ import { MobileShell } from "@/components/mobile-shell";
 import { CameraModal } from "@/components/camera-modal";
 import { OverlayPortal, Spinner, useMinBusy } from "@/components/motion";
 import { createActivity } from "@/lib/activity-store";
-import { inputDateToLocalIso, todayInputDate } from "@/lib/date-utils";
+import { formatInputDateLong, inputDateToLocalIso, todayInputDate } from "@/lib/date-utils";
 import { KELURAHAN_WILAYAH, type Activity, type ActivityType } from "@/lib/mock-data";
 import { useMemo, useState } from "react";
 import {
@@ -176,7 +176,7 @@ function CreateKacabActivity() {
             disabled
             className="flex w-full cursor-not-allowed items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-left text-[14px] text-slate-700 disabled:opacity-100"
           >
-            {formatDateInput(date)}
+            {formatInputDateLong(date)}
             <CalendarDays className="h-4 w-4 text-slate-500" />
           </button>
         </Field>
@@ -497,9 +497,4 @@ function Field({
       {hint && <p className="mt-1.5 text-[12px] text-[#2953A4]">{hint}</p>}
     </div>
   );
-}
-
-function formatDateInput(value: string) {
-  const [year, month, day] = value.split("-");
-  return `${day}/${month}/${year}`;
 }

@@ -106,52 +106,54 @@ function Home() {
           </Link>
         </div>
 
-        <div className="absolute left-4 right-4 top-[96px] z-20 text-slate-900">
-          <div className="rounded-t-2xl bg-white px-3 pb-1.5 pt-1.5 shadow-[0_10px_24px_rgba(25,42,77,0.08)]">
+        <div className="absolute left-[clamp(16px,5vw,20px)] right-[clamp(16px,5vw,20px)] top-[96px] z-20 text-slate-900">
+          <div className="rounded-t-2xl bg-white px-[clamp(12px,4vw,16px)] pb-3 pt-3 shadow-[0_10px_24px_rgba(25,42,77,0.08)]">
             <div className="grid grid-cols-2">
-              <div className="min-w-0 overflow-hidden border-r border-slate-200 pr-3">
-                <p className="flex min-w-0 items-center gap-2 text-[11px] leading-3 text-slate-500">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#e9f1fd] text-[#2953A4]">
-                    <Wallet size={16} weight="regular" />
+              <div className="min-w-0 overflow-hidden border-r border-slate-200 pr-[clamp(10px,3vw,12px)]">
+                <p className="flex min-w-0 items-center gap-2 text-[clamp(13px,4vw,15px)] leading-5 text-slate-500">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#e9f1fd] text-[#2953A4]">
+                    <Wallet size={18} weight="regular" />
                   </span>
                   Booking (Amount)
                 </p>
-                <p className="mt-0.5 whitespace-nowrap text-[16px] font-bold leading-tight tracking-tight">
+                <p className="mt-2 whitespace-nowrap text-[clamp(18px,5.5vw,22px)] font-bold leading-tight tracking-tight">
                   {rp(profile.booking)} <span className="font-normal text-slate-400">/</span>
                 </p>
-                <p className="text-[12px] text-slate-400">{rp(profile.bookingEstimate)}</p>
+                <p className="text-[clamp(14px,4vw,16px)] text-slate-400">
+                  {rp(profile.bookingEstimate)}
+                </p>
               </div>
-              <div className="min-w-0 overflow-hidden pl-3">
-                <p className="flex min-w-0 items-center gap-2 text-[11px] leading-3 text-slate-500">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#e9f1fd] text-[#2953A4]">
-                    <Scales size={17} weight="regular" />
+              <div className="min-w-0 overflow-hidden pl-[clamp(10px,3vw,12px)]">
+                <p className="flex min-w-0 items-center gap-2 text-[clamp(13px,4vw,15px)] leading-5 text-slate-500">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#e9f1fd] text-[#2953A4]">
+                    <Scales size={19} weight="regular" />
                   </span>
                   <span className="truncate">Gram (New CIF)</span>
                 </p>
-                <p className="mt-0.5 whitespace-nowrap text-[16px] font-bold leading-tight tracking-tight">
+                <p className="mt-2 whitespace-nowrap text-[clamp(18px,5.5vw,22px)] font-bold leading-tight tracking-tight">
                   {grams.current}g{" "}
                   <span className="font-normal text-slate-400">/ {grams.target}g</span>
                 </p>
               </div>
             </div>
-            <div className="mt-1.5 border-t border-slate-200 pt-1.5">
-              <p className="flex items-center gap-2 text-[11px] text-slate-500">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#e9f1fd] text-[#2953A4]">
-                  <Money size={16} weight="regular" />
+            <div className="mt-4 border-t border-slate-200 pt-4">
+              <p className="flex items-center gap-2 text-[clamp(13px,4vw,15px)] text-slate-500">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#e9f1fd] text-[#2953A4]">
+                  <Money size={18} weight="regular" />
                 </span>
                 Estimasi Insentif
               </p>
-              <p className="mt-0.5 text-[17px] font-bold leading-tight tracking-tight">
+              <p className="mt-2 text-[clamp(19px,5.5vw,23px)] font-bold leading-tight tracking-tight">
                 {rp(profile.estimasiInsentif)}
               </p>
             </div>
           </div>
-          <div className="rounded-b-2xl bg-[#eff5fb] px-3 py-1">
+          <div className="rounded-b-2xl bg-[#eff5fb] px-[clamp(12px,4vw,16px)] py-2.5">
             <div className="flex items-center justify-between gap-2">
-              <p className="flex items-center gap-2 text-[12px] text-slate-500">
-                <EnvelopeSimple size={19} weight="regular" color={PRIMARY} /> ADO
+              <p className="flex items-center gap-2 text-[clamp(13px,4vw,15px)] text-slate-500">
+                <EnvelopeSimple size={21} weight="regular" color={PRIMARY} /> ADO
               </p>
-              <p className="min-w-0 truncate text-right text-[14px] font-bold">
+              <p className="min-w-0 truncate text-right text-[clamp(15px,4.5vw,18px)] font-bold">
                 {rp(ado.current)}
                 <span className="font-normal text-slate-400">/{rp(ado.target)}</span>
               </p>
@@ -170,7 +172,7 @@ function Home() {
         </svg>
       </header>
 
-      <div className="space-y-6 bg-white px-4 pb-28 pt-[92px]">
+      <div className="space-y-6 bg-white px-4 pb-28 pt-[120px]">
         <ScreenLoader skeleton={<HomeSkeleton />}>
           <section>
             <h2 className="text-[18px] font-semibold text-slate-900">Target Leads dan Closing</h2>

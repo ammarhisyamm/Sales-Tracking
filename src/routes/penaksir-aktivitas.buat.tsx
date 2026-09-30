@@ -12,7 +12,7 @@ import {
 import { useState, type FormEvent, type ReactNode } from "react";
 import { MobileShell } from "@/components/mobile-shell";
 import { OverlayPortal, Spinner, useMinBusy } from "@/components/motion";
-import { todayInputDate } from "@/lib/date-utils";
+import { formatInputDateLong, todayInputDate } from "@/lib/date-utils";
 
 export const Route = createFileRoute("/penaksir-aktivitas/buat")({
   head: () => ({ meta: [{ title: "Tambah Aktivitas Penaksir" }] }),
@@ -153,12 +153,9 @@ function CreatePenaksirActivity() {
 
           <Field label="Tanggal Pelaksanaan">
             <div className="relative">
-              <input
-                type="date"
-                value={date}
-                disabled
-                className="penaksir-date-input h-14 w-full appearance-none rounded-[14px] border border-[#dfe7f2] bg-[#f8fafc] px-4 pr-12 text-[16px] text-[#45556c] outline-none disabled:cursor-not-allowed disabled:opacity-100"
-              />
+              <div className="flex h-14 w-full items-center rounded-[14px] border border-[#dfe7f2] bg-[#f8fafc] px-4 pr-12 text-[16px] text-[#45556c]">
+                {formatInputDateLong(date)}
+              </div>
               <CalendarDots
                 className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#62748e]"
                 size={22}
