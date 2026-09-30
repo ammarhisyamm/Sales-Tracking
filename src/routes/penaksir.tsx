@@ -8,9 +8,10 @@ import {
   ChevronDown,
   ChevronRight,
   ClipboardList,
+  Eye,
   FileText,
   Home,
-  MessageCircle,
+  Image as ImageIcon,
   Plus,
   ScanEye,
   Signal,
@@ -49,21 +50,65 @@ const RANGE_SUMMARY: Record<Range, { ro: { current: number; target: number; pct:
   },
 };
 
+type StatusTone = "green" | "amber" | "red";
+
+interface SbgItem {
+  number: string;
+  followUp: string;
+}
+
 interface PenaksirActivity {
+  id: string;
   sbg: string;
   name: string;
   date: string;
   title: string;
-  extraSbg: string[];
+  status: string;
+  tone: StatusTone;
+  extraSbg: SbgItem[];
 }
+
+const TONE_CLASS: Record<StatusTone, string> = {
+  green: "text-green-600",
+  amber: "text-amber-700",
+  red: "text-red-600",
+};
 
 const WEEK_ACTIVITIES: PenaksirActivity[] = [
   {
+    id: "ovd-deal",
     sbg: "1312T1T181817",
     name: "Adam Alis",
     date: "Sabtu, 10/10/2026",
-    title: "Follow Up OVD | Follow up Ke-2",
-    extraSbg: ["1312T1T181818", "1312T1T181819", "1312T1T181820", "1312T1T181821"],
+    title: "Follow Up OVD",
+    status: "Deal Transaksi",
+    tone: "green",
+    extraSbg: [
+      { number: "001568002500007", followUp: "Follow Up ke-1" },
+      { number: "001568002500006", followUp: "Follow Up ke-2" },
+      { number: "001568002500005", followUp: "Follow Up ke-1" },
+      { number: "001568002500002", followUp: "Follow Up ke-5" },
+    ],
+  },
+  {
+    id: "ro-pertimbang",
+    sbg: "1312T1T181817",
+    name: "Adam Alis",
+    date: "Sabtu, 10/10/2026",
+    title: "Follow Up RO | Follow up Ke-1",
+    status: "Masih Dipertimbangkan",
+    tone: "amber",
+    extraSbg: [],
+  },
+  {
+    id: "ro-tidak-hubungi",
+    sbg: "1312T1T181817",
+    name: "Adam Alis",
+    date: "Sabtu, 10/10/2026",
+    title: "Follow Up RO | Follow up Ke-1",
+    status: "Tidak Dapat Dihubungi",
+    tone: "red",
+    extraSbg: [],
   },
 ];
 
@@ -225,9 +270,9 @@ function PenaksirHome() {
               </div>
             </>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {activities.map((a) => (
-                <ActivityCard key={a.sbg} activity={a} />
+                <ActivityCard key={a.id} activity={a} />
               ))}
             </div>
           )}
@@ -288,42 +333,80 @@ function SummaryCard({ icon, label, current, target, pct }: { icon: React.ReactN
 
 function ActivityCard({ activity }: { activity: PenaksirActivity }) {
   const [open, setOpen] = useState(false);
+  const hasExtra = activity.extraSbg.length > 0;
+  const showWhatsapp = !hasExtra || !open;
+  const showVisit = hasExtra && open;
+  const showPhoto = !hasExtra || open;
   return (
-    <div className="rounded-2xl bg-[#eaf1fd] p-3">
-      <p className="flex items-center gap-2 px-1 text-[15px] font-medium text-slate-900">
-        <SquareUserRound className="h-5 w-5" style={{ color: PRIMARY }} />
+    <div className="rounded-2xl border border-[#dde3ee] bg-[#edf1f7] p-3">
+      <p className="flex items-center gap-2 px-1 py-1 text-[17px] font-medium text-slate-900">
+        <SquareUserRound className="h-[22px] w-[22px]" style={{ color: PRIMARY }} />
         {activity.sbg}
       </p>
-      <div className="mt-2 rounded-xl border border-slate-200 bg-white p-4">
+      <div className="mt-2 rounded-xl bg-white px-4 py-4">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-[15px] text-slate-600">{activity.name}</p>
-          <p className="text-[13px] text-slate-500">{activity.date}</p>
+          <p className="text-[17px] text-slate-600">{activity.name}</p>
+          <p className="shrink-0 text-[15px] text-slate-500">{activity.date}</p>
         </div>
-        <div className="my-2.5 border-t border-slate-100" />
-        <p className="text-[17px] font-bold leading-snug text-slate-900">{activity.title}</p>
-        <button
-          onClick={() => setOpen((v) => !v)}
-          className="mt-2 flex w-full items-center justify-between py-1 text-[14px] text-slate-500"
-        >
-          <span>+{activity.extraSbg.length} Nomor SBG Lainnya</span>
-          <ChevronDown className={`h-5 w-5 transition-transform ${open ? "rotate-180" : ""}`} />
-        </button>
-        {open && (
-          <ul className="mt-1 space-y-1.5">
-            {activity.extraSbg.map((sbg) => (
-              <li key={sbg} className="flex items-center gap-2 text-[14px] text-slate-600">
-                <SquareUserRound className="h-4 w-4" style={{ color: PRIMARY }} />
-                {sbg}
-              </li>
-            ))}
-          </ul>
+        <div className="my-3 border-t border-slate-200" />
+        <p className="text-[21px] font-bold leading-snug text-black">{activity.title}</p>
+        <p className={`mt-1 text-[19px] ${TONE_CLASS[activity.tone]}`}>{activity.status}</p>
+
+        {hasExtra && !open && (
+          <button
+            onClick={() => setOpen(true)}
+            className="mt-2.5 flex w-full items-center justify-between py-1 text-left text-[16px] text-slate-500"
+          >
+            <span>+{activity.extraSbg.length} Nomor SBG Lainnya</span>
+            <ChevronDown className="h-6 w-6 text-slate-400" />
+          </button>
         )}
-        <button className="mt-3 flex w-full items-center gap-3 rounded-xl border border-slate-200 px-3 py-2.5 text-left">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100">
-            <MessageCircle className="h-5 w-5 text-slate-500" />
-          </span>
-          <span className="text-[15px] text-slate-900">Whatsapp</span>
-        </button>
+        {hasExtra && open && (
+          <div className="mt-3 rounded-xl bg-[#e5ebf8] p-3">
+            <button
+              onClick={() => setOpen(false)}
+              className="flex w-full items-center justify-between py-1 text-left text-[16px] text-slate-500"
+            >
+              <span>+{activity.extraSbg.length} Nomor SBG Lainnya</span>
+              <ChevronDown className="h-6 w-6 rotate-180 text-slate-400" />
+            </button>
+            <ul className="mt-1 space-y-2.5 pb-1 pt-1">
+              {activity.extraSbg.map((item, index) => (
+                <li key={item.number} className="flex items-center gap-3">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-[16px] font-medium text-black">
+                    {index + 1}
+                  </span>
+                  <span className="text-[16px] text-slate-700">
+                    {item.number} - {item.followUp}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {showWhatsapp && (
+          <button className="mt-3.5 flex w-full items-center gap-3 rounded-xl border border-slate-300 px-4 py-3.5 text-left transition-transform duration-100 active:scale-[0.99]">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#eef2f7]">
+              <ImageIcon className="h-5 w-5 text-slate-500" />
+            </span>
+            <span className="text-[17px] text-black">Whatsapp</span>
+          </button>
+        )}
+        {showVisit && (
+          <button className="mt-3 flex w-full items-center gap-3 rounded-xl border border-slate-300 px-4 py-3.5 text-left transition-transform duration-100 active:scale-[0.99]">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#eef2f7]">
+              <ImageIcon className="h-5 w-5 text-slate-500" />
+            </span>
+            <span className="text-[17px] text-black">Visit</span>
+          </button>
+        )}
+        {showPhoto && (
+          <button className="mt-3 flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#2953A4] py-4 text-[18px] font-medium text-white transition-transform duration-100 active:scale-[0.99]">
+            <Eye className="h-6 w-6" />
+            Lihat Foto
+          </button>
+        )}
       </div>
     </div>
   );
