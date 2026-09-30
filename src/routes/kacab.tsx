@@ -1,20 +1,24 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
-import { useState } from "react";
 import {
+  BatteryFull,
   Bell,
-  ChevronDown,
-  ChevronRight,
-  ClipboardCheck,
-  Clock3,
+  Buildings,
+  CaretDown,
+  CaretRight,
+  CellSignalFull,
+  ClipboardText,
+  Clock,
   Crosshair,
   FileText,
+  House,
   Megaphone,
-  MapPin,
   Plus,
-  UserRound,
-  UsersRound,
-} from "lucide-react";
+  User,
+  Users,
+  WifiHigh,
+} from "@phosphor-icons/react";
+import { useState } from "react";
 
 export const Route = createFileRoute("/kacab")({
   head: () => ({ meta: [{ title: "Home KACAB — Sales Tracking" }] }),
@@ -58,13 +62,22 @@ function KacabHome() {
   return (
     <MobileShell role="kacab" hideFab>
       <header
-        className="relative h-[222px] overflow-visible px-5 pt-12 text-white"
-        style={{ background: "var(--gradient-brand)" }}
+        className="relative h-[176px] overflow-visible px-4 pt-[56px] text-white"
+        style={{ background: "linear-gradient(180deg, #28285f 0%, #4d529d 72%, #7b8bd0 100%)" }}
       >
+        <div className="absolute inset-x-6 top-5 flex items-center justify-between text-white">
+          <span className="text-[15px] font-semibold tracking-tight">9:41</span>
+          <span className="flex items-center gap-1.5">
+            <CellSignalFull size={17} weight="bold" />
+            <WifiHigh size={18} weight="bold" />
+            <BatteryFull size={20} weight="bold" />
+          </span>
+        </div>
+
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex min-w-0 items-center gap-3">
-            <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-white/25">
-              <UserRound className="h-7 w-7 text-white" />
+            <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[#dbeafe] text-[#2953A4]">
+              <User size={30} weight="fill" />
             </span>
             <div className="min-w-0 flex-1">
               <p className="text-[13px] text-white/75">Selamat datang</p>
@@ -75,21 +88,25 @@ function KacabHome() {
             className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-white text-[#2953A4]"
             aria-label="Notifikasi"
           >
-            <Bell className="h-5 w-5" />
+            <Bell size={21} weight="regular" />
           </button>
         </div>
 
-        <div className="absolute left-4 right-4 top-[154px] z-20 grid grid-cols-2 divide-x divide-slate-200 rounded-2xl bg-white p-4 text-slate-900 shadow-[0_12px_24px_rgba(25,42,77,0.10)]">
+        <div className="absolute left-3 right-3 top-[116px] z-20 grid grid-cols-2 divide-x divide-slate-200 rounded-xl bg-white p-3 text-slate-900 shadow-[0_12px_24px_rgba(25,42,77,0.10)]">
           <SummaryMetric
-            icon={<MapPin />}
+            icon={<Buildings size={20} weight="regular" />}
             label="Visit"
             value={`${kcp.visit[period][0]}`}
             target={`/${kcp.visit[period][1]}`}
           />
-          <SummaryMetric icon={<ClipboardCheck />} label="Waskat" value={`${kcp.waskat[period]}`} />
+          <SummaryMetric
+            icon={<FileText size={20} weight="regular" />}
+            label="Waskat"
+            value={`${kcp.waskat[period]}`}
+          />
         </div>
         <svg
-          className="absolute bottom-0 left-0 h-[70px] w-full"
+          className="absolute bottom-0 left-0 h-[100px] w-full"
           viewBox="0 0 440 70"
           preserveAspectRatio="none"
         >
@@ -99,7 +116,7 @@ function KacabHome() {
         </svg>
       </header>
 
-      <main className="space-y-5 bg-white px-5 pb-8 pt-[64px]">
+      <main className="space-y-5 bg-white px-4 pb-8 pt-[20px]">
         <section>
           <h2 className="text-[20px] font-bold text-slate-900">Monitoring Aktivitas</h2>
           <label className="mt-3 block text-[14px] font-medium text-slate-700">Pilih KCP</label>
@@ -115,7 +132,11 @@ function KacabHome() {
                 </option>
               ))}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+            <CaretDown
+              className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-500"
+              size={18}
+              weight="regular"
+            />
           </span>
         </section>
 
@@ -138,36 +159,36 @@ function KacabHome() {
             ))}
           </div>
           <div className="mt-3 space-y-3">
-            <MetricGroup icon={<UserRound className="h-4 w-4" />} title="Kepala KCP">
+            <MetricGroup icon={<User size={18} weight="regular" />} title="Kepala KCP">
               <MetricRow
-                icon={<Megaphone className="h-4 w-4" />}
+                icon={<Megaphone size={18} weight="regular" />}
                 label="Marketing"
                 value={kcp.marketing.kepala[period]}
               />
             </MetricGroup>
-            <MetricGroup icon={<UsersRound className="h-4 w-4" />} title="Penaksir Kasir">
+            <MetricGroup icon={<Users size={18} weight="regular" />} title="Penaksir Kasir">
               <div className="grid grid-cols-2 gap-2.5">
                 <MetricRow
-                  icon={<FileText className="h-4 w-4" />}
+                  icon={<ClipboardText size={18} weight="regular" />}
                   label="Follow Up RO"
                   value={kcp.marketing.ro[period]}
                 />
                 <MetricRow
-                  icon={<Clock3 className="h-4 w-4" />}
+                  icon={<Clock size={18} weight="regular" />}
                   label="Follow Up OVD"
                   value={kcp.marketing.ovd[period]}
                 />
               </div>
             </MetricGroup>
-            <MetricGroup icon={<UsersRound className="h-4 w-4" />} title="Sales Officer">
+            <MetricGroup icon={<Users size={18} weight="regular" />} title="Sales Officer">
               <div className="grid grid-cols-2 gap-2.5">
                 <MetricRow
-                  icon={<Crosshair className="h-4 w-4" />}
+                  icon={<Crosshair size={18} weight="regular" />}
                   label="Leads"
                   value={kcp.marketing.leads[period]}
                 />
                 <MetricRow
-                  icon={<UserRound className="h-4 w-4" />}
+                  icon={<User size={18} weight="regular" />}
                   label="Closing Leads"
                   value={kcp.marketing.closing[period]}
                 />
@@ -183,7 +204,7 @@ function KacabHome() {
               to="/kacab-aktivitas"
               className="inline-flex items-center gap-0.5 text-[13px] font-medium text-slate-500"
             >
-              Lihat Semua <ChevronRight className="h-4 w-4" />
+              Lihat Semua <CaretRight size={17} weight="regular" />
             </Link>
           </div>
           <div className="py-3 text-center">
@@ -198,7 +219,7 @@ function KacabHome() {
               href="/kacab-aktivitas/buat"
               className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-[#2953A4] bg-white px-4 py-2.5 text-[14px] font-medium text-[#2953A4]"
             >
-              <Plus className="h-4 w-4" /> Tambah Aktivitas
+              <Plus size={20} weight="regular" /> Tambah Aktivitas
             </a>
           </div>
         </section>

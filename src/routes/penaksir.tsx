@@ -1,21 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
-import { CaretDown, Eye as PhosphorEye, FileImage, UserSquare } from "@phosphor-icons/react";
-import { useState } from "react";
 import {
-  BatteryFull,
-  Bell,
-  CalendarDays,
-  ChevronRight,
-  ClipboardList,
-  FileText,
-  Home,
-  Plus,
-  ScanEye,
-  Signal,
-  UserRound,
-  Wifi,
-} from "lucide-react";
+  ArrowsClockwise,
+  BatteryFull as PhosphorBatteryFull,
+  Bell as PhosphorBell,
+  CaretDown,
+  CaretRight,
+  CellSignalFull,
+  ClipboardText,
+  Eye as PhosphorEye,
+  FileImage,
+  FileText as PhosphorFileText,
+  House,
+  Plus as PhosphorPlus,
+  User as PhosphorUser,
+  UserSquare,
+  WifiHigh,
+} from "@phosphor-icons/react";
+import { useState } from "react";
 
 export const Route = createFileRoute("/penaksir")({
   head: () => ({ meta: [{ title: "Penaksir — Sales Tracking" }] }),
@@ -129,25 +131,22 @@ function PenaksirHome() {
   return (
     <MobileShell hideNav hideFab>
       <header
-        className="relative overflow-hidden px-5 pb-20 pt-[68px] text-white"
+        className="relative h-[170px] overflow-visible px-4 pt-[56px] text-white"
         style={{ background: "linear-gradient(180deg, #28285f 0%, #4d529d 72%, #7b8bd0 100%)" }}
       >
         <div className="absolute inset-x-6 top-5 flex items-center justify-between text-white">
           <span className="text-[15px] font-semibold tracking-tight">9:41</span>
           <span className="flex items-center gap-1.5">
-            <Signal className="h-4 w-4" strokeWidth={3} />
-            <Wifi className="h-4 w-4" strokeWidth={2.5} />
-            <BatteryFull className="h-5 w-5" strokeWidth={2.5} />
+            <CellSignalFull size={17} weight="bold" />
+            <WifiHigh size={18} weight="bold" />
+            <PhosphorBatteryFull size={20} weight="bold" />
           </span>
         </div>
 
         <div className="relative z-10 flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white">
-              <svg viewBox="0 0 24 24" className="h-7 w-7" fill="#2953A4" aria-hidden="true">
-                <circle cx="12" cy="7.5" r="4" />
-                <path d="M4.5 19.5c.8-3.8 3.9-6 7.5-6s6.7 2.2 7.5 6v.5h-15v-.5z" />
-              </svg>
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#dbeafe] text-[#2953A4]">
+              <PhosphorUser size={30} weight="fill" />
             </span>
             <div className="min-w-0">
               <p className="text-[15px] text-white/90">Selamat datang</p>
@@ -161,16 +160,16 @@ function PenaksirHome() {
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#2953A4]"
             aria-label="Notifikasi"
           >
-            <Bell className="h-5 w-5" />
+            <PhosphorBell size={21} weight="regular" />
           </Link>
         </div>
 
-        <div className="relative z-10 mt-4 rounded-xl bg-white p-4 text-slate-900 shadow-[0_2px_12px_rgba(25,42,77,0.06)]">
+        <div className="absolute left-4 right-4 top-[136px] z-20 rounded-xl bg-white p-3 text-slate-900 shadow-[0_12px_24px_rgba(25,42,77,0.10)]">
           <div className="grid grid-cols-2">
             <div className="border-r border-slate-200 pr-3">
               <p className="flex items-center gap-2 text-[13px] text-slate-500">
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#e9f1fd] text-[#2953A4]">
-                  <ScanEye className="h-4 w-4" />
+                  <ArrowsClockwise size={17} weight="regular" />
                 </span>
                 Follow Up RO
               </p>
@@ -182,7 +181,7 @@ function PenaksirHome() {
             <div className="pl-3">
               <p className="flex items-center gap-2 text-[13px] text-slate-500">
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#e9f1fd] text-[#2953A4]">
-                  <FileText className="h-4 w-4" />
+                  <PhosphorFileText size={17} weight="regular" />
                 </span>
                 Follow Up OVD
               </p>
@@ -195,7 +194,7 @@ function PenaksirHome() {
         </div>
 
         <svg
-          className="absolute bottom-0 left-0 h-[70px] w-full"
+          className="absolute bottom-0 left-0 h-[100px] w-full"
           viewBox="0 0 440 70"
           preserveAspectRatio="none"
         >
@@ -205,7 +204,7 @@ function PenaksirHome() {
         </svg>
       </header>
 
-      <div className="space-y-6 bg-white px-5 pb-32 pt-5">
+      <div className="space-y-6 bg-white px-4 pb-32 pt-[60px]">
         <section>
           <h2 className="text-[17px] font-bold text-slate-900">Summary Aktivitas</h2>
           <p className="mt-1 text-[13px] text-slate-500">
@@ -228,14 +227,14 @@ function PenaksirHome() {
           </div>
           <div className="mt-3 grid grid-cols-2 gap-3">
             <SummaryCard
-              icon={<ScanEye className="h-4 w-4 text-[#2953A4]" />}
+              icon={<ArrowsClockwise size={17} weight="regular" color="#2953A4" />}
               label="Follow Up RO"
               current={summary.ro.current}
               target={summary.ro.target}
               pct={summary.ro.pct}
             />
             <SummaryCard
-              icon={<FileText className="h-4 w-4 text-[#2953A4]" />}
+              icon={<PhosphorFileText size={17} weight="regular" color="#2953A4" />}
               label="Follow Up OVD"
               current={summary.ovd.current}
               target={summary.ovd.target}
@@ -251,22 +250,17 @@ function PenaksirHome() {
               to="/aktivitas"
               className="inline-flex items-center gap-0.5 text-[13px] font-medium text-slate-500"
             >
-              Lihat Semua <ChevronRight className="h-4 w-4" />
+              Lihat Semua <CaretRight size={17} weight="regular" />
             </Link>
           </div>
           {activities.length === 0 ? (
             <>
               <div className="py-6 text-center">
-                <div className="relative mx-auto h-28 w-40 overflow-hidden rounded-2xl bg-[#eef1f6]">
-                  <span className="absolute left-5 top-4 flex h-16 w-14 -rotate-6 items-center justify-center rounded-lg bg-[#8fa0b8] shadow">
-                    <CalendarDays className="h-8 w-8 text-white" />
-                  </span>
-                  <span className="absolute bottom-2 right-5 flex h-20 w-16 rotate-12 items-center justify-center rounded-lg bg-[#5b6b84] shadow-lg">
-                    <ClipboardList className="h-9 w-9 text-white" />
-                  </span>
-                  <span className="absolute left-3 top-14 text-[#5b6b84]">✦</span>
-                  <span className="absolute right-16 top-3 text-[10px] text-[#8fa0b8]">✦</span>
-                </div>
+                <img
+                  src="/empty-activity.svg"
+                  alt=""
+                  className="mx-auto h-28 w-40 object-contain"
+                />
                 <p className="mt-4 text-[17px] font-bold text-slate-900">
                   Belum Ada Aktivitas Hari Ini
                 </p>
@@ -279,7 +273,7 @@ function PenaksirHome() {
                   to="/aktivitas/buat"
                   className="inline-flex items-center gap-1.5 rounded-lg border border-[#2953A4] bg-white px-4 py-2 text-[14px] font-medium text-[#2953A4] transition-transform duration-100 active:scale-[0.98]"
                 >
-                  <Plus className="h-4 w-4" /> Tambah Aktivitas
+                  <PhosphorPlus size={20} weight="regular" /> Tambah Aktivitas
                 </Link>
               </div>
             </>
@@ -297,7 +291,7 @@ function PenaksirHome() {
         <ul className="grid grid-cols-3 px-2 pb-4 pt-2">
           <li className="flex justify-center">
             <span className="flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[10px] font-medium text-[#2953A4]">
-              <Home className="h-5 w-5" strokeWidth={2.4} />
+              <House size={23} weight="regular" />
               <span>Home</span>
             </span>
           </li>
@@ -306,7 +300,7 @@ function PenaksirHome() {
               to="/aktivitas"
               className="flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[10px] font-medium text-slate-400"
             >
-              <ClipboardList className="h-5 w-5" strokeWidth={1.8} />
+              <ClipboardText size={23} weight="regular" />
               <span>Aktivitas</span>
             </Link>
           </li>
@@ -315,7 +309,7 @@ function PenaksirHome() {
               to="/profile"
               className="flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[10px] font-medium text-slate-400"
             >
-              <UserRound className="h-5 w-5" strokeWidth={1.8} />
+              <PhosphorUser size={23} weight="regular" />
               <span>Profil</span>
             </Link>
           </li>
