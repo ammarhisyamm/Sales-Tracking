@@ -1,7 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, CalendarDots, CaretDown, Check, X } from "@phosphor-icons/react";
+import {
+  ArrowLeft,
+  BatteryFull,
+  CalendarDots,
+  CaretDown,
+  CellSignalFull,
+  Check,
+  WifiHigh,
+  X,
+} from "@phosphor-icons/react";
 import { useState, type FormEvent, type ReactNode } from "react";
-import { CameraModal } from "@/components/camera-modal";
 import { MobileShell } from "@/components/mobile-shell";
 import { OverlayPortal, Spinner, useMinBusy } from "@/components/motion";
 
@@ -37,10 +45,7 @@ function CreatePenaksirActivity() {
   const [media, setMedia] = useState<(typeof MEDIA_OPTIONS)[number] | "">("");
   const [result, setResult] = useState<(typeof RESULT_OPTIONS)[number] | "">("");
   const [selectedSbg, setSelectedSbg] = useState<string[]>([]);
-  const [photoName, setPhotoName] = useState("");
-  const [photoUrl, setPhotoUrl] = useState("");
   const [picker, setPicker] = useState<Picker>(null);
-  const [cameraOpen, setCameraOpen] = useState(false);
   const [saved, setSaved] = useState(false);
   const [busy, runSave] = useMinBusy();
 
@@ -64,130 +69,110 @@ function CreatePenaksirActivity() {
 
   return (
     <MobileShell hideNav>
-      <header className="flex h-[101px] items-end bg-white px-4 pb-4 pt-10">
+      <header className="bg-white px-4 pb-4 pt-4">
+        <div className="flex items-center justify-between text-[#131324]">
+          <span className="text-[15px] font-semibold tracking-tight">9:41</span>
+          <span className="flex items-center gap-1.5">
+            <CellSignalFull size={17} weight="bold" />
+            <WifiHigh size={18} weight="bold" />
+            <BatteryFull size={20} weight="bold" />
+          </span>
+        </div>
         <button
           type="button"
           onClick={() => navigate({ to: "/penaksir" })}
-          className="inline-flex items-center gap-3 text-[17px] font-medium text-[#131324]"
+          className="mt-8 inline-flex items-center gap-3 text-[20px] font-medium leading-none text-[#131324]"
         >
-          <ArrowLeft size={21} weight="regular" />
+          <ArrowLeft size={31} weight="regular" />
           Tambah Aktivitas
         </button>
       </header>
 
-      <form onSubmit={save} className="space-y-3 bg-white px-4 pb-32 pt-5">
-        <div className="mb-6">
-          <h1 className="text-[20px] font-semibold leading-6 text-[#131324]">Buat Aktivitas</h1>
-          <p className="mt-1 text-[14px] text-[#5a5a66]">Isi detail kegiatan</p>
+      <form onSubmit={save} className="bg-white px-4 pb-32 pt-7">
+        <div className="mb-8">
+          <h1 className="text-[22px] font-semibold leading-7 text-[#131324]">Buat Aktivitas</h1>
+          <p className="mt-1 text-[16px] text-[#5a5a66]">Isi detail kegiatan</p>
         </div>
 
-        <Field label="Aktivitas">
-          <PickerField
-            value={activity}
-            placeholder="Pilih Aktivitas"
-            onClick={() => setPicker("activity")}
-          />
-        </Field>
+        <div className="space-y-5">
+          <Field label="Aktivitas">
+            <PickerField
+              value={activity}
+              placeholder="Pilih Aktivitas"
+              onClick={() => setPicker("activity")}
+            />
+          </Field>
 
-        {activity && (
-          <>
-            <Field label="CIF (Nama Nasabah)">
-              <input
-                value={cif}
-                onChange={(event) => setCif(event.target.value)}
-                placeholder="Masukkan CIF"
-                className="h-12 w-full rounded-lg border border-[#e2e8f0] bg-white px-3 text-[14px] text-[#131324] outline-none placeholder:text-[#90a1b9] focus:border-[#2953A4]"
-              />
-            </Field>
+          <Field label="CIF (Nama Nasabah)">
+            <input
+              value={cif}
+              onChange={(event) => setCif(event.target.value)}
+              placeholder="Masukkan CIF"
+              className="h-14 w-full rounded-[14px] border border-[#dfe7f2] bg-white px-4 text-[16px] text-[#131324] outline-none placeholder:text-[#90a1b9] focus:border-[#2953A4]"
+            />
+          </Field>
 
-            {isOvd ? (
-              <Field label="Nomor SBG">
-                <PickerField
-                  value={selectedSbg.length ? `${selectedSbg.length} nomor SBG dipilih` : ""}
-                  placeholder="Pilih Nomor SBG"
-                  onClick={() => setPicker("sbg")}
-                />
-                {selectedSbg.length > 0 && (
-                  <div className="mt-2 space-y-2">
-                    {selectedSbg.map((item) => (
-                      <div
-                        key={item}
-                        className="flex items-center justify-between rounded-lg bg-[#eef5ff] px-3 py-2 text-[13px] text-[#415574]"
-                      >
-                        <span className="truncate pr-2">{item}</span>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setSelectedSbg((current) => current.filter((value) => value !== item))
-                          }
-                          className="shrink-0 rounded-full p-1 text-[#62748e] hover:bg-[#dce9fb]"
-                          aria-label={`Hapus ${item}`}
-                        >
-                          <X size={16} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </Field>
-            ) : (
-              <Field label="Follow Up Ke">
-                <div className="flex h-12 items-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc] px-3 text-[14px] text-[#62748e]">
-                  1
-                </div>
-              </Field>
-            )}
+          <Field label="Follow Up Ke">
+            <div className="flex h-14 items-center rounded-[14px] border border-[#dfe7f2] bg-white px-4 text-[16px] text-[#90a1b9]">
+              [auto fill]
+            </div>
+          </Field>
 
-            <Field label="Tanggal Pelaksanaan">
-              <div className="relative">
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(event) => setDate(event.target.value)}
-                  className={`penaksir-date-input h-12 w-full appearance-none rounded-lg border border-[#e2e8f0] bg-white px-3 pr-11 text-[14px] outline-none focus:border-[#2953A4] ${date ? "text-[#131324]" : "text-[#90a1b9]"}`}
-                />
-                <CalendarDots
-                  className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#62748e]"
-                  size={19}
-                />
-              </div>
-            </Field>
-
-            <Field label="Media Follow Up">
+          {isOvd && (
+            <Field label="Nomor SBG">
               <PickerField
-                value={media}
-                placeholder="Pilih Media"
-                onClick={() => setPicker("media")}
+                value={selectedSbg.length ? `${selectedSbg.length} nomor SBG dipilih` : ""}
+                placeholder="Pilih Nomor SBG"
+                onClick={() => setPicker("sbg")}
               />
-            </Field>
-
-            <Field label="Foto Kegiatan">
-              <button
-                type="button"
-                onClick={() => setCameraOpen(true)}
-                className={`flex h-12 w-full items-center justify-between rounded-lg border border-[#e2e8f0] px-3 text-left text-[14px] ${photoName ? "text-[#2953A4]" : "text-[#90a1b9]"}`}
-              >
-                <span className="truncate">{photoName || "Unggah foto kegiatan"}</span>
-                {photoName && <Check size={18} weight="bold" />}
-              </button>
-              {photoUrl && (
-                <img
-                  src={photoUrl}
-                  alt="Preview foto kegiatan"
-                  className="mt-2 h-24 w-full rounded-lg object-cover"
-                />
+              {selectedSbg.length > 0 && (
+                <div className="mt-2 space-y-2">
+                  {selectedSbg.map((item) => (
+                    <div
+                      key={item}
+                      className="flex items-center justify-between rounded-lg bg-[#eef5ff] px-3 py-2 text-[13px] text-[#415574]"
+                    >
+                      <span className="truncate pr-2">{item}</span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setSelectedSbg((current) => current.filter((value) => value !== item))
+                        }
+                        className="shrink-0 rounded-full p-1 text-[#62748e] hover:bg-[#dce9fb]"
+                        aria-label={`Hapus ${item}`}
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
               )}
             </Field>
+          )}
 
-            <Field label="Hasil Aktivitas">
-              <PickerField
-                value={result}
-                placeholder="Pilih Hasil"
-                onClick={() => setPicker("result")}
+          <Field label="Tanggal Pelaksanaan">
+            <div className="relative">
+              <input
+                type="date"
+                value={date}
+                onChange={(event) => setDate(event.target.value)}
+                className={`penaksir-date-input h-14 w-full appearance-none rounded-[14px] border border-[#dfe7f2] bg-[#f8fafc] px-4 pr-12 text-[16px] outline-none focus:border-[#2953A4] ${date ? "text-[#131324]" : "text-[#90a1b9]"}`}
               />
-            </Field>
-          </>
-        )}
+              <CalendarDots
+                className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#62748e]"
+                size={22}
+              />
+            </div>
+          </Field>
+
+          <Field label="Media Follow Up">
+            <PickerField value={media} placeholder="Pilih Media" onClick={() => setPicker("media")} />
+          </Field>
+
+          <Field label="Hasil Aktivitas">
+            <PickerField value={result} placeholder="Pilih Hasil" onClick={() => setPicker("result")} />
+          </Field>
+        </div>
 
         <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-[440px] -translate-x-1/2 border-t border-[#f1f5f9] bg-white px-4 pb-6 pt-3">
           <button
@@ -224,19 +209,6 @@ function CreatePenaksirActivity() {
         />
       )}
 
-      {cameraOpen && (
-        <CameraModal
-          mode="photo"
-          onClose={() => setCameraOpen(false)}
-          onSkip={() => setCameraOpen(false)}
-          onSave={(url) => {
-            setPhotoUrl(url);
-            setPhotoName("Foto kegiatan tersimpan");
-            setCameraOpen(false);
-          }}
-        />
-      )}
-
       {saved && (
         <OverlayPortal>
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-5">
@@ -268,7 +240,7 @@ function CreatePenaksirActivity() {
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-[14px] text-[#131324]">{label}</span>
+      <span className="mb-2 block text-[16px] leading-5 text-[#131324]">{label}</span>
       {children}
     </label>
   );
@@ -287,10 +259,10 @@ function PickerField({
     <button
       type="button"
       onClick={onClick}
-      className={`flex h-12 w-full items-center justify-between rounded-lg border border-[#e2e8f0] bg-white px-3 text-left text-[14px] ${value ? "text-[#131324]" : "text-[#90a1b9]"}`}
+      className={`flex h-14 w-full items-center justify-between rounded-[14px] border border-[#dfe7f2] bg-white px-4 text-left text-[16px] ${value ? "text-[#131324]" : "text-[#90a1b9]"}`}
     >
       <span className="truncate">{value || placeholder}</span>
-      <CaretDown className="ml-3 shrink-0 text-[#62748e]" size={18} />
+      <CaretDown className="ml-3 shrink-0 text-[#62748e]" size={22} />
     </button>
   );
 }

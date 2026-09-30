@@ -204,7 +204,7 @@ function PenaksirHome() {
         </svg>
       </header>
 
-      <div className="space-y-6 bg-white px-4 pb-32 pt-[60px]">
+      <div className="space-y-6 bg-white px-4 pb-32 pt-[72px]">
         <section>
           <h2 className="text-[17px] font-bold text-slate-900">Summary Aktivitas</h2>
           <p className="mt-1 text-[13px] text-slate-500">
