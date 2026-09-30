@@ -19,6 +19,7 @@ import { Route as KacabProfileRouteImport } from './routes/kacab-profile'
 import { Route as KontakRouteImport } from './routes/kontak'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as NotifikasiRouteImport } from './routes/notifikasi'
+import { Route as PenaksirRouteImport } from './routes/penaksir'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ProgramRouteImport } from './routes/program'
 import { Route as UbahPasswordRouteImport } from './routes/ubah-password'
@@ -79,6 +80,11 @@ const NotifikasiRoute = NotifikasiRouteImport.update({
   path: '/notifikasi',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PenaksirRoute = PenaksirRouteImport.update({
+  id: '/penaksir',
+  path: '/penaksir',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -136,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/kontak': typeof KontakRoute
   '/login': typeof LoginRoute
   '/notifikasi': typeof NotifikasiRoute
+  '/penaksir': typeof PenaksirRoute
   '/profile': typeof ProfileRoute
   '/program': typeof ProgramRoute
   '/ubah-password': typeof UbahPasswordRoute
@@ -156,6 +163,7 @@ export interface FileRoutesByTo {
   '/kontak': typeof KontakRoute
   '/login': typeof LoginRoute
   '/notifikasi': typeof NotifikasiRoute
+  '/penaksir': typeof PenaksirRoute
   '/profile': typeof ProfileRoute
   '/program': typeof ProgramRoute
   '/ubah-password': typeof UbahPasswordRoute
@@ -178,6 +186,7 @@ export interface FileRoutesById {
   '/kontak': typeof KontakRoute
   '/login': typeof LoginRoute
   '/notifikasi': typeof NotifikasiRoute
+  '/penaksir': typeof PenaksirRoute
   '/profile': typeof ProfileRoute
   '/program': typeof ProgramRoute
   '/ubah-password': typeof UbahPasswordRoute
@@ -201,6 +210,7 @@ export interface FileRouteTypes {
     | '/kontak'
     | '/login'
     | '/notifikasi'
+    | '/penaksir'
     | '/profile'
     | '/program'
     | '/ubah-password'
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
     | '/kontak'
     | '/login'
     | '/notifikasi'
+    | '/penaksir'
     | '/profile'
     | '/program'
     | '/ubah-password'
@@ -242,6 +253,7 @@ export interface FileRouteTypes {
     | '/kontak'
     | '/login'
     | '/notifikasi'
+    | '/penaksir'
     | '/profile'
     | '/program'
     | '/ubah-password'
@@ -264,6 +276,7 @@ export interface RootRouteChildren {
   KontakRoute: typeof KontakRoute
   LoginRoute: typeof LoginRoute
   NotifikasiRoute: typeof NotifikasiRoute
+  PenaksirRoute: typeof PenaksirRoute
   ProfileRoute: typeof ProfileRoute
   ProgramRoute: typeof ProgramRoute
   UbahPasswordRoute: typeof UbahPasswordRoute
@@ -341,6 +354,13 @@ declare module '@tanstack/react-router' {
       path: '/notifikasi'
       fullPath: '/notifikasi'
       preLoaderRoute: typeof NotifikasiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/penaksir': {
+      id: '/penaksir'
+      path: '/penaksir'
+      fullPath: '/penaksir'
+      preLoaderRoute: typeof PenaksirRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -448,6 +468,7 @@ const rootRouteChildren: RootRouteChildren = {
   KontakRoute: KontakRoute,
   LoginRoute: LoginRoute,
   NotifikasiRoute: NotifikasiRoute,
+  PenaksirRoute: PenaksirRoute,
   ProfileRoute: ProfileRoute,
   ProgramRoute: ProgramRoute,
   UbahPasswordRoute: UbahPasswordRoute,

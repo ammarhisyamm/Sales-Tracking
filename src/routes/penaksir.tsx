@@ -1,0 +1,330 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { MobileShell } from "@/components/mobile-shell";
+import { useState } from "react";
+import {
+  BatteryFull,
+  Bell,
+  CalendarDays,
+  ChevronDown,
+  ChevronRight,
+  ClipboardList,
+  FileText,
+  Home,
+  MessageCircle,
+  Plus,
+  ScanEye,
+  Signal,
+  SquareUserRound,
+  UserRound,
+  Wifi,
+} from "lucide-react";
+
+export const Route = createFileRoute("/penaksir")({
+  head: () => ({ meta: [{ title: "Penaksir — Sales Tracking" }] }),
+  component: PenaksirHome,
+});
+
+const PRIMARY = "#2953A4";
+
+type Range = "today" | "week" | "month";
+
+const HEADER_SUMMARY = {
+  ro: { current: 0, target: 120 },
+  ovd: { current: 0, target: 120 },
+};
+
+/** pct ditulis eksplisit agar sama persis dengan desain (minggu: 2/15 tampil 90%). */
+const RANGE_SUMMARY: Record<Range, { ro: { current: number; target: number; pct: number }; ovd: { current: number; target: number; pct: number } }> = {
+  today: {
+    ro: { current: 0, target: 5, pct: 0 },
+    ovd: { current: 0, target: 5, pct: 0 },
+  },
+  week: {
+    ro: { current: 2, target: 15, pct: 90 },
+    ovd: { current: 2, target: 15, pct: 90 },
+  },
+  month: {
+    ro: { current: 32, target: 60, pct: 53 },
+    ovd: { current: 30, target: 60, pct: 50 },
+  },
+};
+
+interface PenaksirActivity {
+  sbg: string;
+  name: string;
+  date: string;
+  title: string;
+  extraSbg: string[];
+}
+
+const WEEK_ACTIVITIES: PenaksirActivity[] = [
+  {
+    sbg: "1312T1T181817",
+    name: "Adam Alis",
+    date: "Sabtu, 10/10/2026",
+    title: "Follow Up OVD | Follow up Ke-2",
+    extraSbg: ["1312T1T181818", "1312T1T181819", "1312T1T181820", "1312T1T181821"],
+  },
+];
+
+const RANGES: Array<{ value: Range; label: string }> = [
+  { value: "today", label: "Hari ini" },
+  { value: "week", label: "Minggu ini" },
+  { value: "month", label: "Bulan ini" },
+];
+
+function PenaksirHome() {
+  const [range, setRange] = useState<Range>("today");
+  const summary = RANGE_SUMMARY[range];
+  const activities = range === "today" ? [] : WEEK_ACTIVITIES;
+
+  return (
+    <MobileShell hideNav hideFab>
+      <header
+        className="relative overflow-hidden px-5 pb-20 pt-[68px] text-white"
+        style={{ background: "linear-gradient(180deg, #28285f 0%, #4d529d 72%, #7b8bd0 100%)" }}
+      >
+        <div className="absolute inset-x-6 top-5 flex items-center justify-between text-white">
+          <span className="text-[15px] font-semibold tracking-tight">9:41</span>
+          <span className="flex items-center gap-1.5">
+            <Signal className="h-4 w-4" strokeWidth={3} />
+            <Wifi className="h-4 w-4" strokeWidth={2.5} />
+            <BatteryFull className="h-5 w-5" strokeWidth={2.5} />
+          </span>
+        </div>
+
+        <div className="relative z-10 flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white">
+              <svg viewBox="0 0 24 24" className="h-7 w-7" fill="#2953A4" aria-hidden="true">
+                <circle cx="12" cy="7.5" r="4" />
+                <path d="M4.5 19.5c.8-3.8 3.9-6 7.5-6s6.7 2.2 7.5 6v.5h-15v-.5z" />
+              </svg>
+            </span>
+            <div className="min-w-0">
+              <p className="text-[15px] text-white/90">Selamat datang</p>
+              <p className="truncate text-[20px] font-bold leading-tight">
+                Penaksir Kasir (MAS MONANG-...
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/notifikasi"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#2953A4]"
+            aria-label="Notifikasi"
+          >
+            <Bell className="h-5 w-5" />
+          </Link>
+        </div>
+
+        <div className="relative z-10 mt-4 rounded-xl bg-white p-4 text-slate-900 shadow-[0_2px_12px_rgba(25,42,77,0.06)]">
+          <div className="grid grid-cols-2">
+            <div className="border-r border-slate-200 pr-3">
+              <p className="flex items-center gap-2 text-[13px] text-slate-500">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#e9f1fd] text-[#2953A4]">
+                  <ScanEye className="h-4 w-4" />
+                </span>
+                Follow Up RO
+              </p>
+              <p className="mt-2 text-[21px] font-bold leading-tight tracking-tight">
+                {HEADER_SUMMARY.ro.current}
+                <span className="font-normal text-slate-400">/{HEADER_SUMMARY.ro.target}</span>
+              </p>
+            </div>
+            <div className="pl-3">
+              <p className="flex items-center gap-2 text-[13px] text-slate-500">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#e9f1fd] text-[#2953A4]">
+                  <FileText className="h-4 w-4" />
+                </span>
+                Follow Up OVD
+              </p>
+              <p className="mt-2 text-[21px] font-bold leading-tight tracking-tight">
+                {HEADER_SUMMARY.ovd.current}
+                <span className="font-normal text-slate-400">/{HEADER_SUMMARY.ovd.target}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <svg className="absolute bottom-0 left-0 h-[70px] w-full" viewBox="0 0 440 70" preserveAspectRatio="none">
+          <path d="M0,38 C110,72 230,72 440,14 L440,70 L0,70 Z" fill="#8fa3d9" opacity="0.5" />
+          <path d="M0,48 C130,78 260,76 440,28 L440,70 L0,70 Z" fill="#c3d0f0" opacity="0.75" />
+          <path d="M0,56 C140,82 280,80 440,40 L440,70 L0,70 Z" fill="#eef2fd" />
+        </svg>
+      </header>
+
+      <div className="space-y-6 bg-white px-5 pb-32 pt-5">
+        <section>
+          <h2 className="text-[17px] font-bold text-slate-900">Summary Aktivitas</h2>
+          <p className="mt-1 text-[13px] text-slate-500">
+            Pantau progres dan pencapaian target aktivitas
+          </p>
+          <div className="mt-2.5 flex gap-2">
+            {RANGES.map((r) => (
+              <button
+                key={r.value}
+                onClick={() => setRange(r.value)}
+                className={`rounded-full border px-4 py-2 text-[13px] font-medium ${
+                  range === r.value
+                    ? "border-[#2953A4] bg-[#2953A4] text-white"
+                    : "border-slate-200 bg-white text-slate-500"
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <SummaryCard
+              icon={<ScanEye className="h-4 w-4 text-[#2953A4]" />}
+              label="Follow Up RO"
+              current={summary.ro.current}
+              target={summary.ro.target}
+              pct={summary.ro.pct}
+            />
+            <SummaryCard
+              icon={<FileText className="h-4 w-4 text-[#2953A4]" />}
+              label="Follow Up OVD"
+              current={summary.ovd.current}
+              target={summary.ovd.target}
+              pct={summary.ovd.pct}
+            />
+          </div>
+        </section>
+
+        <section>
+          <div className="mb-2.5 flex items-center justify-between">
+            <h2 className="text-[17px] font-bold text-slate-900">Aktivitas Hari Ini</h2>
+            <Link to="/aktivitas" className="inline-flex items-center gap-0.5 text-[13px] font-medium text-slate-500">
+              Lihat Semua <ChevronRight className="h-4 w-4" />
+            </Link>
+          </div>
+          {activities.length === 0 ? (
+            <>
+              <div className="py-6 text-center">
+                <div className="relative mx-auto h-28 w-40 overflow-hidden rounded-2xl bg-[#eef1f6]">
+                  <span className="absolute left-5 top-4 flex h-16 w-14 -rotate-6 items-center justify-center rounded-lg bg-[#8fa0b8] shadow">
+                    <CalendarDays className="h-8 w-8 text-white" />
+                  </span>
+                  <span className="absolute bottom-2 right-5 flex h-20 w-16 rotate-12 items-center justify-center rounded-lg bg-[#5b6b84] shadow-lg">
+                    <ClipboardList className="h-9 w-9 text-white" />
+                  </span>
+                  <span className="absolute left-3 top-14 text-[#5b6b84]">✦</span>
+                  <span className="absolute right-16 top-3 text-[10px] text-[#8fa0b8]">✦</span>
+                </div>
+                <p className="mt-4 text-[17px] font-bold text-slate-900">Belum Ada Aktivitas Hari Ini</p>
+                <p className="mt-1 text-[13px] text-slate-500">Aktivitas yang tersedia akan muncul disini</p>
+              </div>
+              <div className="mt-3 flex justify-center">
+                <Link
+                  to="/aktivitas/buat"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#2953A4] bg-white px-4 py-2 text-[14px] font-medium text-[#2953A4] transition-transform duration-100 active:scale-[0.98]"
+                >
+                  <Plus className="h-4 w-4" /> Tambah Aktivitas
+                </Link>
+              </div>
+            </>
+          ) : (
+            <div className="space-y-3">
+              {activities.map((a) => (
+                <ActivityCard key={a.sbg} activity={a} />
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
+
+      <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[440px] -translate-x-1/2 border-t border-slate-200 bg-white">
+        <ul className="grid grid-cols-3 px-2 pb-4 pt-2">
+          <li className="flex justify-center">
+            <span className="flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[10px] font-medium text-[#2953A4]">
+              <Home className="h-5 w-5" strokeWidth={2.4} />
+              <span>Home</span>
+            </span>
+          </li>
+          <li className="flex justify-center">
+            <Link
+              to="/aktivitas"
+              className="flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[10px] font-medium text-slate-400"
+            >
+              <ClipboardList className="h-5 w-5" strokeWidth={1.8} />
+              <span>Aktivitas</span>
+            </Link>
+          </li>
+          <li className="flex justify-center">
+            <Link
+              to="/profile"
+              className="flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[10px] font-medium text-slate-400"
+            >
+              <UserRound className="h-5 w-5" strokeWidth={1.8} />
+              <span>Profil</span>
+            </Link>
+          </li>
+        </ul>
+      </nav>
+    </MobileShell>
+  );
+}
+
+function SummaryCard({ icon, label, current, target, pct }: { icon: React.ReactNode; label: string; current: number; target: number; pct: number }) {
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-3.5">
+      <p className="flex items-center gap-1.5 text-[14px] text-slate-700">
+        {icon} {label}
+      </p>
+      <p className="mt-1.5 truncate text-[18px] font-bold text-slate-900">
+        {current}
+        <span className="text-[13px] font-normal text-slate-400">/{target}</span>
+      </p>
+      <div className="mt-2 flex items-center gap-2">
+        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+          <div className="h-full rounded-full bg-[#2953A4]" style={{ width: `${pct}%` }} />
+        </div>
+        <span className="text-[12px] text-slate-500">{pct}%</span>
+      </div>
+    </div>
+  );
+}
+
+function ActivityCard({ activity }: { activity: PenaksirActivity }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-2xl bg-[#eaf1fd] p-3">
+      <p className="flex items-center gap-2 px-1 text-[15px] font-medium text-slate-900">
+        <SquareUserRound className="h-5 w-5" style={{ color: PRIMARY }} />
+        {activity.sbg}
+      </p>
+      <div className="mt-2 rounded-xl border border-slate-200 bg-white p-4">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-[15px] text-slate-600">{activity.name}</p>
+          <p className="text-[13px] text-slate-500">{activity.date}</p>
+        </div>
+        <div className="my-2.5 border-t border-slate-100" />
+        <p className="text-[17px] font-bold leading-snug text-slate-900">{activity.title}</p>
+        <button
+          onClick={() => setOpen((v) => !v)}
+          className="mt-2 flex w-full items-center justify-between py-1 text-[14px] text-slate-500"
+        >
+          <span>+{activity.extraSbg.length} Nomor SBG Lainnya</span>
+          <ChevronDown className={`h-5 w-5 transition-transform ${open ? "rotate-180" : ""}`} />
+        </button>
+        {open && (
+          <ul className="mt-1 space-y-1.5">
+            {activity.extraSbg.map((sbg) => (
+              <li key={sbg} className="flex items-center gap-2 text-[14px] text-slate-600">
+                <SquareUserRound className="h-4 w-4" style={{ color: PRIMARY }} />
+                {sbg}
+              </li>
+            ))}
+          </ul>
+        )}
+        <button className="mt-3 flex w-full items-center gap-3 rounded-xl border border-slate-200 px-3 py-2.5 text-left">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100">
+            <MessageCircle className="h-5 w-5 text-slate-500" />
+          </span>
+          <span className="text-[15px] text-slate-900">Whatsapp</span>
+        </button>
+      </div>
+    </div>
+  );
+}
