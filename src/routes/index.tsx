@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
 import { CameraModal } from "@/components/camera-modal";
 import { ActivityKindBadge } from "@/components/activity-kind-badge";
+import { DigitalActivityAction } from "@/components/digital-activity-action";
 import {
   formatTanggalPanjang,
   profile,
@@ -316,7 +317,15 @@ function Home() {
                           <Crosshair size={18} weight="regular" color={PRIMARY} />
                           {a.leadsCount} Leads
                         </span>
-                        {status === "completed" ? (
+                        {a.kind === "digital" ? (
+                          <DigitalActivityAction
+                            completed={status === "completed"}
+                            onComplete={() => {
+                              updateActivity(a.id, { status: "completed" });
+                              toast("Aktivitas digital ditandai selesai");
+                            }}
+                          />
+                        ) : status === "completed" ? (
                           <span className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-3 py-1.5 text-[12px] font-medium text-slate-500">
                             <CheckCircle size={16} weight="regular" /> Finished{" "}
                             {a.checkOutTime ?? ""}

@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
 import { CameraModal } from "@/components/camera-modal";
 import { ActivityKindBadge } from "@/components/activity-kind-badge";
+import { DigitalActivityAction } from "@/components/digital-activity-action";
 import { formatJadwal, monthOptions, parseMonthOption, STATUS_META } from "@/lib/mock-data";
 import { nowHHMM, updateActivity, useActivities } from "@/lib/activity-store";
 import { ScreenLoader } from "@/components/motion";
@@ -159,7 +160,15 @@ function ActivityList() {
                       <Crosshair className="h-4 w-4 text-[#2953A4]" />
                       {a.leadsCount} Leads
                     </span>
-                    {status === "completed" ? (
+                    {a.kind === "digital" ? (
+                      <DigitalActivityAction
+                        completed={status === "completed"}
+                        onComplete={() => {
+                          updateActivity(a.id, { status: "completed" });
+                          toast("Aktivitas digital ditandai selesai");
+                        }}
+                      />
+                    ) : status === "completed" ? (
                       <span className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-3 py-1.5 text-[12px] font-medium text-slate-500">
                         <CircleCheck className="h-3.5 w-3.5" /> Finished {a.checkOutTime ?? ""}
                       </span>
