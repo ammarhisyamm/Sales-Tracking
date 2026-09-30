@@ -94,8 +94,8 @@ function Home() {
               <User size={31} weight="fill" />
             </span>
             <div className="min-w-0">
-              <p className="text-[15px] text-white/90">Selamat datang</p>
-              <p className="truncate text-[20px] font-bold leading-tight">Sales Gadai Mas</p>
+              <p className="text-[15px] leading-4 text-white/90">Selamat datang</p>
+              <p className="truncate text-[20px] font-bold leading-5">Sales Gadai Mas</p>
             </div>
           </div>
           <Link
@@ -109,26 +109,26 @@ function Home() {
         <div className="absolute left-4 right-4 top-[96px] z-20 text-slate-900">
           <div className="rounded-t-2xl bg-white px-3 pb-1.5 pt-1.5 shadow-[0_10px_24px_rgba(25,42,77,0.08)]">
             <div className="grid grid-cols-2">
-              <div className="min-w-0 border-r border-slate-200 pr-3">
+              <div className="min-w-0 overflow-hidden border-r border-slate-200 pr-3">
                 <p className="flex min-w-0 items-center gap-2 text-[11px] leading-3 text-slate-500">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#e9f1fd] text-[#2953A4]">
                     <Wallet size={16} weight="regular" />
                   </span>
                   Booking (Amount)
                 </p>
-                <p className="mt-0.5 whitespace-nowrap text-[17px] font-bold leading-tight tracking-tight">
+                <p className="mt-0.5 whitespace-nowrap text-[16px] font-bold leading-tight tracking-tight">
                   {rp(profile.booking)} <span className="font-normal text-slate-400">/</span>
                 </p>
                 <p className="text-[12px] text-slate-400">{rp(profile.bookingEstimate)}</p>
               </div>
-              <div className="min-w-0 pl-3">
+              <div className="min-w-0 overflow-hidden pl-3">
                 <p className="flex min-w-0 items-center gap-2 text-[11px] leading-3 text-slate-500">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-[#e9f1fd] text-[#2953A4]">
                     <Scales size={17} weight="regular" />
                   </span>
                   <span className="truncate">Gram (New CIF)</span>
                 </p>
-                <p className="mt-0.5 whitespace-nowrap text-[17px] font-bold leading-tight tracking-tight">
+                <p className="mt-0.5 whitespace-nowrap text-[16px] font-bold leading-tight tracking-tight">
                   {grams.current}g{" "}
                   <span className="font-normal text-slate-400">/ {grams.target}g</span>
                 </p>
@@ -151,7 +151,7 @@ function Home() {
               <p className="flex items-center gap-2 text-[12px] text-slate-500">
                 <EnvelopeSimple size={19} weight="regular" color={PRIMARY} /> ADO
               </p>
-              <p className="whitespace-nowrap text-[15px] font-bold">
+              <p className="min-w-0 truncate text-right text-[14px] font-bold">
                 {rp(ado.current)}
                 <span className="font-normal text-slate-400">/{rp(ado.target)}</span>
               </p>
@@ -185,7 +185,7 @@ function Home() {
                 <button
                   key={r}
                   onClick={() => setRange(r)}
-                  className={`h-9 rounded-full border px-4 text-[14px] font-medium ${
+                  className={`h-9 whitespace-nowrap rounded-full border px-3 text-[13px] font-medium ${
                     range === r
                       ? "border-[#2953A4] bg-[#2953A4] text-white"
                       : "border-slate-200 bg-white text-slate-500"
