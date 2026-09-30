@@ -1,22 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
+import { CaretDown, Eye as PhosphorEye, FileImage, UserSquare } from "@phosphor-icons/react";
 import { useState } from "react";
 import {
   BatteryFull,
   Bell,
   CalendarDays,
-  ChevronDown,
   ChevronRight,
   ClipboardList,
-  Eye,
-  FileMinus,
-  FileImage,
   FileText,
   Home,
   Plus,
   ScanEye,
   Signal,
-  SquareUserRound,
   UserRound,
   Wifi,
 } from "lucide-react";
@@ -76,9 +72,9 @@ interface PenaksirActivity {
 }
 
 const TONE_CLASS: Record<StatusTone, string> = {
-  green: "text-green-600",
+  green: "text-[#008236]",
   amber: "text-amber-700",
-  red: "text-red-600",
+  red: "text-[#e7000b]",
 };
 
 const WEEK_ACTIVITIES: PenaksirActivity[] = [
@@ -366,16 +362,16 @@ function ActivityCard({ activity }: { activity: PenaksirActivity }) {
   const hasExtra = activity.extraSbg.length > 0;
   const showWhatsapp = !hasExtra || !open;
   const showVisit = hasExtra && open;
-  const showPhoto = hasExtra && open;
+  const showPhoto = !hasExtra || open;
   const detailsId = `sbg-details-${activity.id}`;
 
   return (
-    <div className="rounded-lg border border-[#e2e8f0] bg-[#eff6ff] p-3">
-      <p className="flex items-center gap-2 text-[13px] font-medium text-slate-900">
-        <SquareUserRound className="h-4 w-4" style={{ color: PRIMARY }} />
+    <div className="overflow-hidden rounded-lg border border-[#e2e8f0] bg-[#eff6ff]">
+      <p className="flex items-center gap-2 px-3 py-3 text-[13px] font-medium text-slate-900">
+        <UserSquare size={20} weight="regular" color={PRIMARY} />
         {activity.sbg}
       </p>
-      <div className="mt-3 rounded-lg border border-[#e2e8f0] bg-white p-3">
+      <div className="rounded-lg border border-[#e2e8f0] bg-white p-3">
         <div className="flex items-center justify-between gap-2">
           <p className="text-[14px] text-[#45556c]">{activity.name}</p>
           <p className="shrink-0 text-[12px] text-[#45556c]">{activity.date}</p>
@@ -393,7 +389,7 @@ function ActivityCard({ activity }: { activity: PenaksirActivity }) {
             className="mt-2.5 flex w-full items-center justify-between py-1 text-left text-[12px] text-[#62748e]"
           >
             <span>+{activity.extraSbg.length} Nomor SBG Lainnya</span>
-            <ChevronDown className="h-4 w-4 text-[#62748e]" />
+            <CaretDown size={16} weight="regular" color="#62748e" />
           </button>
         )}
         {hasExtra && open && (
@@ -406,7 +402,7 @@ function ActivityCard({ activity }: { activity: PenaksirActivity }) {
               className="flex w-full items-center justify-between py-1 text-left text-[12px] text-[#62748e]"
             >
               <span>+{activity.extraSbg.length} Nomor SBG Lainnya</span>
-              <ChevronDown className="h-4 w-4 rotate-180 text-[#62748e]" />
+              <CaretDown size={16} weight="regular" color="#62748e" className="rotate-180" />
             </button>
             <ul className="mt-1 space-y-2 pb-1 pt-1">
               {activity.extraSbg.map((item, index) => (
@@ -430,7 +426,7 @@ function ActivityCard({ activity }: { activity: PenaksirActivity }) {
             className="mt-3 flex w-full items-center gap-2 rounded-lg border border-[#e2e8f0] p-2 text-left transition-transform duration-100 active:scale-[0.99]"
           >
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f0f7fe]">
-              <FileImage className="h-4 w-4 text-[#62748e]" />
+              <FileImage size={18} weight="regular" color="#62748e" />
             </span>
             <span className="text-[13px] text-[#131324]">Whatsapp</span>
           </button>
@@ -442,7 +438,7 @@ function ActivityCard({ activity }: { activity: PenaksirActivity }) {
             className="mt-3 flex w-full items-center gap-2 rounded-lg border border-[#e2e8f0] p-2 text-left transition-transform duration-100 active:scale-[0.99]"
           >
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f0f7fe]">
-              <FileMinus className="h-5 w-5 text-slate-500" />
+              <FileImage size={18} weight="regular" color="#62748e" />
             </span>
             <span className="text-[13px] text-[#131324]">Visit</span>
           </button>
@@ -453,7 +449,7 @@ function ActivityCard({ activity }: { activity: PenaksirActivity }) {
             aria-label="Lihat foto aktivitas"
             className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-[#2953A4] py-3 text-[14px] font-medium text-white transition-transform duration-100 active:scale-[0.99]"
           >
-            <Eye className="h-4 w-4" />
+            <PhosphorEye size={20} weight="regular" />
             Lihat Foto
           </button>
         )}
