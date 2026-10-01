@@ -58,11 +58,12 @@
   --accent: oklch(0.88 0.16 95);
   --accent-foreground: oklch(0.25 0.08 60);
 
-  --background: oklch(0.98 0.005 250);
+  /* Mobile canvas: a cool gray that keeps white cards visually separated. */
+  --background: #f8fafb;
   --foreground: oklch(0.18 0.04 265);
 
   --surface: oklch(1 0 0);
-  --surface-muted: oklch(0.965 0.008 250);
+  --surface-muted: #f5f7fa;
 
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.18 0.04 265);

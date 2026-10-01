@@ -62,14 +62,14 @@ function ActivityList() {
 
   return (
     <MobileShell hideFab>
-      <div className="bg-white px-5 pb-2 pt-12">
+      <div className="bg-background px-5 pb-2 pt-12">
         <h1 className="text-[22px] font-bold text-slate-900">Aktivitas</h1>
         <p className="mt-0.5 text-[13px] text-slate-500">
           Kelola dan pantau semua kegiatan lapanganmu
         </p>
       </div>
 
-      <div className="space-y-4 bg-white px-5 pb-8">
+      <div className="space-y-4 bg-background px-5 pb-8">
         <div className="flex gap-2 pt-3">
           {TABS.map((t) => (
             <button
