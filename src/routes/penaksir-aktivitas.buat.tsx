@@ -209,22 +209,10 @@ function CreatePenaksirActivity() {
               <button
                 type="button"
                 onClick={() => setCameraOpen(true)}
-                className={`flex min-h-14 w-full items-center gap-3 rounded-[14px] border px-4 text-left ${photoUrl ? "border-[#2953A4] bg-[#f8fbff]" : "border-[#dfe7f2] bg-white"}`}
+                className="flex h-14 w-full items-center justify-between rounded-[14px] border border-[#dfe7f2] bg-white px-4 text-left text-[16px] text-[#62748e]"
               >
-                {photoUrl ? (
-                  <img
-                    src={photoUrl}
-                    alt="Preview foto kegiatan"
-                    className="h-12 w-12 shrink-0 rounded-lg object-cover"
-                  />
-                ) : (
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#eef5ff] text-[#2953A4]">
-                    <Camera size={21} weight="regular" />
-                  </span>
-                )}
-                <span className={`text-[16px] ${photoUrl ? "text-[#2953A4]" : "text-[#90a1b9]"}`}>
-                  {photoUrl ? "Foto kegiatan tersimpan" : "Ambil foto kegiatan"}
-                </span>
+                <span>{photoUrl ? "Foto kegiatan tersimpan" : "Unggah Foto Kegiatan"}</span>
+                <Camera size={22} weight="regular" className="shrink-0 text-[#45556c]" />
               </button>
             </Field>
           )}
