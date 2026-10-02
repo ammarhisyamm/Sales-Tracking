@@ -11,11 +11,9 @@ import {
   CaretDown,
   CaretRight,
   CellSignalFull,
-  ClipboardText,
   Eye as PhosphorEye,
   FileImage,
   FileText as PhosphorFileText,
-  House,
   Plus as PhosphorPlus,
   User as PhosphorUser,
   UserSquare,
@@ -135,7 +133,7 @@ function PenaksirHome() {
   const activities = range === "today" ? [] : WEEK_ACTIVITIES;
 
   return (
-    <MobileShell hideNav hideFab>
+    <MobileShell role="penaksir" hideFab>
       <header
         className="relative h-[170px] overflow-visible px-4 pt-[56px] text-white"
         style={{ background: "linear-gradient(180deg, #28285f 0%, #4d529d 72%, #7b8bd0 100%)" }}
@@ -292,35 +290,6 @@ function PenaksirHome() {
           )}
         </section>
       </div>
-
-      <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[440px] -translate-x-1/2 border-t border-slate-200 bg-white">
-        <ul className="grid grid-cols-3 px-2 pb-4 pt-2">
-          <li className="flex justify-center">
-            <span className="flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[10px] font-medium text-[#2953A4]">
-              <House size={24} weight="fill" />
-              <span>Home</span>
-            </span>
-          </li>
-          <li className="flex justify-center">
-            <Link
-              to="/penaksir-aktivitas"
-              className="flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[10px] font-medium text-slate-400"
-            >
-              <ClipboardText size={24} weight="regular" />
-              <span>Aktivitas</span>
-            </Link>
-          </li>
-          <li className="flex justify-center">
-            <Link
-              to="/profile"
-              className="flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[10px] font-medium text-slate-400"
-            >
-              <PhosphorUser size={24} weight="regular" />
-              <span>Profil</span>
-            </Link>
-          </li>
-        </ul>
-      </nav>
     </MobileShell>
   );
 }

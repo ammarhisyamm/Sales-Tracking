@@ -51,9 +51,9 @@ export function MobileShell({
       </PageTransition>
       {!hideNav && (
         <>
-          <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[440px] -translate-x-1/2 border-t border-border bg-card/95 backdrop-blur">
+          <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[440px] -translate-x-1/2 border-t border-slate-200 bg-white">
             <ul
-              className={`grid ${role === "sales" ? "grid-cols-5" : "grid-cols-3"} px-2 pb-3 pt-2`}
+              className={`grid ${role === "sales" ? "grid-cols-5" : "grid-cols-3"} px-2 pb-4 pt-2`}
             >
               {tabs.map((t) => {
                 const Icon = t.icon;
@@ -66,7 +66,7 @@ export function MobileShell({
                     <Link
                       to={t.to}
                       className={`flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[13px] font-medium transition-colors ${
-                        active ? "text-brand" : "text-muted-foreground"
+                        active ? "text-[#2953A4]" : "text-[#90a4bf]"
                       }`}
                     >
                       <Icon size={24} weight={active ? "fill" : "regular"} />
