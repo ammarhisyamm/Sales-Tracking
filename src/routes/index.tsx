@@ -171,7 +171,7 @@ function Home() {
         </svg>
       </header>
 
-      <div className="space-y-6 bg-background px-4 pb-28 pt-[170px]">
+      <div className="space-y-6 bg-background px-4 pb-28 pt-[148px]">
         <ScreenLoader skeleton={<HomeSkeleton />}>
           <section>
             <h2 className="text-[18px] font-semibold text-slate-900">Target Leads dan Closing</h2>
