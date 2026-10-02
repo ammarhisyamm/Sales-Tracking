@@ -59,6 +59,7 @@ const RANGE_SUMMARY: Record<
 };
 
 type StatusTone = "green" | "amber" | "red";
+type FollowUpMedia = "Visit" | "Telepon" | "Whatsapp";
 
 interface SbgItem {
   number: string;
@@ -73,6 +74,7 @@ export interface PenaksirActivity {
   title: string;
   status: string;
   tone: StatusTone;
+  media: FollowUpMedia;
   extraSbg: SbgItem[];
   photoUrl?: string;
 }
@@ -92,6 +94,7 @@ export const WEEK_ACTIVITIES: PenaksirActivity[] = [
     title: "Follow Up OVD",
     status: "Deal Transaksi",
     tone: "green",
+    media: "Whatsapp",
     extraSbg: [
       { number: "001568002500007", followUp: "Follow Up ke-1" },
       { number: "001568002500006", followUp: "Follow Up ke-2" },
@@ -107,6 +110,7 @@ export const WEEK_ACTIVITIES: PenaksirActivity[] = [
     title: "Follow Up RO | Follow up Ke-1",
     status: "Masih Dipertimbangkan",
     tone: "amber",
+    media: "Whatsapp",
     extraSbg: [],
   },
   {
@@ -117,6 +121,7 @@ export const WEEK_ACTIVITIES: PenaksirActivity[] = [
     title: "Follow Up RO | Follow up Ke-1",
     status: "Tidak Dapat Dihubungi",
     tone: "red",
+    media: "Whatsapp",
     extraSbg: [],
   },
 ];
@@ -334,9 +339,7 @@ export function ActivityCard({ activity }: { activity: PenaksirActivity }) {
   const storedPhotoUrl = usePenaksirPhoto(activity.sbg);
   const photoUrl = photoOverride ?? storedPhotoUrl ?? activity.photoUrl;
   const hasExtra = activity.extraSbg.length > 0;
-  const showWhatsapp = !hasExtra || !open;
-  const showVisit = hasExtra && open;
-  const showPhoto = !hasExtra || open;
+  const showPhoto = activity.media === "Visit";
   const detailsId = `sbg-details-${activity.id}`;
 
   return (
@@ -393,30 +396,16 @@ export function ActivityCard({ activity }: { activity: PenaksirActivity }) {
           </div>
         )}
 
-        {showWhatsapp && (
-          <button
-            type="button"
-            aria-label="Hubungi nasabah melalui Whatsapp"
-            className="mt-3 flex w-full items-center gap-2 rounded-lg border border-[#e2e8f0] p-2 text-left transition-transform duration-100 active:scale-[0.99]"
-          >
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f0f7fe]">
-              <FileImage size={18} weight="regular" color="#62748e" />
-            </span>
-            <span className="text-[13px] text-[#131324]">Whatsapp</span>
-          </button>
-        )}
-        {showVisit && (
-          <button
-            type="button"
-            aria-label="Kunjungi nasabah"
-            className="mt-3 flex w-full items-center gap-2 rounded-lg border border-[#e2e8f0] p-2 text-left transition-transform duration-100 active:scale-[0.99]"
-          >
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f0f7fe]">
-              <FileImage size={18} weight="regular" color="#62748e" />
-            </span>
-            <span className="text-[13px] text-[#131324]">Visit</span>
-          </button>
-        )}
+        <button
+          type="button"
+          aria-label={`Media follow up ${activity.media}`}
+          className="mt-3 flex w-full items-center gap-2 rounded-lg border border-[#e2e8f0] p-2 text-left transition-transform duration-100 active:scale-[0.99]"
+        >
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f0f7fe]">
+            <FileImage size={18} weight="regular" color="#62748e" />
+          </span>
+          <span className="text-[13px] text-[#131324]">{activity.media}</span>
+        </button>
         {showPhoto && (
           <button
             type="button"
