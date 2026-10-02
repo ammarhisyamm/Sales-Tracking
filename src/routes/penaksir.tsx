@@ -1,9 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
+import { CameraModal } from "@/components/camera-modal";
+import { OverlayPortal } from "@/components/motion";
 import {
   ArrowsClockwise,
   BatteryFull as PhosphorBatteryFull,
   Bell as PhosphorBell,
+  Camera,
   CaretDown,
   CaretRight,
   CellSignalFull,
@@ -16,6 +19,7 @@ import {
   User as PhosphorUser,
   UserSquare,
   WifiHigh,
+  X,
 } from "@phosphor-icons/react";
 import { useState } from "react";
 
@@ -71,6 +75,7 @@ export interface PenaksirActivity {
   status: string;
   tone: StatusTone;
   extraSbg: SbgItem[];
+  photoUrl?: string;
 }
 
 const TONE_CLASS: Record<StatusTone, string> = {
@@ -353,6 +358,9 @@ function SummaryCard({
 
 export function ActivityCard({ activity }: { activity: PenaksirActivity }) {
   const [open, setOpen] = useState(false);
+  const [photoOpen, setPhotoOpen] = useState(false);
+  const [cameraOpen, setCameraOpen] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState(activity.photoUrl);
   const hasExtra = activity.extraSbg.length > 0;
   const showWhatsapp = !hasExtra || !open;
   const showVisit = hasExtra && open;
@@ -441,6 +449,7 @@ export function ActivityCard({ activity }: { activity: PenaksirActivity }) {
           <button
             type="button"
             aria-label="Lihat foto aktivitas"
+            onClick={() => setPhotoOpen(true)}
             className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-[#2953A4] py-3 text-[14px] font-medium text-white transition-transform duration-100 active:scale-[0.99]"
           >
             <PhosphorEye size={20} weight="regular" />
@@ -448,6 +457,62 @@ export function ActivityCard({ activity }: { activity: PenaksirActivity }) {
           </button>
         )}
       </div>
+
+      {photoOpen && (
+        <OverlayPortal>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+            <div className="w-full max-w-[360px] rounded-2xl bg-white px-5 pb-7 pt-6 shadow-2xl">
+              <div className="flex items-center justify-between">
+                <h2 className="text-[22px] font-bold text-[#131324]">Foto Kegiatan</h2>
+                <button
+                  type="button"
+                  onClick={() => setPhotoOpen(false)}
+                  aria-label="Tutup foto kegiatan"
+                >
+                  <X size={28} weight="regular" className="text-[#131324]" />
+                </button>
+              </div>
+              <div className="mt-5 flex h-[390px] items-center justify-center overflow-hidden rounded-xl bg-[#eeeeee] p-3">
+                {photoUrl ? (
+                  <img
+                    src={photoUrl}
+                    alt="Foto kegiatan"
+                    className="max-h-full max-w-full rounded-lg object-contain"
+                  />
+                ) : (
+                  <div className="text-center text-[14px] text-slate-500">
+                    <Camera size={32} weight="regular" className="mx-auto mb-2" />
+                    Foto kegiatan belum tersedia
+                  </div>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setPhotoOpen(false);
+                  setCameraOpen(true);
+                }}
+                className="mx-auto mt-5 inline-flex items-center gap-2 rounded-xl bg-[#315bac] px-6 py-3 text-[15px] font-semibold text-white"
+              >
+                <Camera size={20} weight="regular" /> Foto Ulang
+              </button>
+            </div>
+          </div>
+        </OverlayPortal>
+      )}
+
+      {cameraOpen && (
+        <CameraModal
+          mode="photo"
+          onClose={() => setCameraOpen(false)}
+          onSave={(url) => {
+            setPhotoUrl(url);
+            setCameraOpen(false);
+            setPhotoOpen(true);
+          }}
+          onSkip={() => setCameraOpen(false)}
+        />
+      )}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   ArrowLeft,
   BatteryFull,
+  Camera,
   CalendarDots,
   CaretDown,
   CellSignalFull,
@@ -11,6 +12,7 @@ import {
 } from "@phosphor-icons/react";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { MobileShell } from "@/components/mobile-shell";
+import { CameraModal } from "@/components/camera-modal";
 import { OverlayPortal, Spinner, useMinBusy } from "@/components/motion";
 import { formatInputDateLong, todayInputDate } from "@/lib/date-utils";
 
@@ -50,19 +52,23 @@ function CreatePenaksirActivity() {
   const [media, setMedia] = useState<(typeof MEDIA_OPTIONS)[number] | "">("");
   const [result, setResult] = useState<(typeof RESULT_OPTIONS)[number] | "">("");
   const [selectedSbg, setSelectedSbg] = useState<string[]>([]);
+  const [photoUrl, setPhotoUrl] = useState("");
+  const [cameraOpen, setCameraOpen] = useState(false);
   const [picker, setPicker] = useState<Picker>(null);
   const [saved, setSaved] = useState(false);
   const [busy, runSave] = useMinBusy();
 
   const isOvd = activity === "Follow Up OVD";
+  const isVisit = media === "Visit";
   const availableSbg = SBG_BY_CIF[cif.trim().toUpperCase()] ?? [];
   const valid = Boolean(
     activity &&
-      cif.trim() &&
-      date &&
-      media &&
-      result &&
-      (!isOvd || (availableSbg.length > 0 && selectedSbg.length)),
+    cif.trim() &&
+    date &&
+    media &&
+    result &&
+    (!isVisit || photoUrl) &&
+    (!isOvd || (availableSbg.length > 0 && selectedSbg.length)),
   );
 
   const chooseActivity = (value: ActivityName) => {
@@ -194,6 +200,31 @@ function CreatePenaksirActivity() {
             />
           </Field>
 
+          {isVisit && (
+            <Field label="Foto Kegiatan">
+              <button
+                type="button"
+                onClick={() => setCameraOpen(true)}
+                className={`flex min-h-14 w-full items-center gap-3 rounded-[14px] border px-4 text-left ${photoUrl ? "border-[#2953A4] bg-[#f8fbff]" : "border-[#dfe7f2] bg-white"}`}
+              >
+                {photoUrl ? (
+                  <img
+                    src={photoUrl}
+                    alt="Preview foto kegiatan"
+                    className="h-12 w-12 shrink-0 rounded-lg object-cover"
+                  />
+                ) : (
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#eef5ff] text-[#2953A4]">
+                    <Camera size={21} weight="regular" />
+                  </span>
+                )}
+                <span className={`text-[16px] ${photoUrl ? "text-[#2953A4]" : "text-[#90a1b9]"}`}>
+                  {photoUrl ? "Foto kegiatan tersimpan" : "Ambil foto kegiatan"}
+                </span>
+              </button>
+            </Field>
+          )}
+
           <Field label="Hasil Aktivitas">
             <PickerField
               value={result}
@@ -229,6 +260,7 @@ function CreatePenaksirActivity() {
           onActivity={chooseActivity}
           onMedia={(value) => {
             setMedia(value);
+            if (value !== "Visit") setPhotoUrl("");
             setPicker(null);
           }}
           onResult={(value) => {
@@ -262,6 +294,18 @@ function CreatePenaksirActivity() {
             </div>
           </div>
         </OverlayPortal>
+      )}
+
+      {cameraOpen && (
+        <CameraModal
+          mode="photo"
+          onClose={() => setCameraOpen(false)}
+          onSave={(url) => {
+            setPhotoUrl(url);
+            setCameraOpen(false);
+          }}
+          onSkip={() => setCameraOpen(false)}
+        />
       )}
     </MobileShell>
   );
