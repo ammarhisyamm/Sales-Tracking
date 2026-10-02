@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
 import { CameraModal } from "@/components/camera-modal";
 import { OverlayPortal } from "@/components/motion";
+import { savePenaksirPhoto, usePenaksirPhoto } from "@/lib/penaksir-photo-store";
 import {
   ArrowsClockwise,
   BatteryFull as PhosphorBatteryFull,
@@ -360,7 +361,9 @@ export function ActivityCard({ activity }: { activity: PenaksirActivity }) {
   const [open, setOpen] = useState(false);
   const [photoOpen, setPhotoOpen] = useState(false);
   const [cameraOpen, setCameraOpen] = useState(false);
-  const [photoUrl, setPhotoUrl] = useState(activity.photoUrl);
+  const [photoOverride, setPhotoOverride] = useState<string>();
+  const storedPhotoUrl = usePenaksirPhoto(activity.sbg);
+  const photoUrl = photoOverride ?? storedPhotoUrl ?? activity.photoUrl;
   const hasExtra = activity.extraSbg.length > 0;
   const showWhatsapp = !hasExtra || !open;
   const showVisit = hasExtra && open;
@@ -506,7 +509,8 @@ export function ActivityCard({ activity }: { activity: PenaksirActivity }) {
           mode="photo"
           onClose={() => setCameraOpen(false)}
           onSave={(url) => {
-            setPhotoUrl(url);
+            setPhotoOverride(url);
+            savePenaksirPhoto(activity.sbg, url);
             setCameraOpen(false);
             setPhotoOpen(true);
           }}

@@ -15,6 +15,7 @@ import { MobileShell } from "@/components/mobile-shell";
 import { CameraModal } from "@/components/camera-modal";
 import { OverlayPortal, Spinner, useMinBusy } from "@/components/motion";
 import { formatInputDateLong, todayInputDate } from "@/lib/date-utils";
+import { savePenaksirPhoto } from "@/lib/penaksir-photo-store";
 
 export const Route = createFileRoute("/penaksir-aktivitas/buat")({
   head: () => ({ meta: [{ title: "Tambah Aktivitas Penaksir" }] }),
@@ -82,7 +83,10 @@ function CreatePenaksirActivity() {
   const save = (event: FormEvent) => {
     event.preventDefault();
     if (!valid || busy) return;
-    runSave(() => setSaved(true));
+    runSave(() => {
+      if (isVisit && photoUrl) savePenaksirPhoto(cif, photoUrl);
+      setSaved(true);
+    });
   };
 
   return (
