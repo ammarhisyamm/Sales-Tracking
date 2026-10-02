@@ -133,9 +133,9 @@ const KacabAktivitasBuatRoute = KacabAktivitasBuatRouteImport.update({
   getParentRoute: () => KacabAktivitasRoute,
 } as any)
 const PenaksirAktivitasBuatRoute = PenaksirAktivitasBuatRouteImport.update({
-  id: '/penaksir-aktivitas/buat',
-  path: '/penaksir-aktivitas/buat',
-  getParentRoute: () => rootRouteImport,
+  id: '/buat',
+  path: '/buat',
+  getParentRoute: () => PenaksirAktivitasRoute,
 } as any)
 const TambahLeadsActivityIdRoute = TambahLeadsActivityIdRouteImport.update({
   id: '/tambah-leads/$activityId',
@@ -155,7 +155,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/notifikasi': typeof NotifikasiRoute
   '/penaksir': typeof PenaksirRoute
-  '/penaksir-aktivitas': typeof PenaksirAktivitasRoute
+  '/penaksir-aktivitas': typeof PenaksirAktivitasRouteWithChildren
   '/profile': typeof ProfileRoute
   '/program': typeof ProgramRoute
   '/ubah-password': typeof UbahPasswordRoute
@@ -178,7 +178,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/notifikasi': typeof NotifikasiRoute
   '/penaksir': typeof PenaksirRoute
-  '/penaksir-aktivitas': typeof PenaksirAktivitasRoute
+  '/penaksir-aktivitas': typeof PenaksirAktivitasRouteWithChildren
   '/profile': typeof ProfileRoute
   '/program': typeof ProgramRoute
   '/ubah-password': typeof UbahPasswordRoute
@@ -203,7 +203,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/notifikasi': typeof NotifikasiRoute
   '/penaksir': typeof PenaksirRoute
-  '/penaksir-aktivitas': typeof PenaksirAktivitasRoute
+  '/penaksir-aktivitas': typeof PenaksirAktivitasRouteWithChildren
   '/profile': typeof ProfileRoute
   '/program': typeof ProgramRoute
   '/ubah-password': typeof UbahPasswordRoute
@@ -301,12 +301,11 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   NotifikasiRoute: typeof NotifikasiRoute
   PenaksirRoute: typeof PenaksirRoute
-  PenaksirAktivitasRoute: typeof PenaksirAktivitasRoute
+  PenaksirAktivitasRoute: typeof PenaksirAktivitasRouteWithChildren
   ProfileRoute: typeof ProfileRoute
   ProgramRoute: typeof ProgramRoute
   UbahPasswordRoute: typeof UbahPasswordRoute
   IsiIdRoute: typeof IsiIdRoute
-  PenaksirAktivitasBuatRoute: typeof PenaksirAktivitasBuatRoute
   TambahLeadsActivityIdRoute: typeof TambahLeadsActivityIdRoute
 }
 
@@ -454,10 +453,10 @@ declare module '@tanstack/react-router' {
     }
     '/penaksir-aktivitas/buat': {
       id: '/penaksir-aktivitas/buat'
-      path: '/penaksir-aktivitas/buat'
+      path: '/buat'
       fullPath: '/penaksir-aktivitas/buat'
       preLoaderRoute: typeof PenaksirAktivitasBuatRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof PenaksirAktivitasRoute
     }
     '/tambah-leads/$activityId': {
       id: '/tambah-leads/$activityId'
@@ -497,6 +496,17 @@ const KacabAktivitasRouteWithChildren = KacabAktivitasRoute._addFileChildren(
   KacabAktivitasRouteChildren,
 )
 
+interface PenaksirAktivitasRouteChildren {
+  PenaksirAktivitasBuatRoute: typeof PenaksirAktivitasBuatRoute
+}
+
+const PenaksirAktivitasRouteChildren: PenaksirAktivitasRouteChildren = {
+  PenaksirAktivitasBuatRoute: PenaksirAktivitasBuatRoute,
+}
+
+const PenaksirAktivitasRouteWithChildren =
+  PenaksirAktivitasRoute._addFileChildren(PenaksirAktivitasRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AktivitasRoute: AktivitasRouteWithChildren,
@@ -509,24 +519,13 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   NotifikasiRoute: NotifikasiRoute,
   PenaksirRoute: PenaksirRoute,
-  PenaksirAktivitasRoute: PenaksirAktivitasRoute,
+  PenaksirAktivitasRoute: PenaksirAktivitasRouteWithChildren,
   ProfileRoute: ProfileRoute,
   ProgramRoute: ProgramRoute,
   UbahPasswordRoute: UbahPasswordRoute,
   IsiIdRoute: IsiIdRoute,
-  PenaksirAktivitasBuatRoute: PenaksirAktivitasBuatRoute,
   TambahLeadsActivityIdRoute: TambahLeadsActivityIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
