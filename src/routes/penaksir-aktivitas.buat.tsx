@@ -35,6 +35,10 @@ const SBG_OPTIONS = [
   "001568002500002 - Follow Up ke 5",
 ] as const;
 
+const SBG_BY_CIF: Record<string, readonly string[]> = {
+  "1312T1T181817": SBG_OPTIONS,
+};
+
 type ActivityName = (typeof ACTIVITY_OPTIONS)[number];
 type Picker = "activity" | "media" | "result" | "sbg" | null;
 
@@ -51,13 +55,20 @@ function CreatePenaksirActivity() {
   const [busy, runSave] = useMinBusy();
 
   const isOvd = activity === "Follow Up OVD";
+  const availableSbg = SBG_BY_CIF[cif.trim().toUpperCase()] ?? [];
   const valid = Boolean(
-    activity && cif.trim() && date && media && result && (!isOvd || selectedSbg.length),
+    activity &&
+      cif.trim() &&
+      date &&
+      media &&
+      result &&
+      (!isOvd || (availableSbg.length > 0 && selectedSbg.length)),
   );
 
   const chooseActivity = (value: ActivityName) => {
     setActivity(value);
-    setResult("");
+    setResult(value === "Follow Up OVD" ? "Belum Ada Respon" : "");
+    setMedia(value === "Follow Up OVD" ? "Telepon" : "");
     setSelectedSbg([]);
     setPicker(null);
   };
@@ -107,33 +118,44 @@ function CreatePenaksirActivity() {
           <Field label="CIF (Nama Nasabah)">
             <input
               value={cif}
-              onChange={(event) => setCif(event.target.value)}
+              onChange={(event) => {
+                setCif(event.target.value);
+                setSelectedSbg([]);
+              }}
               placeholder="Masukkan CIF"
               className="h-14 w-full rounded-[14px] border border-[#dfe7f2] bg-white px-4 text-[16px] text-[#131324] outline-none placeholder:text-[#90a1b9] focus:border-[#2953A4]"
             />
           </Field>
 
-          <Field label="Follow Up Ke">
-            <div className="flex h-14 items-center rounded-[14px] border border-[#dfe7f2] bg-white px-4 text-[16px] text-[#90a1b9]">
-              [auto fill]
-            </div>
-          </Field>
+          {!isOvd && (
+            <Field label="Follow Up Ke">
+              <div className="flex h-14 items-center rounded-[14px] border border-[#dfe7f2] bg-white px-4 text-[16px] text-[#90a1b9]">
+                [auto fill]
+              </div>
+            </Field>
+          )}
 
           {isOvd && (
             <Field label="Nomor SBG">
               <PickerField
                 value={selectedSbg.length ? `${selectedSbg.length} nomor SBG dipilih` : ""}
-                placeholder="Pilih Nomor SBG"
+                placeholder={
+                  !cif.trim()
+                    ? "Masukkan CIF terlebih dahulu"
+                    : availableSbg.length
+                      ? "Pilih Nomor SBG"
+                      : "Nomor SBG tidak ditemukan"
+                }
+                disabled={!availableSbg.length}
                 onClick={() => setPicker("sbg")}
               />
               {selectedSbg.length > 0 && (
-                <div className="mt-2 space-y-2">
+                <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
                   {selectedSbg.map((item) => (
                     <div
                       key={item}
-                      className="flex items-center justify-between rounded-lg bg-[#eef5ff] px-3 py-2 text-[13px] text-[#415574]"
+                      className="flex shrink-0 items-center gap-2 rounded-full bg-[#eef5ff] px-3 py-2 text-[13px] text-[#2953A4]"
                     >
-                      <span className="truncate pr-2">{item}</span>
                       <button
                         type="button"
                         onClick={() =>
@@ -144,6 +166,7 @@ function CreatePenaksirActivity() {
                       >
                         <X size={16} />
                       </button>
+                      <span className="truncate">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -201,6 +224,7 @@ function CreatePenaksirActivity() {
           media={media}
           result={result}
           selectedSbg={selectedSbg}
+          sbgOptions={availableSbg}
           onClose={() => setPicker(null)}
           onActivity={chooseActivity}
           onMedia={(value) => {
@@ -255,17 +279,20 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 function PickerField({
   value,
   placeholder,
+  disabled = false,
   onClick,
 }: {
   value: string;
   placeholder: string;
+  disabled?: boolean;
   onClick: () => void;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`flex h-14 w-full items-center justify-between rounded-[14px] border border-[#dfe7f2] bg-white px-4 text-left text-[16px] ${value ? "text-[#131324]" : "text-[#90a1b9]"}`}
+      disabled={disabled}
+      className={`flex h-14 w-full items-center justify-between rounded-[14px] border border-[#dfe7f2] bg-white px-4 text-left text-[16px] disabled:cursor-not-allowed disabled:bg-[#f8fafc] ${value ? "text-[#131324]" : "text-[#90a1b9]"}`}
     >
       <span className="truncate">{value || placeholder}</span>
       <CaretDown className="ml-3 shrink-0 text-[#62748e]" size={22} />
@@ -279,6 +306,7 @@ function PickerSheet({
   media,
   result,
   selectedSbg,
+  sbgOptions,
   onClose,
   onActivity,
   onMedia,
@@ -290,6 +318,7 @@ function PickerSheet({
   media: (typeof MEDIA_OPTIONS)[number] | "";
   result: (typeof RESULT_OPTIONS)[number] | "";
   selectedSbg: string[];
+  sbgOptions: readonly string[];
   onClose: () => void;
   onActivity: (value: ActivityName) => void;
   onMedia: (value: (typeof MEDIA_OPTIONS)[number]) => void;
@@ -311,7 +340,7 @@ function PickerSheet({
         ? MEDIA_OPTIONS
         : picker === "result"
           ? RESULT_OPTIONS
-          : SBG_OPTIONS;
+          : sbgOptions;
 
   return (
     <OverlayPortal>
@@ -335,6 +364,11 @@ function PickerSheet({
             </button>
           </div>
           <div className="max-h-[48vh] overflow-y-auto">
+            {options.length === 0 && picker === "sbg" && (
+              <p className="py-6 text-center text-[14px] text-[#90a1b9]">
+                Masukkan CIF yang terdaftar untuk melihat Nomor SBG.
+              </p>
+            )}
             {options.map((option) => {
               const selected =
                 picker === "sbg"

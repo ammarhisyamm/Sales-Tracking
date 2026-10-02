@@ -62,7 +62,7 @@ interface SbgItem {
   followUp: string;
 }
 
-interface PenaksirActivity {
+export interface PenaksirActivity {
   id: string;
   sbg: string;
   name: string;
@@ -79,7 +79,7 @@ const TONE_CLASS: Record<StatusTone, string> = {
   red: "text-[#e7000b]",
 };
 
-const WEEK_ACTIVITIES: PenaksirActivity[] = [
+export const WEEK_ACTIVITIES: PenaksirActivity[] = [
   {
     id: "ovd-deal",
     sbg: "1312T1T181817",
@@ -247,7 +247,7 @@ function PenaksirHome() {
           <div className="mb-2.5 flex items-center justify-between">
             <h2 className="text-[17px] font-bold text-slate-900">Aktivitas Hari Ini</h2>
             <Link
-              to="/aktivitas"
+              to="/penaksir-aktivitas"
               className="inline-flex items-center gap-0.5 text-[13px] font-medium text-slate-500"
             >
               Lihat Semua <CaretRight size={17} weight="regular" />
@@ -297,7 +297,7 @@ function PenaksirHome() {
           </li>
           <li className="flex justify-center">
             <Link
-              to="/aktivitas"
+              to="/penaksir-aktivitas"
               className="flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[10px] font-medium text-slate-400"
             >
               <ClipboardText size={23} weight="regular" />
@@ -351,7 +351,7 @@ function SummaryCard({
   );
 }
 
-function ActivityCard({ activity }: { activity: PenaksirActivity }) {
+export function ActivityCard({ activity }: { activity: PenaksirActivity }) {
   const [open, setOpen] = useState(false);
   const hasExtra = activity.extraSbg.length > 0;
   const showWhatsapp = !hasExtra || !open;

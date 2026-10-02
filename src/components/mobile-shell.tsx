@@ -24,6 +24,12 @@ const kacabTabs = [
   { to: "/kacab-profile", label: "Profil", icon: UserCircle },
 ] as const;
 
+const penaksirTabs = [
+  { to: "/penaksir", label: "Home", icon: House },
+  { to: "/penaksir-aktivitas", label: "Aktivitas", icon: ClipboardText },
+  { to: "/profile", label: "Profil", icon: UserCircle },
+] as const;
+
 export function MobileShell({
   children,
   hideNav = false,
@@ -33,10 +39,10 @@ export function MobileShell({
   children: ReactNode;
   hideNav?: boolean;
   hideFab?: boolean;
-  role?: "sales" | "kacab";
+  role?: "sales" | "kacab" | "penaksir";
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const tabs = role === "kacab" ? kacabTabs : salesTabs;
+  const tabs = role === "kacab" ? kacabTabs : role === "penaksir" ? penaksirTabs : salesTabs;
 
   return (
     <div className="mobile-shell relative">
@@ -47,12 +53,14 @@ export function MobileShell({
         <>
           <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[440px] -translate-x-1/2 border-t border-border bg-card/95 backdrop-blur">
             <ul
-              className={`grid ${role === "kacab" ? "grid-cols-3" : "grid-cols-5"} px-2 pb-3 pt-2`}
+              className={`grid ${role === "sales" ? "grid-cols-5" : "grid-cols-3"} px-2 pb-3 pt-2`}
             >
               {tabs.map((t) => {
                 const Icon = t.icon;
                 const active =
-                  t.to === "/" || t.to === "/kacab" ? pathname === t.to : pathname.startsWith(t.to);
+                  t.to === "/" || t.to === "/kacab" || t.to === "/penaksir"
+                    ? pathname === t.to
+                    : pathname.startsWith(t.to);
                 return (
                   <li key={t.to} className="flex justify-center">
                     <Link
