@@ -30,6 +30,8 @@ function persist() {
 function seed(activityId: string, source: string): Contact[] {
   // Aktivitas buatan user mulai kosong — tanpa contoh
   if (activityId.startsWith("u-")) return [];
+  // Aktivitas online menunggu nasabah mengisi formulir pendaftaran.
+  if (source === "Event") return [];
   const related = contacts.filter((c) => c.source === source);
   const base = related.length > 0 ? related : contacts.slice(0, 3);
   return base.map((c) => ({ ...c }));
@@ -62,6 +64,6 @@ export function useLeads(activityId: string, source: string): Contact[] {
   return useSyncExternalStore(
     subscribe,
     () => ensure(activityId, source),
-    () => seed(activityId, source)
+    () => seed(activityId, source),
   );
 }

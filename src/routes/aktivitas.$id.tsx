@@ -1,7 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
 import { CameraModal } from "@/components/camera-modal";
-import { ActivityKindBadge } from "@/components/activity-kind-badge";
 import {
   activities,
   fillWaTemplate,
@@ -21,6 +20,7 @@ import { toast } from "@/components/motion";
 import { useState } from "react";
 import {
   ArrowLeft,
+  CalendarDays,
   Camera,
   Check,
   Copy,
@@ -142,9 +142,6 @@ function ActivityDetail() {
             </span>
             <div className="min-w-0">
               <p className="truncate text-[17px] font-medium text-slate-900">{activity.type}</p>
-              <div className="mt-1">
-                <ActivityKindBadge kind={activity.kind} />
-              </div>
             </div>
           </div>
 
@@ -271,34 +268,46 @@ function ActivityDetail() {
               </Link>
             </div>
             <div className="space-y-2.5">
-              {leads.map((c) => (
-                <div
-                  key={c.id}
-                  className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-[14px] font-bold text-slate-900">{c.name}</p>
-                    <p className="mt-0.5 truncate text-[12px] text-slate-500">
-                      {c.job ? `${c.job} | ${c.status}` : `${c.status} · ${c.lastContact}`}
-                    </p>
-                  </div>
-                  <a
-                    href={`tel:${c.phone}`}
-                    aria-label={`Telepon ${c.name}`}
-                    className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#2953A4]/10 transition-transform duration-100 active:scale-90"
-                    style={{ color: PRIMARY }}
-                  >
-                    <Phone className="h-4.5 w-4.5" />
-                  </a>
-                  <button
-                    onClick={() => setWaLead(c)}
-                    aria-label={`WhatsApp ${c.name}`}
-                    className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-green-100 text-green-600 transition-transform duration-100 active:scale-90"
-                  >
-                    <MessageCircle className="h-4.5 w-4.5" />
-                  </button>
+              {leads.length === 0 ? (
+                <div className="flex flex-col items-center px-4 pb-5 pt-7 text-center">
+                  <LeadsEmptyStateIcon />
+                  <p className="mt-5 text-[18px] font-semibold text-slate-900">
+                    Belum Ada Leads Tercatat
+                  </p>
+                  <p className="mt-1 text-[14px] text-[#45556c]">
+                    Tambahkan leads untuk melengkapi hasil aktivitas.
+                  </p>
                 </div>
-              ))}
+              ) : (
+                leads.map((c) => (
+                  <div
+                    key={c.id}
+                    className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[14px] font-bold text-slate-900">{c.name}</p>
+                      <p className="mt-0.5 truncate text-[12px] text-slate-500">
+                        {c.job ? `${c.job} | ${c.status}` : `${c.status} · ${c.lastContact}`}
+                      </p>
+                    </div>
+                    <a
+                      href={`tel:${c.phone}`}
+                      aria-label={`Telepon ${c.name}`}
+                      className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#2953A4]/10 transition-transform duration-100 active:scale-90"
+                      style={{ color: PRIMARY }}
+                    >
+                      <Phone className="h-4.5 w-4.5" />
+                    </a>
+                    <button
+                      onClick={() => setWaLead(c)}
+                      aria-label={`WhatsApp ${c.name}`}
+                      className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-green-100 text-green-600 transition-transform duration-100 active:scale-90"
+                    >
+                      <MessageCircle className="h-4.5 w-4.5" />
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </ScreenLoader>
@@ -323,6 +332,17 @@ function ActivityDetail() {
         />
       )}
     </MobileShell>
+  );
+}
+
+function LeadsEmptyStateIcon() {
+  return (
+    <div className="relative flex h-20 w-20 items-center justify-center rounded-lg bg-[#f1f1f1]">
+      <CalendarDays className="h-12 w-12 text-[#607b9d]" strokeWidth={2.5} />
+      <span className="absolute -bottom-1 -right-2 flex h-9 w-9 items-center justify-center rounded-full bg-[#aebdd0] text-white">
+        <X className="h-6 w-6" strokeWidth={3} />
+      </span>
+    </div>
   );
 }
 

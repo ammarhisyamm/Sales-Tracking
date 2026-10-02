@@ -52,19 +52,19 @@ function PublicLeadForm() {
     runSubmit(() => {
       addLead(activity.id, activity.type, {
         id: `c-${Date.now()}`,
-      name: name.trim(),
-      phone: phone.trim(),
-      status: "Warm",
-      source: activity.type,
-      lastContact: "Baru saja",
-      hasGold: false,
-      interested: true,
-      gender: gender as "Laki-Laki" | "Perempuan",
-      address: address.trim() || undefined,
-      kelurahan,
-      wilayah: KELURAHAN_WILAYAH[kelurahan],
-      job,
-    });
+        name: name.trim(),
+        phone: phone.trim(),
+        status: "Warm",
+        source: activity.type,
+        lastContact: "Baru saja",
+        hasGold: false,
+        interested: true,
+        gender: gender as "Laki-Laki" | "Perempuan",
+        address: address.trim() || undefined,
+        kelurahan,
+        wilayah: KELURAHAN_WILAYAH[kelurahan],
+        job,
+      });
       setDone(true);
     });
   };
@@ -92,8 +92,8 @@ function PublicLeadForm() {
           </span>
           <h1 className="mt-4 text-lg font-bold text-slate-900">Link Belum Aktif</h1>
           <p className="mt-2 text-sm text-slate-500">
-            Aktivitas <b>{activity.locationName}</b> ({formatTanggalPanjang(activity.date)}) belum berjalan.
-            Link ini aktif setelah sales check-in di lokasi.
+            Aktivitas <b>{activity.locationName}</b> ({formatTanggalPanjang(activity.date)}) belum
+            berjalan. Link ini aktif setelah sales check-in di lokasi.
           </p>
         </div>
       </MobileShell>
@@ -118,7 +118,11 @@ function PublicLeadForm() {
     <MobileShell hideNav>
       <div
         className="px-5 pb-8 pt-12 text-white"
-        style={{ backgroundImage: "url('/header-gradient.svg')", backgroundSize: "cover", backgroundPosition: "center" }}
+        style={{
+          backgroundImage: "url('/program-banner.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
         <h1 className="text-[26px] font-bold leading-tight">Formulir Pendaftaran</h1>
         <span className="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-[13px] font-medium text-slate-900">
@@ -127,10 +131,7 @@ function PublicLeadForm() {
         </span>
       </div>
 
-      <form
-        onSubmit={submit}
-        className="space-y-4 bg-white px-5 py-5"
-      >
+      <form onSubmit={submit} className="space-y-4 bg-white px-5 py-5">
         <div>
           <Label>Nama Calon Nasabah</Label>
           <input
@@ -149,7 +150,9 @@ function PublicLeadForm() {
               onChange={(e) => setGender(e.target.value)}
               className={`${inputCls} appearance-none ${!gender ? "text-slate-400" : ""}`}
             >
-              <option value="" disabled>Pilih Jenis Kelamin</option>
+              <option value="" disabled>
+                Pilih Jenis Kelamin
+              </option>
               <option value="Laki-Laki">Laki-Laki</option>
               <option value="Perempuan">Perempuan</option>
             </select>
@@ -186,9 +189,13 @@ function PublicLeadForm() {
               onChange={(e) => setKelurahan(e.target.value)}
               className={`${inputCls} appearance-none ${!kelurahan ? "text-slate-400" : ""}`}
             >
-              <option value="" disabled>Pilih Kelurahan</option>
+              <option value="" disabled>
+                Pilih Kelurahan
+              </option>
               {KELURAHAN.map((k) => (
-                <option key={k} value={k}>{k}</option>
+                <option key={k} value={k}>
+                  {k}
+                </option>
               ))}
             </select>
             <ChevronRight className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -212,9 +219,13 @@ function PublicLeadForm() {
               onChange={(e) => setJob(e.target.value)}
               className={`${inputCls} appearance-none ${!job ? "text-slate-400" : ""}`}
             >
-              <option value="" disabled>Masukkan Pekerjaan Nasabah</option>
+              <option value="" disabled>
+                Masukkan Pekerjaan Nasabah
+              </option>
               {PEKERJAAN_PROMAS.map((p) => (
-                <option key={p} value={p}>{p}</option>
+                <option key={p} value={p}>
+                  {p}
+                </option>
               ))}
             </select>
             <ChevronRight className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 rotate-90 text-slate-400" />
