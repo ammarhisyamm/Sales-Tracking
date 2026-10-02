@@ -297,7 +297,7 @@ function PenaksirHome() {
         <ul className="grid grid-cols-3 px-2 pb-4 pt-2">
           <li className="flex justify-center">
             <span className="flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[10px] font-medium text-[#2953A4]">
-              <House size={23} weight="regular" />
+              <House size={24} weight="fill" />
               <span>Home</span>
             </span>
           </li>
@@ -306,7 +306,7 @@ function PenaksirHome() {
               to="/penaksir-aktivitas"
               className="flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[10px] font-medium text-slate-400"
             >
-              <ClipboardText size={23} weight="regular" />
+              <ClipboardText size={24} weight="regular" />
               <span>Aktivitas</span>
             </Link>
           </li>
@@ -315,7 +315,7 @@ function PenaksirHome() {
               to="/profile"
               className="flex w-full flex-col items-center gap-1 rounded-xl py-1.5 text-[10px] font-medium text-slate-400"
             >
-              <PhosphorUser size={23} weight="regular" />
+              <PhosphorUser size={24} weight="regular" />
               <span>Profil</span>
             </Link>
           </li>

@@ -69,7 +69,7 @@ export function MobileShell({
                         active ? "text-brand" : "text-muted-foreground"
                       }`}
                     >
-                      <Icon size={23} weight="regular" />
+                      <Icon size={24} weight={active ? "fill" : "regular"} />
                       <span>{t.label}</span>
                     </Link>
                   </li>
