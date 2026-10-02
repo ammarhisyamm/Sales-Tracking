@@ -73,10 +73,6 @@ function KacabActivityList() {
     if (tab !== "Custom") return activityItems;
     return activityItems.filter((item) => item.date >= from && item.date <= to);
   }, [activityItems, tab, from, to]);
-  const groups = [...new Set(visible.map((item) => item.kcp))].map((kcp) => ({
-    kcp,
-    items: visible.filter((item) => item.kcp === kcp),
-  }));
 
   return (
     <MobileShell role="kacab" hideFab>
@@ -105,64 +101,88 @@ function KacabActivityList() {
           </div>
         )}
         <div className="space-y-4">
-          {groups.map((group) => (
-            <section key={group.kcp} className="overflow-hidden rounded-2xl bg-[#eef5ff]">
-              <h2 className="flex items-center gap-2 px-4 py-3 text-[16px] font-bold text-[#2953A4]">
-                <Building2 className="h-5 w-5" />
-                {group.kcp}
-              </h2>
-              <div className="space-y-3 px-1 pb-1">
-                {group.items.map((item) => {
-                  const key = item.id;
-                  const additionalActivities = item.activityTypes?.slice(1) ?? [];
-                  const expanded = expandedItem === key;
-                  return (
-                    <article key={key} className="rounded-xl border border-slate-200 bg-white p-4">
-                      <div className="flex items-start justify-between gap-3">
-                        <p className="text-[14px] font-bold text-[#2953A4]">
-                          {formatDate(item.date)} | {item.time}
-                        </p>
-                        <span
-                          className={`flex-shrink-0 text-[14px] font-semibold ${item.priority === "High" ? "text-red-500" : "text-amber-600"}`}
-                        >
-                          {item.priority}
-                        </span>
-                      </div>
-                      <div className="my-3 border-t border-slate-100" />
-                      <h3 className="text-[18px] font-bold leading-tight text-slate-950">
-                        {formatActivityTitle(item.title, item.activityTypes)}
-                      </h3>
-                      {additionalActivities.length > 0 && (
-                        <>
-                          <button type="button" onClick={() => setExpandedItem(expanded ? null : key)} className="mt-2 flex w-full items-center justify-between text-left text-[14px] text-[#607b9d]"><span>+{additionalActivities.length} Kegiatan Lainnya</span>{expanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}</button>
-                          {expanded && <div className="mt-2 space-y-2 rounded-2xl bg-[#eef5ff] p-3">{additionalActivities.map((activity, index) => <div key={activity} className="flex items-center gap-3 text-[14px] font-medium text-slate-700"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-slate-900">{index + 1}</span><span>{activity}</span></div>)}</div>}
-                        </>
-                      )}
-                      <div className="mt-4 flex items-center gap-3 rounded-xl border border-slate-200 px-3 py-3">
-                        <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#eef5ff] text-[#2953A4]">
-                          <MapPin className="h-5 w-5" />
-                        </span>
-                        <div className="min-w-0">
-                          <p className="truncate text-[15px] font-medium text-slate-900">
-                            {item.place}
-                          </p>
-                          <p className="mt-0.5 text-[14px] text-slate-500">{item.region}</p>
-                        </div>
-                      </div>
+          {visible.map((item) => {
+            const key = item.id;
+            const additionalActivities = item.activityTypes?.slice(1) ?? [];
+            const expanded = expandedItem === key;
+            return (
+              <section
+                key={key}
+                className="overflow-hidden rounded-lg border border-[#e2e8f0] bg-[#eff6ff]"
+              >
+                <h2 className="flex items-center gap-2 px-3 py-3 text-[13px] font-medium text-slate-900">
+                  <Building2 className="h-5 w-5" />
+                  {item.kcp}
+                </h2>
+                <article className="rounded-lg border border-[#e2e8f0] bg-white p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-[14px] font-bold text-[#2953A4]">
+                      {formatDate(item.date)} | {item.time}
+                    </p>
+                    <span
+                      className={`flex-shrink-0 text-[14px] font-semibold ${item.priority === "High" ? "text-red-500" : "text-amber-600"}`}
+                    >
+                      {item.priority}
+                    </span>
+                  </div>
+                  <div className="my-3 border-t border-slate-100" />
+                  <h3 className="text-[18px] font-bold leading-tight text-slate-950">
+                    {formatActivityTitle(item.title, item.activityTypes)}
+                  </h3>
+                  {additionalActivities.length > 0 && (
+                    <>
                       <button
                         type="button"
-                        onClick={() => setViewerItem(key)}
-                        className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#315bac] py-3 text-[15px] font-semibold text-white"
+                        onClick={() => setExpandedItem(expanded ? null : key)}
+                        className="mt-2 flex w-full items-center justify-between text-left text-[14px] text-[#607b9d]"
                       >
-                        <Eye className="h-5 w-5" /> Lihat Foto
+                        <span>+{additionalActivities.length} Kegiatan Lainnya</span>
+                        {expanded ? (
+                          <ChevronUp className="h-5 w-5" />
+                        ) : (
+                          <ChevronDown className="h-5 w-5" />
+                        )}
                       </button>
-                    </article>
-                  );
-                })}
-              </div>
-            </section>
-          ))}
-          {groups.length === 0 && (
+                      {expanded && (
+                        <div className="mt-2 space-y-2 rounded-2xl bg-[#eef5ff] p-3">
+                          {additionalActivities.map((activity, index) => (
+                            <div
+                              key={activity}
+                              className="flex items-center gap-3 text-[14px] font-medium text-slate-700"
+                            >
+                              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-slate-900">
+                                {index + 1}
+                              </span>
+                              <span>{activity}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+                  <div className="mt-4 flex items-center gap-3 rounded-xl border border-slate-200 px-3 py-3">
+                    <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#eef5ff] text-[#2953A4]">
+                      <MapPin className="h-5 w-5" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-[15px] font-medium text-slate-900">
+                        {item.place}
+                      </p>
+                      <p className="mt-0.5 text-[14px] text-slate-500">{item.region}</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setViewerItem(key)}
+                    className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#315bac] py-3 text-[15px] font-semibold text-white"
+                  >
+                    <Eye className="h-5 w-5" /> Lihat Foto
+                  </button>
+                </article>
+              </section>
+            );
+          })}
+          {visible.length === 0 && (
             <div className="rounded-2xl border border-slate-200 px-5 py-12 text-center text-[14px] text-slate-500">
               Belum ada aktivitas pada rentang tanggal ini.
             </div>

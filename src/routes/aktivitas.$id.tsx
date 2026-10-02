@@ -34,7 +34,7 @@ import {
   Share2,
   X,
 } from "lucide-react";
-import { ClipboardText, GlobeSimple } from "@phosphor-icons/react";
+import { ClipboardText } from "@phosphor-icons/react";
 
 const PRIMARY = "#2953A4";
 
@@ -77,11 +77,6 @@ function ActivityDetail() {
     const t = nowHHMM();
     updateActivity(activity.id, { status: "completed", checkOutTime: t });
     toast(`Check-out tersimpan · Finished ${t}`);
-  };
-
-  const completeDigital = () => {
-    updateActivity(activity.id, { status: "completed" });
-    toast("Aktivitas digital ditandai selesai");
   };
 
   const openCamera = (m: "checkin" | "photo") => {
@@ -145,55 +140,27 @@ function ActivityDetail() {
             </div>
           </div>
 
-          {isDone ? (
+          {current.kind === "digital" ? (
+            activity.shareCode ? (
+              <ShareLinkCard
+                activityId={activity.id}
+                shareCode={activity.shareCode}
+                views={activity.linkViews ?? 0}
+                leadsCount={activity.leadsCount}
+              />
+            ) : null
+          ) : isDone ? (
             <div className="rounded-xl border border-slate-200 bg-white px-4 py-8 text-center">
               <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100">
                 <Check className="h-7 w-7 text-emerald-600" strokeWidth={3} />
               </span>
               <p className="mt-3 text-[15px] font-semibold text-slate-900">
-                {current.kind === "digital"
-                  ? "Aktivitas Digital Selesai"
-                  : "Anda Telah Melakukan Checkout"}
+                Anda Telah Melakukan Checkout
               </p>
-              {current.kind === "digital" ? (
-                <p className="mx-auto mt-2 max-w-[270px] text-[12px] leading-5 text-slate-400">
-                  Aktivitas digital tidak menggunakan proses check-in atau check-out.
-                </p>
-              ) : (
-                <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-[12px] text-slate-500">
-                  Finished {activity.checkOutTime ?? ""}
-                </span>
-              )}
+              <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-[12px] text-slate-500">
+                Finished {activity.checkOutTime ?? ""}
+              </span>
             </div>
-          ) : current.kind === "digital" ? (
-            <>
-              <div className="rounded-xl border border-slate-200 bg-white px-4 py-8 text-center">
-                <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-violet-100 text-violet-700">
-                  <GlobeSimple size={28} weight="regular" />
-                </span>
-                <p className="mt-3 text-[15px] font-semibold text-slate-900">
-                  Aktivitas Digital Belum Selesai
-                </p>
-                <p className="mx-auto mt-1 max-w-[270px] text-[12px] leading-5 text-slate-400">
-                  Tidak perlu check-in. Tandai selesai setelah kegiatan digital berakhir.
-                </p>
-                <button
-                  type="button"
-                  onClick={completeDigital}
-                  className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-[#2953A4] px-5 py-2.5 text-[13px] font-semibold text-white transition-transform duration-100 active:scale-[0.98]"
-                >
-                  <Check className="h-4 w-4" /> Tandai Selesai
-                </button>
-              </div>
-              {activity.shareCode && (
-                <ShareLinkCard
-                  activityId={activity.id}
-                  shareCode={activity.shareCode}
-                  views={activity.linkViews ?? 0}
-                  leadsCount={activity.leadsCount}
-                />
-              )}
-            </>
           ) : checkedIn ? (
             <>
               <div className="rounded-xl border border-slate-200 bg-white p-4">
