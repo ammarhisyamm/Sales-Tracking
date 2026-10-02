@@ -76,13 +76,13 @@ function KacabActivityList() {
 
   return (
     <MobileShell role="kacab" hideFab>
-      <header className="bg-white px-5 pb-5 pt-12">
+      <header className="bg-background px-5 pb-5 pt-12">
         <h1 className="text-[22px] font-bold text-slate-900">Aktivitas</h1>
         <p className="mt-0.5 text-[15px] text-slate-500">
           Kelola dan pantau semua kegiatan lapanganmu
         </p>
       </header>
-      <main className="space-y-4 bg-white px-5 pb-8">
+      <main className="space-y-4 bg-background px-5 pb-8">
         <div className="flex gap-2 overflow-x-auto pb-1">
           {TABS.map((item) => (
             <button

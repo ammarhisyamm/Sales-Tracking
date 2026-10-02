@@ -91,7 +91,7 @@ function CreatePenaksirActivity() {
 
   return (
     <MobileShell hideNav>
-      <header className="bg-white px-4 pb-4 pt-4">
+      <header className="bg-background px-4 pb-4 pt-4">
         <div className="flex items-center justify-between text-[#131324]">
           <span className="text-[15px] font-semibold tracking-tight">9:41</span>
           <span className="flex items-center gap-1.5">
@@ -110,7 +110,7 @@ function CreatePenaksirActivity() {
         </button>
       </header>
 
-      <form onSubmit={save} className="bg-white px-4 pb-32 pt-7">
+      <form onSubmit={save} className="bg-background px-4 pb-32 pt-7">
         <div className="mb-8">
           <h1 className="text-[22px] font-semibold leading-7 text-[#131324]">Buat Aktivitas</h1>
           <p className="mt-1 text-[16px] text-[#5a5a66]">Isi detail kegiatan</p>

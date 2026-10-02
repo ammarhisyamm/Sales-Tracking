@@ -10,11 +10,11 @@ export const Route = createFileRoute("/kacab-profile")({
 function KacabProfile() {
   return (
     <MobileShell role="kacab" hideFab>
-      <header className="bg-white px-5 pb-5 pt-12">
+      <header className="bg-background px-5 pb-5 pt-12">
         <h1 className="text-[22px] font-bold text-slate-900">Profil</h1>
         <p className="mt-0.5 text-[13px] text-slate-500">Informasi akun dan unit kerja</p>
       </header>
-      <main className="space-y-3 bg-white px-5 pb-8">
+      <main className="space-y-3 bg-background px-5 pb-8">
         <div className="flex items-center gap-3 rounded-xl bg-[#2953A4] p-4 text-white">
           <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20"><UserRound className="h-6 w-6" /></span>
           <div><p className="font-bold">KACAB</p><p className="text-[13px] text-white/75">MAS Monang-Maning</p></div>

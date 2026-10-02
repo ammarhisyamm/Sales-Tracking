@@ -105,14 +105,14 @@ function ActivityDetail() {
 
   return (
     <MobileShell hideNav>
-      <div className="bg-white px-5 pb-2 pt-12">
+      <div className="bg-background px-5 pb-2 pt-12">
         <Link to="/aktivitas" className="inline-flex items-center gap-2 text-slate-900">
           <ArrowLeft className="h-5 w-5" />
           <span className="text-[17px] font-medium">Detail Aktivitas</span>
         </Link>
       </div>
 
-      <div className="space-y-4 bg-white px-5 pb-8 pt-3">
+      <div className="space-y-4 bg-background px-5 pb-8 pt-3">
         <ScreenLoader skeleton={<AktivitasDetailSkeleton />}>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <div className="flex items-center justify-between gap-2">

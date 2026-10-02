@@ -116,7 +116,7 @@ function KacabHome() {
         </svg>
       </header>
 
-      <main className="space-y-5 bg-white px-4 pb-8 pt-[20px]">
+      <main className="space-y-5 bg-background px-4 pb-8 pt-[20px]">
         <section>
           <h2 className="text-[20px] font-bold text-slate-900">Monitoring Aktivitas</h2>
           <label className="mt-3 block text-[14px] font-medium text-slate-700">Pilih KCP</label>

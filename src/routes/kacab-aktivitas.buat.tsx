@@ -112,7 +112,7 @@ function CreateKacabActivity() {
 
   return (
     <MobileShell role="kacab" hideNav>
-      <header className="bg-white px-5 pb-3 pt-12">
+      <header className="bg-background px-5 pb-3 pt-12">
         <button
           onClick={() => navigate({ to: "/kacab-aktivitas" })}
           className="inline-flex items-center gap-2 text-slate-900"
@@ -121,7 +121,7 @@ function CreateKacabActivity() {
           <span className="text-[17px] font-medium">Tambah Aktivitas</span>
         </button>
       </header>
-      <form onSubmit={save} className="space-y-4 bg-white px-5 pb-8 pt-4">
+      <form onSubmit={save} className="space-y-4 bg-background px-5 pb-8 pt-4">
         <div>
           <h1 className="text-[20px] font-bold text-slate-900">Buat Aktivitas</h1>
           <p className="mt-0.5 text-[13px] text-slate-500">Isi detail kegiatan monitoring KCP</p>
