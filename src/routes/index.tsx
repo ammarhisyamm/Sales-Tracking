@@ -1,8 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
 import { CameraModal } from "@/components/camera-modal";
-import { ActivityKindBadge } from "@/components/activity-kind-badge";
-import { DigitalActivityAction } from "@/components/digital-activity-action";
 import {
   formatTanggalPanjang,
   profile,
@@ -25,6 +23,7 @@ import {
   ClipboardText,
   Crosshair,
   EnvelopeSimple,
+  GlobeSimple,
   MapPin,
   Money,
   Plus,
@@ -307,7 +306,6 @@ function Home() {
                             <p className="min-w-0 truncate text-[13px] text-slate-500">
                               {a.address}
                             </p>
-                            <ActivityKindBadge kind={a.kind} />
                           </div>
                         </div>
                         <CaretRight size={22} weight="regular" color={PRIMARY} />
@@ -318,13 +316,9 @@ function Home() {
                           {a.leadsCount} Leads
                         </span>
                         {a.kind === "digital" ? (
-                          <DigitalActivityAction
-                            completed={status === "completed"}
-                            onComplete={() => {
-                              updateActivity(a.id, { status: "completed" });
-                              toast("Aktivitas digital ditandai selesai");
-                            }}
-                          />
+                          <span className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-2 text-[12px] font-medium text-slate-500">
+                            <GlobeSimple size={16} weight="regular" /> Aktivitas Digital
+                          </span>
                         ) : status === "completed" ? (
                           <span className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-3 py-1.5 text-[12px] font-medium text-slate-500">
                             <CheckCircle size={16} weight="regular" /> Finished{" "}

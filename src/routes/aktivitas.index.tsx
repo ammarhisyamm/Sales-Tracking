@@ -1,15 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
 import { CameraModal } from "@/components/camera-modal";
-import { ActivityKindBadge } from "@/components/activity-kind-badge";
-import { DigitalActivityAction } from "@/components/digital-activity-action";
 import { formatJadwal, monthOptions, parseMonthOption, STATUS_META } from "@/lib/mock-data";
 import { nowHHMM, updateActivity, useActivities } from "@/lib/activity-store";
 import { ScreenLoader } from "@/components/motion";
 import { AktivitasListSkeleton } from "@/components/skeletons";
 import { toast } from "@/components/motion";
 import { useMemo, useState } from "react";
-import { ChevronRight, CircleCheck, Crosshair, LogOut, MapPin, Plus } from "lucide-react";
+import { ChevronRight, CircleCheck, Crosshair, Globe2, LogOut, MapPin, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/aktivitas/")({
   head: () => ({ meta: [{ title: "Aktivitas" }] }),
@@ -150,7 +148,6 @@ function ActivityList() {
                       </p>
                       <div className="mt-1 flex min-w-0 flex-wrap items-center gap-2">
                         <p className="min-w-0 truncate text-[13px] text-slate-500">{a.address}</p>
-                        <ActivityKindBadge kind={a.kind} />
                       </div>
                     </div>
                     <ChevronRight className="h-5 w-5 flex-shrink-0 text-[#2953A4]" />
@@ -161,13 +158,9 @@ function ActivityList() {
                       {a.leadsCount} Leads
                     </span>
                     {a.kind === "digital" ? (
-                      <DigitalActivityAction
-                        completed={status === "completed"}
-                        onComplete={() => {
-                          updateActivity(a.id, { status: "completed" });
-                          toast("Aktivitas digital ditandai selesai");
-                        }}
-                      />
+                      <span className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-2 text-[12px] font-medium text-slate-500">
+                        <Globe2 className="h-4 w-4" /> Aktivitas Digital
+                      </span>
                     ) : status === "completed" ? (
                       <span className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-3 py-1.5 text-[12px] font-medium text-slate-500">
                         <CircleCheck className="h-3.5 w-3.5" /> Finished {a.checkOutTime ?? ""}
