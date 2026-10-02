@@ -117,12 +117,10 @@ function Home() {
                   </span>
                   Booking (Amount)
                 </p>
-                <p className="mt-1 whitespace-nowrap text-[clamp(17px,5vw,20px)] font-bold leading-tight tracking-tight">
+                <p className="mt-1 whitespace-nowrap text-[14px] font-bold leading-tight tracking-tight">
                   {rp(profile.booking)} <span className="font-normal text-slate-400">/</span>
                 </p>
-                <p className="text-[clamp(13px,3.5vw,15px)] text-slate-400">
-                  {rp(profile.bookingEstimate)}
-                </p>
+                <p className="text-[14px] text-slate-400">{rp(profile.bookingEstimate)}</p>
               </div>
               <div className="min-w-0 overflow-hidden pl-[clamp(10px,3vw,12px)]">
                 <p className="flex min-w-0 items-center gap-1.5 text-[clamp(12px,3.5vw,14px)] leading-4 text-slate-500">
@@ -131,7 +129,7 @@ function Home() {
                   </span>
                   <span className="truncate">Gram (New CIF)</span>
                 </p>
-                <p className="mt-1 whitespace-nowrap text-[clamp(17px,5vw,20px)] font-bold leading-tight tracking-tight">
+                <p className="mt-1 whitespace-nowrap text-[14px] font-bold leading-tight tracking-tight">
                   {grams.current}g{" "}
                   <span className="font-normal text-slate-400">/ {grams.target}g</span>
                 </p>
@@ -144,7 +142,7 @@ function Home() {
                 </span>
                 Estimasi Insentif
               </p>
-              <p className="mt-1 text-[clamp(18px,5vw,21px)] font-bold leading-tight tracking-tight">
+              <p className="mt-1 text-[14px] font-bold leading-tight tracking-tight">
                 {rp(profile.estimasiInsentif)}
               </p>
             </div>
@@ -154,9 +152,9 @@ function Home() {
               <p className="flex items-center gap-1.5 text-[clamp(12px,3.5vw,14px)] text-slate-500">
                 <EnvelopeSimple size={19} weight="regular" color={PRIMARY} /> ADO
               </p>
-              <p className="min-w-0 truncate text-right text-[clamp(14px,4vw,17px)] font-bold">
+              <p className="min-w-0 truncate text-right text-[14px] font-bold">
                 {rp(ado.current)}
-                <span className="font-normal text-slate-400">/{rp(ado.target)}</span>
+                <span className="text-[12px] font-normal text-slate-400">/{rp(ado.target)}</span>
               </p>
             </div>
           </div>
