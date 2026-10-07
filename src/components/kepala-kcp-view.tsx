@@ -298,11 +298,28 @@ function ActivityDetailModal({
 
         <div className="max-h-[calc(100vh-280px)] overflow-y-auto px-8 py-6">
           <p className="text-[18px] font-semibold">{item.title}</p>
-          <p className="mt-1 text-[14px] text-slate-500">
-            {item.place} · {item.region}
-          </p>
           <div className="mt-2">
             <StatusBadge status={item.status} />
+          </div>
+
+          <h3 className="mt-6 text-[16px] font-semibold">Lokasi Kegiatan</h3>
+          <div className="mt-3 overflow-hidden rounded-xl border border-slate-200">
+            <table className="w-full border-collapse text-left text-[14px]">
+              <tbody>
+                <tr className="border-b border-slate-100">
+                  <td className="w-32 bg-slate-50 px-4 py-3 font-medium text-slate-500">
+                    Tempat
+                  </td>
+                  <td className="px-4 py-3">{item.place}</td>
+                </tr>
+                <tr>
+                  <td className="w-32 bg-slate-50 px-4 py-3 font-medium text-slate-500">
+                    Wilayah
+                  </td>
+                  <td className="px-4 py-3">{item.region}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
           <h3 className="mt-6 text-[16px] font-semibold">
