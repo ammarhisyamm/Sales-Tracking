@@ -5,6 +5,7 @@ const KEY = "connect-track-leads-v1";
 
 let cache: Record<string, Contact[]> = {};
 let hydrated = false;
+let allLeadsSnapshot: Contact[] = [];
 const listeners = new Set<() => void>();
 
 function readPersisted(): Record<string, Contact[]> {
@@ -27,6 +28,15 @@ function persist() {
   }
 }
 
+function refreshAllLeadsSnapshot() {
+  const byId = new Map<string, Contact>();
+  for (const contact of contacts) byId.set(contact.id, contact);
+  for (const list of Object.values(cache)) {
+    for (const contact of list) byId.set(contact.id, contact);
+  }
+  allLeadsSnapshot = [...byId.values()];
+}
+
 function seed(activityId: string, source: string): Contact[] {
   // Aktivitas buatan user mulai kosong — tanpa contoh
   if (activityId.startsWith("u-")) return [];
@@ -41,8 +51,12 @@ function ensure(activityId: string, source: string): Contact[] {
   if (!hydrated && typeof window !== "undefined") {
     hydrated = true;
     cache = { ...readPersisted() };
+    refreshAllLeadsSnapshot();
   }
-  if (!cache[activityId]) cache[activityId] = seed(activityId, source);
+  if (!cache[activityId]) {
+    cache[activityId] = seed(activityId, source);
+    refreshAllLeadsSnapshot();
+  }
   return cache[activityId];
 }
 
@@ -56,6 +70,7 @@ function subscribe(fn: () => void) {
 export function addLead(activityId: string, source: string, lead: Contact) {
   const list = ensure(activityId, source);
   cache[activityId] = [lead, ...list];
+  refreshAllLeadsSnapshot();
   if (typeof window !== "undefined") persist();
   listeners.forEach((l) => l());
 }
@@ -65,5 +80,20 @@ export function useLeads(activityId: string, source: string): Contact[] {
     subscribe,
     () => ensure(activityId, source),
     () => seed(activityId, source),
+  );
+}
+
+export function useAllLeads(): Contact[] {
+  return useSyncExternalStore(
+    subscribe,
+    () => {
+      if (!hydrated && typeof window !== "undefined") {
+        hydrated = true;
+        cache = { ...readPersisted() };
+        refreshAllLeadsSnapshot();
+      }
+      return allLeadsSnapshot;
+    },
+    () => contacts,
   );
 }

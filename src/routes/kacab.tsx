@@ -1,5 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
+import { OverlayPortal } from "@/components/motion";
+import { useAllLeads } from "@/lib/leads-store";
+import type { Contact } from "@/lib/mock-data";
 import {
   BatteryFull,
   Bell,
@@ -14,9 +17,11 @@ import {
   House,
   Megaphone,
   Plus,
+  Phone,
   User,
   Users,
   WifiHigh,
+  X,
 } from "@phosphor-icons/react";
 import { useState } from "react";
 
@@ -57,7 +62,9 @@ const KCP_DATA = [
 function KacabHome() {
   const [selectedKcp, setSelectedKcp] = useState(0);
   const [period, setPeriod] = useState<Period>("today");
+  const [leadDetail, setLeadDetail] = useState<"all" | "closing" | null>(null);
   const kcp = KCP_DATA[selectedKcp];
+  const leads = useAllLeads();
 
   return (
     <MobileShell role="kacab" hideFab>
@@ -186,11 +193,13 @@ function KacabHome() {
                   icon={<Crosshair size={18} weight="regular" />}
                   label="Leads"
                   value={kcp.marketing.leads[period]}
+                  onClick={() => setLeadDetail("all")}
                 />
                 <MetricRow
                   icon={<User size={18} weight="regular" />}
                   label="Closing Leads"
                   value={kcp.marketing.closing[period]}
+                  onClick={() => setLeadDetail("closing")}
                 />
               </div>
             </MetricGroup>
@@ -224,6 +233,15 @@ function KacabHome() {
           </div>
         </section>
       </main>
+      {leadDetail && (
+        <LeadDetailsSheet
+          leads={
+            leadDetail === "closing" ? leads.filter((lead) => lead.status === "Closing") : leads
+          }
+          title={leadDetail === "closing" ? "Detail Closing Leads" : "Detail Leads"}
+          onClose={() => setLeadDetail(null)}
+        />
+      )}
     </MobileShell>
   );
 }
@@ -281,14 +299,20 @@ function MetricRow({
   icon,
   label,
   value,
+  onClick,
 }: {
   icon: React.ReactNode;
   label: string;
   value: readonly [number, number];
+  onClick?: () => void;
 }) {
   const percent = value[1] ? Math.min(100, Math.round((value[0] / value[1]) * 100)) : 0;
   return (
-    <div className="rounded-xl border border-slate-200 bg-white px-3 py-3">
+    <button
+      type="button"
+      onClick={onClick}
+      className={`w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-left ${onClick ? "transition-transform active:scale-[0.99]" : "cursor-default"}`}
+    >
       <p className="flex items-center gap-2 text-[14px] font-medium text-slate-700">
         <span className="text-[#2953A4]">{icon}</span>
         <span className="truncate">{label}</span>
@@ -307,6 +331,75 @@ function MetricRow({
           </span>
         </div>
       )}
+    </button>
+  );
+}
+
+function LeadDetailsSheet({
+  leads,
+  title,
+  onClose,
+}: {
+  leads: Contact[];
+  title: string;
+  onClose: () => void;
+}) {
+  return (
+    <OverlayPortal>
+      <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/45 px-0">
+        <div className="w-full max-w-[440px] rounded-t-3xl bg-white px-5 pb-8 pt-6 shadow-2xl">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-[22px] font-bold text-slate-900">{title}</h2>
+              <p className="mt-0.5 text-[13px] text-slate-500">{leads.length} data nasabah</p>
+            </div>
+            <button type="button" onClick={onClose} aria-label="Tutup detail leads">
+              <X size={28} weight="regular" className="text-slate-500" />
+            </button>
+          </div>
+
+          <div className="mt-5 max-h-[62vh] space-y-3 overflow-y-auto">
+            {leads.length > 0 ? (
+              leads.map((lead) => <LeadContactCard key={lead.id} lead={lead} />)
+            ) : (
+              <div className="rounded-xl border border-dashed border-slate-300 px-4 py-10 text-center text-[14px] text-slate-500">
+                Belum ada data leads.
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </OverlayPortal>
+  );
+}
+
+function LeadContactCard({ lead }: { lead: Contact }) {
+  const whatsappNumber = lead.phone.replace(/\D/g, "").replace(/^0/, "62");
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-[0_2px_8px_rgba(25,42,77,0.04)]">
+      <p className="text-[16px] font-medium text-slate-900">{lead.name}</p>
+      <p className="mt-0.5 text-[14px] text-slate-500">
+        {lead.job ?? "Pekerjaan belum tersedia"} <span className="text-slate-300">|</span>{" "}
+        {lead.status}
+      </p>
+      <div className="mt-3 flex gap-2">
+        <a
+          href={`tel:${lead.phone}`}
+          aria-label={`Telepon ${lead.name}`}
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-[#eef5ff] text-[#2953A4]"
+        >
+          <Phone size={20} weight="regular" />
+        </a>
+        <a
+          href={`https://wa.me/${whatsappNumber}`}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`WhatsApp ${lead.name}`}
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e6f7ed] text-[#16a765]"
+        >
+          <span className="text-[18px] font-bold">W</span>
+        </a>
+      </div>
     </div>
   );
 }
