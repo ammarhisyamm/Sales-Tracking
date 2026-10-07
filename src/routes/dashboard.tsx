@@ -19,6 +19,7 @@ import {
   X,
 } from "lucide-react";
 import { TargetFilters } from "../components/target-filters";
+import { KepalaKcpView } from "../components/kepala-kcp-view";
 import { formatRupiah } from "../lib/mock-data";
 
 export const Route = createFileRoute("/dashboard")({
@@ -226,6 +227,7 @@ function Dashboard() {
   const [edit, setEdit] = useState<EditTarget | null>(null);
   const [successUnit, setSuccessUnit] = useState<string | null>(null);
   const [targetMenuOpen, setTargetMenuOpen] = useState(true);
+  const [menu, setMenu] = useState<"target" | "kepala-kcp">("target");
   const [salesGrade, setSalesGrade] = useState("Semua Grade");
   const visible = useMemo(() => targets, [targets]);
   const configured = targets.filter((item) => item.configured).length;
@@ -314,8 +316,16 @@ function Dashboard() {
           </button>
           {targetMenuOpen && (
             <div className="bg-[#211f58] py-1 text-white/90">
-              <SidebarSubItem label="Target Aktivitas" active />
-              <SidebarSubItem label="Pencapaian Kepala KCP" />
+              <SidebarSubItem
+                label="Target Aktivitas"
+                active={menu === "target"}
+                onClick={() => setMenu("target")}
+              />
+              <SidebarSubItem
+                label="Pencapaian Kepala KCP"
+                active={menu === "kepala-kcp"}
+                onClick={() => setMenu("kepala-kcp")}
+              />
               <SidebarSubItem label="Pencapaian Penaksir" muted />
               <SidebarSubItem label="Pencapaian Sales Officer" muted />
               <SidebarSubItem label="Pencapaian Sales Agent" muted />
@@ -333,7 +343,7 @@ function Dashboard() {
       </aside>
 
       <main
-        className={`flex min-h-screen flex-col lg:ml-[256px] ${tab === "Sales Officer" ? "sales-view" : ""} ${tab !== "Kepala KCP" ? "non-kcp-view" : ""} ${canEditTarget ? "" : "target-period-locked"}`}
+        className={`flex min-h-screen flex-col lg:ml-[256px] ${menu === "target" && tab === "Sales Officer" ? "sales-view" : ""} ${menu === "target" && tab !== "Kepala KCP" ? "non-kcp-view" : ""} ${menu === "target" && !canEditTarget ? "target-period-locked" : ""}`}
       >
         <div className="flex-1 mx-auto w-full max-w-[1600px] px-6 py-8 lg:px-12 lg:py-12">
           <div className="flex items-center gap-4 text-[16px] text-slate-500">
@@ -341,6 +351,17 @@ function Dashboard() {
             <span>/</span>
             <strong className="text-slate-900">Pencapaian Tim</strong>
           </div>
+          {menu === "kepala-kcp" ? (
+            <>
+              <div className="mt-5">
+                <h1 className="text-[32px] font-bold tracking-tight">Pencapaian Kepala KCP</h1>
+              </div>
+              <div className="mt-10">
+                <KepalaKcpView />
+              </div>
+            </>
+          ) : (
+            <>
           <div className="mt-5">
             <h1 className="text-[32px] font-bold tracking-tight">Target Aktivitas</h1>
           </div>
@@ -504,6 +525,8 @@ function Dashboard() {
                 })
               }
             />
+          )}
+            </>
           )}
         </div>
         <footer className="mt-auto border-t border-slate-200 bg-white px-6 py-8 text-[14px] text-slate-500 lg:px-12">
@@ -1261,19 +1284,28 @@ function SidebarSubItem({
   label,
   active = false,
   muted = false,
+  onClick,
 }: {
   label: string;
   active?: boolean;
   muted?: boolean;
+  onClick?: () => void;
 }) {
-  return (
-    <div
-      className={`relative flex h-12 items-center pl-16 pr-8 text-[14px] whitespace-nowrap ${muted ? "text-white/60" : ""}`}
-    >
+  const className = `relative flex h-12 w-full items-center pl-16 pr-8 text-left text-[14px] whitespace-nowrap ${muted ? "text-white/60" : ""} ${onClick ? "transition-colors hover:bg-white/10" : ""}`;
+  const content = (
+    <>
       {active && <span className="absolute left-10 h-3 w-3 rounded-full bg-white" />}
       {label}
-    </div>
+    </>
   );
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} className={className}>
+        {content}
+      </button>
+    );
+  }
+  return <div className={className}>{content}</div>;
 }
 function VisitCard({ label, value }: { label: string; value: string }) {
   return (

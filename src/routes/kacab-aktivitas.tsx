@@ -3,6 +3,7 @@ import { MobileShell } from "@/components/mobile-shell";
 import { CameraModal } from "@/components/camera-modal";
 import { OverlayPortal, toast } from "@/components/motion";
 import { useActivities } from "@/lib/activity-store";
+import { KCP_ACTIVITY_SEEDS } from "@/lib/kepala-kcp";
 import type { Activity } from "@/lib/mock-data";
 import { useMemo, useState } from "react";
 import { Building2, Camera, ChevronDown, ChevronUp, Eye, MapPin, Plus, X } from "lucide-react";
@@ -25,30 +26,8 @@ type KacabActivityItem = {
   priority: string;
   photoUrl?: string;
 };
-const ITEMS: KacabActivityItem[] = [
-  {
-    id: "seed-monang",
-    kcp: "MAS MONANG-MANING",
-    date: "2026-06-28",
-    time: "15:00 - 16:00 WIB",
-    title: "Evaluasi Pencapaian Target Unit & Sales",
-    activityTypes: ["Evaluasi Pencapaian Target Unit & Sales"],
-    place: "Balai Desa Kelurahan Pilumpanua",
-    region: "Wajo, Sulawesi Selatan",
-    priority: "High",
-  },
-  {
-    id: "seed-rawamangun",
-    kcp: "MAS RAWAMANGUN",
-    date: "2026-06-06",
-    time: "09:00 - 10:00 WIB",
-    title: "Visit Nasabah One Obligor",
-    activityTypes: ["Visit Nasabah One Obligor"],
-    place: "KCP Rawamangun",
-    region: "Jakarta Timur, DKI Jakarta",
-    priority: "Medium",
-  },
-];
+/** Sumber data sama dengan dashboard Pencapaian Kepala KCP. */
+const ITEMS: KacabActivityItem[] = KCP_ACTIVITY_SEEDS;
 
 function KacabActivities() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
