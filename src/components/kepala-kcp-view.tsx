@@ -115,13 +115,14 @@ export function KepalaKcpView() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[900px] border-collapse text-left">
+          <table className="w-full min-w-[1100px] border-collapse text-left">
             <thead className="border-y border-slate-200 text-[14px] text-slate-400">
               <tr>
                 <th className="px-7 py-5 font-medium">No</th>
                 <th className="px-5 py-5 font-medium">Aktivitas</th>
                 <th className="px-5 py-5 font-medium">KCP</th>
                 <th className="px-5 py-5 font-medium">Tanggal</th>
+                <th className="px-5 py-5 font-medium">Lokasi</th>
                 <th className="px-5 py-5 font-medium">Nasabah</th>
                 <th className="px-5 py-5 font-medium">Status</th>
                 <th className="px-7 py-5 text-right font-medium">Aksi</th>
@@ -131,14 +132,10 @@ export function KepalaKcpView() {
               {rows.map((item, index) => (
                 <tr key={item.id} className="border-b border-slate-100 last:border-0">
                   <td className="px-7 py-6">{(safePage - 1) * PAGE_SIZE + index + 1}</td>
-                  <td className="px-5 py-6">
-                    <p className="font-medium">{item.title}</p>
-                    <p className="mt-0.5 max-w-[260px] truncate text-[13px] text-slate-400">
-                      {item.place}
-                    </p>
-                  </td>
+                  <td className="max-w-[240px] truncate px-5 py-6 font-medium">{item.title}</td>
                   <td className="whitespace-nowrap px-5 py-6">{item.kcp}</td>
                   <td className="whitespace-nowrap px-5 py-6">{formatDate(item.date)}</td>
+                  <td className="max-w-[220px] truncate px-5 py-6">{item.place}</td>
                   <td className="whitespace-nowrap px-5 py-6 tabular-nums">
                     {item.entries.length} Nasabah
                   </td>
@@ -157,7 +154,7 @@ export function KepalaKcpView() {
               ))}
               {rows.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-7 py-12 text-center text-[14px] text-slate-400">
+                  <td colSpan={8} className="px-7 py-12 text-center text-[14px] text-slate-400">
                     Belum ada activity pada {month} {year}.
                   </td>
                 </tr>
