@@ -1,28 +1,22 @@
 import { useMemo, useState } from "react";
 import {
-  Banknote,
   CalendarDays,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   CircleCheck,
   Clock3,
+  Eye,
   ListChecks,
+  UserRound,
   X,
 } from "lucide-react";
 import { useActivities } from "../lib/activity-store";
-import { formatRupiah } from "../lib/mock-data";
 import {
-  ADO_DESC,
   KCP_ACTIVITY_SEEDS,
   KCP_MONTHS,
-  RO_DESC,
-  activityAdo,
-  activityRo,
   filterByPeriod,
   fromSalesActivity,
-  sumAdo,
-  sumRo,
   type KepalaKcpActivity,
 } from "../lib/kepala-kcp";
 
@@ -55,8 +49,15 @@ export function KepalaKcpView() {
     [all, monthIndex, year],
   );
 
-  const totalAdo = useMemo(() => sumAdo(visible), [visible]);
-  const totalRo = useMemo(() => sumRo(visible), [visible]);
+  const doneCount = useMemo(
+    () => visible.filter((item) => item.status === "Selesai").length,
+    [visible],
+  );
+  const scheduledCount = visible.length - doneCount;
+  const nasabahCount = useMemo(
+    () => visible.reduce((sum, item) => sum + item.entries.length, 0),
+    [visible],
+  );
 
   const pageCount = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
   const safePage = Math.min(page, pageCount);
@@ -75,19 +76,19 @@ export function KepalaKcpView() {
           icon={<ListChecks className="h-5 w-5 text-[#199900]" />}
           label="Total Aktivitas"
           value={`${visible.length} Kegiatan`}
-          hint={`${month} ${year} · semua KCP`}
+          hint={`${month} ${year} · KCP MAS RAWAMANGUN`}
         />
         <SummaryCard
-          icon={<Banknote className="h-5 w-5 text-[#199900]" />}
-          label="Nominal ADO"
-          value={formatRupiah(totalAdo)}
-          hint={ADO_DESC}
+          icon={<UserRound className="h-5 w-5 text-[#199900]" />}
+          label="Total Nasabah"
+          value={`${nasabahCount} Nasabah`}
+          hint="Terdaftar pada activity periode ini"
         />
         <SummaryCard
           icon={<CircleCheck className="h-5 w-5 text-[#199900]" />}
-          label="Nominal RO"
-          value={formatRupiah(totalRo)}
-          hint={RO_DESC}
+          label="Progres"
+          value={`${doneCount} Selesai`}
+          hint={`${scheduledCount} terjadwal · ${month} ${year}`}
         />
       </div>
 
@@ -114,15 +115,14 @@ export function KepalaKcpView() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[1100px] border-collapse text-left">
+          <table className="w-full min-w-[900px] border-collapse text-left">
             <thead className="border-y border-slate-200 text-[14px] text-slate-400">
               <tr>
                 <th className="px-7 py-5 font-medium">No</th>
                 <th className="px-5 py-5 font-medium">Aktivitas</th>
                 <th className="px-5 py-5 font-medium">KCP</th>
                 <th className="px-5 py-5 font-medium">Tanggal</th>
-                <th className="px-5 py-5 font-medium">ADO</th>
-                <th className="px-5 py-5 font-medium">RO</th>
+                <th className="px-5 py-5 font-medium">Nasabah</th>
                 <th className="px-5 py-5 font-medium">Status</th>
                 <th className="px-7 py-5 text-right font-medium">Aksi</th>
               </tr>
@@ -140,10 +140,7 @@ export function KepalaKcpView() {
                   <td className="whitespace-nowrap px-5 py-6">{item.kcp}</td>
                   <td className="whitespace-nowrap px-5 py-6">{formatDate(item.date)}</td>
                   <td className="whitespace-nowrap px-5 py-6 tabular-nums">
-                    {formatRupiah(activityAdo(item))}
-                  </td>
-                  <td className="whitespace-nowrap px-5 py-6 tabular-nums">
-                    {formatRupiah(activityRo(item))}
+                    {item.entries.length} Nasabah
                   </td>
                   <td className="whitespace-nowrap px-5 py-6">
                     <StatusBadge status={item.status} />
@@ -160,7 +157,7 @@ export function KepalaKcpView() {
               ))}
               {rows.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="px-7 py-12 text-center text-[14px] text-slate-400">
+                  <td colSpan={7} className="px-7 py-12 text-center text-[14px] text-slate-400">
                     Belum ada activity pada {month} {year}.
                   </td>
                 </tr>
@@ -283,8 +280,7 @@ function ActivityDetailModal({
   item: KepalaKcpActivity;
   onClose: () => void;
 }) {
-  const ado = activityAdo(item);
-  const ro = activityRo(item);
+  const [showPhoto, setShowPhoto] = useState(false);
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
       <div className="relative max-h-[calc(100vh-32px)] w-full max-w-[720px] overflow-hidden rounded-xl bg-white shadow-2xl">
@@ -309,61 +305,64 @@ function ActivityDetailModal({
             <StatusBadge status={item.status} />
           </div>
 
-          <div className="mt-5 grid gap-4 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-[#f6faf6] p-5">
-              <p className="text-[14px] font-medium text-slate-500">Total ADO</p>
-              <p className="mt-2 text-[22px] font-bold tabular-nums">{formatRupiah(ado)}</p>
-              <p className="mt-1 text-[13px] text-slate-400">{ADO_DESC}</p>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-[#f6f9ff] p-5">
-              <p className="text-[14px] font-medium text-slate-500">Total RO</p>
-              <p className="mt-2 text-[22px] font-bold tabular-nums">{formatRupiah(ro)}</p>
-              <p className="mt-1 text-[13px] text-slate-400">{RO_DESC}</p>
-            </div>
-          </div>
-
-          <h3 className="mt-6 text-[16px] font-semibold">Rincian per SBG</h3>
+          <h3 className="mt-6 text-[16px] font-semibold">
+            Daftar Nasabah ({item.entries.length})
+          </h3>
           {item.entries.length > 0 ? (
-            <div className="mt-3 overflow-hidden rounded-xl border border-slate-200">
-              <table className="w-full border-collapse text-left text-[14px]">
-                <thead className="bg-slate-50 text-slate-400">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">No</th>
-                    <th className="px-4 py-3 font-medium">No SBG</th>
-                    <th className="px-4 py-3 font-medium">Nama</th>
-                    <th className="px-4 py-3 font-medium">Tipe</th>
-                    <th className="px-4 py-3 text-right font-medium">Nominal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {item.entries.map((entry, index) => (
-                    <tr key={entry.sbg} className="border-t border-slate-100">
-                      <td className="px-4 py-3">{index + 1}</td>
-                      <td className="whitespace-nowrap px-4 py-3 tabular-nums">{entry.sbg}</td>
-                      <td className="px-4 py-3">{entry.nama}</td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`inline-block rounded-full px-3 py-1 text-[12px] font-semibold ${
-                            entry.tipe === "ADO"
-                              ? "bg-amber-100 text-amber-800"
-                              : "bg-green-100 text-green-800"
-                          }`}
-                        >
-                          {entry.tipe}
-                        </span>
-                      </td>
-                      <td className="whitespace-nowrap px-4 py-3 text-right tabular-nums">
-                        {formatRupiah(entry.nominal)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <ul className="mt-3 space-y-3">
+              {item.entries.map((entry, index) => (
+                <li
+                  key={entry.sbg}
+                  className="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3"
+                >
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#eef2f7] text-[15px] font-semibold text-[#292663]">
+                    {index + 1}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[15px] font-medium">{entry.nama}</span>
+                    <span className="block text-[13px] tabular-nums text-slate-400">
+                      {entry.sbg}
+                    </span>
+                  </span>
+                  <span
+                    className={`shrink-0 rounded-full px-3 py-1 text-[12px] font-semibold ${
+                      entry.tipe === "ADO"
+                        ? "bg-amber-100 text-amber-800"
+                        : "bg-green-100 text-green-800"
+                    }`}
+                  >
+                    {entry.tipe}
+                  </span>
+                </li>
+              ))}
+            </ul>
           ) : (
             <p className="mt-3 rounded-xl border border-dashed border-slate-200 px-4 py-6 text-center text-[14px] text-slate-400">
-              Belum ada rincian SBG untuk activity ini.
+              Belum ada daftar nasabah untuk activity ini.
             </p>
+          )}
+
+          <button
+            onClick={() => setShowPhoto((value) => !value)}
+            className="mt-5 flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#2953A4] py-4 text-[16px] font-medium text-white"
+          >
+            <Eye className="h-5 w-5" />
+            {showPhoto ? "Sembunyikan Foto" : "Lihat Foto"}
+          </button>
+          {showPhoto && (
+            <div className="mt-3 flex min-h-[220px] items-center justify-center overflow-hidden rounded-xl bg-[#eef2f7] p-4">
+              {item.photoUrl ? (
+                <img
+                  src={item.photoUrl}
+                  alt={`Foto kegiatan ${item.title}`}
+                  className="max-h-[360px] w-full rounded-lg object-contain"
+                />
+              ) : (
+                <p className="px-6 py-8 text-center text-[14px] text-slate-400">
+                  Foto kegiatan belum tersedia.
+                </p>
+              )}
+            </div>
           )}
         </div>
 

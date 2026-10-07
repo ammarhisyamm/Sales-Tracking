@@ -49,12 +49,13 @@ export interface KepalaKcpActivity {
   priority: string;
   status: KcpActivityStatus;
   entries: KcpActivityEntry[];
+  photoUrl?: string;
 }
 
 export const KCP_ACTIVITY_SEEDS: KepalaKcpActivity[] = [
   {
     id: "seed-kcp-jan-canvassing",
-    kcp: "MAS KEMAYORAN",
+    kcp: "MAS RAWAMANGUN",
     date: "2026-01-15",
     time: "09:00 - 11:00 WIB",
     title: "Canvassing",
@@ -87,13 +88,13 @@ export const KCP_ACTIVITY_SEEDS: KepalaKcpActivity[] = [
   },
   {
     id: "seed-kcp-feb-evaluasi",
-    kcp: "MAS MONANG-MANING",
+    kcp: "MAS RAWAMANGUN",
     date: "2026-02-12",
     time: "13:00 - 15:00 WIB",
     title: "Evaluasi Pencapaian Target Unit & Sales",
     activityTypes: ["Evaluasi Pencapaian Target Unit & Sales"],
-    place: "KCP Monang-Maning",
-    region: "Denpasar, Bali",
+    place: "KCP Rawamangun",
+    region: "Rawamangun, Jakarta Timur",
     priority: "Medium",
     status: "Selesai",
     entries: [
@@ -103,7 +104,7 @@ export const KCP_ACTIVITY_SEEDS: KepalaKcpActivity[] = [
   },
   {
     id: "seed-kcp-feb-sosialisasi",
-    kcp: "MAS KEMAYORAN",
+    kcp: "MAS RAWAMANGUN",
     date: "2026-02-20",
     time: "08:00 - 10:00 WIB",
     title: "Sosialisasi",
@@ -136,13 +137,13 @@ export const KCP_ACTIVITY_SEEDS: KepalaKcpActivity[] = [
   },
   {
     id: "seed-kcp-mar-event",
-    kcp: "MAS MONANG-MANING",
+    kcp: "MAS RAWAMANGUN",
     date: "2026-03-18",
     time: "15:00 - 17:00 WIB",
     title: "Event",
     activityTypes: ["Event"],
-    place: "Balai Banjar Monang-Maning",
-    region: "Denpasar, Bali",
+    place: "Balai Warga Rawamangun",
+    region: "Rawamangun, Jakarta Timur",
     priority: "High",
     status: "Selesai",
     entries: [
@@ -151,7 +152,7 @@ export const KCP_ACTIVITY_SEEDS: KepalaKcpActivity[] = [
   },
   {
     id: "seed-kcp-apr-market",
-    kcp: "MAS KEMAYORAN",
+    kcp: "MAS RAWAMANGUN",
     date: "2026-04-09",
     time: "09:00 - 11:00 WIB",
     title: "Market ke instansi",
@@ -200,13 +201,13 @@ export const KCP_ACTIVITY_SEEDS: KepalaKcpActivity[] = [
   },
   {
     id: "seed-monang",
-    kcp: "MAS MONANG-MANING",
+    kcp: "MAS RAWAMANGUN",
     date: "2026-06-28",
     time: "15:00 - 16:00 WIB",
     title: "Evaluasi Pencapaian Target Unit & Sales",
     activityTypes: ["Evaluasi Pencapaian Target Unit & Sales"],
-    place: "Balai Desa Kelurahan Pilumpanua",
-    region: "Wajo, Sulawesi Selatan",
+    place: "Balai Warga Rawamangun",
+    region: "Rawamangun, Jakarta Timur",
     priority: "High",
     status: "Terjadwal",
     entries: [],
@@ -266,5 +267,6 @@ export function fromSalesActivity(a: Activity): KepalaKcpActivity {
     priority: "Medium",
     status: a.status === "completed" ? "Selesai" : "Terjadwal",
     entries: [],
+    photoUrl: a.photoUrl,
   };
 }
