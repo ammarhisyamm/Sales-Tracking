@@ -31,6 +31,15 @@ const RESULT_OPTIONS = [
   "Tidak Dapat Dihubungi",
   "Belum Ada Respon",
 ] as const;
+const OVD_RESULT_OPTIONS = [
+  "Bersedia Bayar / Perpanjang",
+  "Tidak Dapat Dihubungi",
+  "Belum Ada Respon",
+  "Belum Bisa Bayar",
+  "Menolak / Tidak Bersedia Melanjutkan",
+] as const;
+
+type ResultValue = (typeof RESULT_OPTIONS)[number] | (typeof OVD_RESULT_OPTIONS)[number];
 const SBG_OPTIONS = [
   "001568002500007 - Follow Up ke 1",
   "001568002500006 - Follow Up ke 2",
@@ -51,7 +60,7 @@ function CreatePenaksirActivity() {
   const [cif, setCif] = useState("");
   const [date] = useState(todayInputDate);
   const [media, setMedia] = useState<(typeof MEDIA_OPTIONS)[number] | "">("");
-  const [result, setResult] = useState<(typeof RESULT_OPTIONS)[number] | "">("");
+  const [result, setResult] = useState<ResultValue | "">("");
   const [selectedSbg, setSelectedSbg] = useState<string[]>([]);
   const [photoUrl, setPhotoUrl] = useState("");
   const [cameraOpen, setCameraOpen] = useState(false);
@@ -352,30 +361,36 @@ function PickerSheet({
   picker: Exclude<Picker, null>;
   activity: ActivityName | "";
   media: (typeof MEDIA_OPTIONS)[number] | "";
-  result: (typeof RESULT_OPTIONS)[number] | "";
+  result: ResultValue | "";
   selectedSbg: string[];
   sbgOptions: readonly string[];
   onClose: () => void;
   onActivity: (value: ActivityName) => void;
   onMedia: (value: (typeof MEDIA_OPTIONS)[number]) => void;
-  onResult: (value: (typeof RESULT_OPTIONS)[number]) => void;
+  onResult: (value: ResultValue) => void;
   onSbg: (values: string[]) => void;
 }) {
+  const isOvdResult = picker === "result" && activity === "Follow Up OVD";
+  const [draftResult, setDraftResult] = useState<ResultValue | "">(result);
   const title =
     picker === "activity"
       ? "Aktivitas"
       : picker === "media"
         ? "Media Follow Up"
         : picker === "result"
-          ? "Hasil Aktivitas"
+          ? isOvdResult
+            ? "Hasil Follow Up"
+            : "Hasil Aktivitas"
           : "Nomor SBG";
-  const options =
+  const options: readonly string[] =
     picker === "activity"
       ? ACTIVITY_OPTIONS
       : picker === "media"
         ? MEDIA_OPTIONS
         : picker === "result"
-          ? RESULT_OPTIONS
+          ? isOvdResult
+            ? OVD_RESULT_OPTIONS
+            : RESULT_OPTIONS
           : sbgOptions;
 
   return (
@@ -388,8 +403,16 @@ function PickerSheet({
           className="motion-sheet-in w-full max-w-[440px] rounded-t-2xl bg-white px-5 pb-7 pt-5"
           onClick={(event) => event.stopPropagation()}
         >
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-[17px] font-semibold text-[#131324]">{title}</h2>
+          <div className={`${isOvdResult ? "mb-2" : "mb-4"} flex items-center justify-between`}>
+            <h2
+              className={
+                isOvdResult
+                  ? "text-[24px] font-bold text-[#131324]"
+                  : "text-[17px] font-semibold text-[#131324]"
+              }
+            >
+              {title}
+            </h2>
             <button
               type="button"
               onClick={onClose}
@@ -406,8 +429,9 @@ function PickerSheet({
               </p>
             )}
             {options.map((option) => {
-              const selected =
-                picker === "sbg"
+              const selected = isOvdResult
+                ? option === draftResult
+                : picker === "sbg"
                   ? selectedSbg.includes(option)
                   : option ===
                     (picker === "activity" ? activity : picker === "media" ? media : result);
@@ -418,23 +442,36 @@ function PickerSheet({
                   onClick={() => {
                     if (picker === "activity") onActivity(option as ActivityName);
                     else if (picker === "media") onMedia(option as (typeof MEDIA_OPTIONS)[number]);
-                    else if (picker === "result")
-                      onResult(option as (typeof RESULT_OPTIONS)[number]);
-                    else
+                    else if (picker === "result") {
+                      if (isOvdResult) setDraftResult(option as ResultValue);
+                      else onResult(option as ResultValue);
+                    } else
                       onSbg(
                         selected
                           ? selectedSbg.filter((item) => item !== option)
                           : [...selectedSbg, option],
                       );
                   }}
-                  className="flex w-full items-center justify-between border-b border-[#f1f5f9] py-3.5 text-left text-[14px] text-[#131324]"
+                  className={`flex w-full items-center justify-between gap-3 border-b border-[#eef1f6] text-left text-[#2b2b3a] ${
+                    isOvdResult ? "py-[18px] text-[18px]" : "py-3.5 text-[14px]"
+                  }`}
                 >
-                  {option}
-                  <span
-                    className={`flex h-5 w-5 items-center justify-center rounded-full border ${selected ? "border-[#2953A4] bg-[#2953A4] text-white" : "border-[#b8c4d4]"}`}
-                  >
-                    {selected && <Check size={13} weight="bold" />}
-                  </span>
+                  <span className="min-w-0 flex-1">{option}</span>
+                  {isOvdResult ? (
+                    <span
+                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
+                        selected ? "bg-[#2953A4]" : "border-2 border-[#9fb0c7]"
+                      }`}
+                    >
+                      {selected && <span className="h-2.5 w-2.5 rounded-full bg-white" />}
+                    </span>
+                  ) : (
+                    <span
+                      className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${selected ? "border-[#2953A4] bg-[#2953A4] text-white" : "border-[#b8c4d4]"}`}
+                    >
+                      {selected && <Check size={13} weight="bold" />}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -447,6 +484,18 @@ function PickerSheet({
               className="mt-5 h-12 w-full rounded-lg bg-[#2953A4] text-[14px] font-semibold text-white disabled:bg-[#f1f5f9] disabled:text-[#62748e]"
             >
               Pilih Nomor SBG
+            </button>
+          )}
+          {isOvdResult && (
+            <button
+              type="button"
+              onClick={() => {
+                if (draftResult) onResult(draftResult);
+              }}
+              disabled={!draftResult}
+              className="mt-4 h-14 w-full rounded-xl bg-[#2953A4] text-[18px] font-medium text-white disabled:bg-[#f1f5f9] disabled:text-[#62748e]"
+            >
+              Pilih Hasil
             </button>
           )}
         </div>
