@@ -146,9 +146,9 @@ export const KCP_ACTIVITY_SEEDS: KepalaKcpActivity[] = [
     region: "Rawamangun, Jakarta Timur",
     priority: "High",
     status: "Selesai",
-    entries: [
-      { sbg: "001568002503401", nama: "Ni Luh Diah", tipe: "RO", nominal: 25000000 },
-    ],
+    // Aktivitas digital dimulai tanpa daftar nasabah. Leads akan muncul
+    // setelah calon nasabah mengisi formulir pendaftaran.
+    entries: [],
   },
   {
     id: "seed-kcp-apr-market",

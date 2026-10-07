@@ -8,10 +8,14 @@ import {
   Clock3,
   Eye,
   ListChecks,
+  MessageCircle,
+  Phone,
   UserRound,
   X,
 } from "lucide-react";
 import { useActivities } from "../lib/activity-store";
+import { useAllLeads } from "../lib/leads-store";
+import type { Contact } from "../lib/mock-data";
 import {
   KCP_ACTIVITY_SEEDS,
   KCP_MONTHS,
@@ -24,6 +28,7 @@ const PAGE_SIZE = 10;
 
 export function KepalaKcpView() {
   const salesActivities = useActivities();
+  const leads = useAllLeads();
   const [month, setMonth] = useState("Februari");
   const [year, setYear] = useState("2026");
   const [page, setPage] = useState(1);
@@ -55,8 +60,8 @@ export function KepalaKcpView() {
   );
   const scheduledCount = visible.length - doneCount;
   const nasabahCount = useMemo(
-    () => visible.reduce((sum, item) => sum + item.entries.length, 0),
-    [visible],
+    () => visible.reduce((sum, item) => sum + activityLeadCount(item, leads), 0),
+    [visible, leads],
   );
 
   const pageCount = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
@@ -137,7 +142,7 @@ export function KepalaKcpView() {
                   <td className="whitespace-nowrap px-5 py-6">{formatDate(item.date)}</td>
                   <td className="max-w-[220px] truncate px-5 py-6">{item.place}</td>
                   <td className="whitespace-nowrap px-5 py-6 tabular-nums">
-                    {item.entries.length} Nasabah
+                    {activityLeadCount(item, leads)} Nasabah
                   </td>
                   <td className="whitespace-nowrap px-5 py-6">
                     <StatusBadge status={item.status} />
@@ -189,7 +194,13 @@ export function KepalaKcpView() {
         </div>
       </section>
 
-      {detail && <ActivityDetailModal item={detail} onClose={() => setDetail(null)} />}
+      {detail && (
+        <ActivityDetailModal
+          item={detail}
+          leads={activityLeads(detail, leads)}
+          onClose={() => setDetail(null)}
+        />
+      )}
     </div>
   );
 }
@@ -270,11 +281,23 @@ function formatDate(iso: string) {
   }).format(new Date(`${iso}T00:00:00`));
 }
 
+function activityLeads(item: KepalaKcpActivity, leads: Contact[]) {
+  const types = item.activityTypes?.length ? item.activityTypes : [item.title];
+  return leads.filter((lead) => types.includes(lead.source));
+}
+
+function activityLeadCount(item: KepalaKcpActivity, leads: Contact[]) {
+  const matchingLeads = activityLeads(item, leads);
+  return matchingLeads.length > 0 ? matchingLeads.length : item.entries.length;
+}
+
 function ActivityDetailModal({
   item,
+  leads,
   onClose,
 }: {
   item: KepalaKcpActivity;
+  leads: Contact[];
   onClose: () => void;
 }) {
   const [showPhoto, setShowPhoto] = useState(false);
@@ -304,15 +327,11 @@ function ActivityDetailModal({
             <table className="w-full border-collapse text-left text-[14px]">
               <tbody>
                 <tr className="border-b border-slate-100">
-                  <td className="w-32 bg-slate-50 px-4 py-3 font-medium text-slate-500">
-                    Tempat
-                  </td>
+                  <td className="w-32 bg-slate-50 px-4 py-3 font-medium text-slate-500">Tempat</td>
                   <td className="px-4 py-3">{item.place}</td>
                 </tr>
                 <tr>
-                  <td className="w-32 bg-slate-50 px-4 py-3 font-medium text-slate-500">
-                    Wilayah
-                  </td>
+                  <td className="w-32 bg-slate-50 px-4 py-3 font-medium text-slate-500">Wilayah</td>
                   <td className="px-4 py-3">{item.region}</td>
                 </tr>
               </tbody>
@@ -320,9 +339,15 @@ function ActivityDetailModal({
           </div>
 
           <h3 className="mt-6 text-[16px] font-semibold">
-            Daftar Nasabah ({item.entries.length})
+            Daftar Nasabah ({leads.length > 0 ? leads.length : item.entries.length})
           </h3>
-          {item.entries.length > 0 ? (
+          {leads.length > 0 ? (
+            <div className="mt-3 space-y-3">
+              {leads.map((lead) => (
+                <LeadContactCard key={lead.id} lead={lead} />
+              ))}
+            </div>
+          ) : item.entries.length > 0 ? (
             <ul className="mt-3 space-y-3">
               {item.entries.map((entry, index) => (
                 <li
@@ -352,7 +377,7 @@ function ActivityDetailModal({
             </ul>
           ) : (
             <p className="mt-3 rounded-xl border border-dashed border-slate-200 px-4 py-6 text-center text-[14px] text-slate-400">
-              Belum ada daftar nasabah untuk activity ini.
+              Belum ada leads tercatat untuk activity ini.
             </p>
           )}
 
@@ -388,6 +413,39 @@ function ActivityDetailModal({
             Tutup
           </button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function LeadContactCard({ lead }: { lead: Contact }) {
+  const phoneNumber = lead.phone.replace(/\D/g, "");
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+      <div className="min-w-0">
+        <p className="truncate text-[15px] font-medium text-slate-900">{lead.name}</p>
+        <p className="mt-1 truncate text-[13px] text-slate-500">
+          {lead.job || "Pekerjaan belum diisi"} | {lead.status}
+        </p>
+      </div>
+      <div className="mt-3 flex items-center gap-2">
+        <a
+          href={`tel:${lead.phone}`}
+          aria-label={`Telepon ${lead.name}`}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#eef5fd] text-[#2953A4]"
+        >
+          <Phone className="h-4 w-4" />
+        </a>
+        <a
+          href={`https://wa.me/${phoneNumber}`}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`WhatsApp ${lead.name}`}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#e6f7ed] text-[#18a957]"
+        >
+          <MessageCircle className="h-4 w-4" />
+        </a>
+        <span className="ml-1 text-[13px] tabular-nums text-slate-400">{lead.phone}</span>
       </div>
     </div>
   );
