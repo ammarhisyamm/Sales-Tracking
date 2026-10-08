@@ -5,63 +5,54 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleCheck,
-  Clock3,
+  Crosshair,
   Eye,
   ListChecks,
-  MessageCircle,
-  Phone,
   UserRound,
   X,
 } from "lucide-react";
 import { useActivities } from "../lib/activity-store";
-import { getLeadsForActivity } from "../lib/leads-store";
+import { useLeads } from "../lib/leads-store";
+import { KCP_MONTHS } from "../lib/kepala-kcp";
+import { STATUS_META, type Activity, type ActivityStatus } from "../lib/mock-data";
 import type { Contact } from "../lib/mock-data";
-import {
-  KCP_ACTIVITY_SEEDS,
-  KCP_MONTHS,
-  filterByPeriod,
-  fromSalesActivity,
-  resolveLeadIds,
-  type KepalaKcpActivity,
-} from "../lib/kepala-kcp";
 
 const PAGE_SIZE = 10;
 
-export function KepalaKcpView() {
-  const salesActivities = useActivities();
-  const [month, setMonth] = useState("Februari");
-  const [year, setYear] = useState("2026");
-  const [page, setPage] = useState(1);
-  const [detail, setDetail] = useState<KepalaKcpActivity | null>(null);
+const now = new Date();
+const DEFAULT_MONTH = KCP_MONTHS[now.getMonth()];
+const DEFAULT_YEAR = String(now.getFullYear());
 
-  const all = useMemo(() => {
-    const seeds = KCP_ACTIVITY_SEEDS;
-    const mapped = salesActivities.map((activity) =>
-      fromSalesActivity(activity, getLeadsForActivity(activity.id, activity.type)),
-    );
-    const seen = new Set(seeds.map((item) => item.id));
-    return [...seeds, ...mapped.filter((item) => !seen.has(item.id))];
-  }, [salesActivities]);
+export function SalesOfficerView() {
+  const activities = useActivities();
+  const [month, setMonth] = useState<string>(DEFAULT_MONTH);
+  const [year, setYear] = useState<string>(DEFAULT_YEAR);
+  const [page, setPage] = useState(1);
+  const [detail, setDetail] = useState<Activity | null>(null);
 
   const years = useMemo(() => {
-    const set = new Set(all.map((item) => item.date.slice(0, 4)));
-    if (!set.has("2026")) set.add("2026");
+    const set = new Set(activities.map((item) => item.date.slice(0, 4)));
+    set.add(DEFAULT_YEAR);
     return [...set].sort().reverse();
-  }, [all]);
+  }, [activities]);
 
   const monthIndex = KCP_MONTHS.indexOf(month as (typeof KCP_MONTHS)[number]);
 
   const visible = useMemo(
-    () => filterByPeriod(all, monthIndex, Number(year)),
-    [all, monthIndex, year],
+    () =>
+      activities.filter((item) => {
+        const d = new Date(item.date);
+        return d.getMonth() === monthIndex && String(d.getFullYear()) === year;
+      }),
+    [activities, monthIndex, year],
   );
 
-  const doneCount = useMemo(
-    () => visible.filter((item) => item.status === "Selesai").length,
+  const totalLeads = useMemo(
+    () => visible.reduce((sum, item) => sum + item.leadsCount, 0),
     [visible],
   );
-  const totalLeads = useMemo(
-    () => visible.reduce((sum, item) => sum + item.leadIds.length, 0),
+  const totalClosing = useMemo(
+    () => visible.reduce((sum, item) => sum + item.closingCount, 0),
     [visible],
   );
 
@@ -82,26 +73,26 @@ export function KepalaKcpView() {
           icon={<ListChecks className="h-5 w-5 text-[#199900]" />}
           label="Total Aktivitas"
           value={`${visible.length}`}
-          hint={`${month} ${year} · KCP MAS RAWAMANGUN`}
+          hint={`${month} ${year} · Sales Gadai Mas`}
         />
         <SummaryCard
-          icon={<CircleCheck className="h-5 w-5 text-[#199900]" />}
-          label="Aktivitas Selesai"
-          value={`${doneCount}`}
-          hint={`${month} ${year} · KCP MAS RAWAMANGUN`}
+          icon={<Crosshair className="h-5 w-5 text-[#199900]" />}
+          label="Total Leads"
+          value={`${totalLeads}`}
+          hint={`${month} ${year} · realisasi kegiatan`}
         />
         <SummaryCard
           icon={<UserRound className="h-5 w-5 text-[#199900]" />}
-          label="Total Leads"
-          value={`${totalLeads}`}
-          hint={`${month} ${year} · KCP MAS RAWAMANGUN`}
+          label="Total Closing"
+          value={`${totalClosing}`}
+          hint={`${month} ${year} · realisasi kegiatan`}
         />
       </div>
 
       <section className="mt-8 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-5 px-7 py-7">
           <div>
-            <h2 className="text-[25px] font-semibold">Daftar Activity</h2>
+            <h2 className="text-[25px] font-semibold">Daftar Pencapaian Sales Officer</h2>
             <p className="mt-1 text-[14px] text-slate-400">{visible.length} Data</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -128,8 +119,8 @@ export function KepalaKcpView() {
                 <th className="px-5 py-5 font-medium">Tanggal</th>
                 <th className="px-5 py-5 font-medium">Aktivitas</th>
                 <th className="px-5 py-5 font-medium">Lokasi</th>
-                <th className="px-5 py-5 font-medium">Target Leads</th>
-                <th className="px-5 py-5 font-medium">Realisasi Leads</th>
+                <th className="px-5 py-5 font-medium">Leads</th>
+                <th className="px-5 py-5 font-medium">Closing</th>
                 <th className="px-5 py-5 font-medium">Status</th>
                 <th className="px-7 py-5 text-right font-medium">Aksi</th>
               </tr>
@@ -139,13 +130,15 @@ export function KepalaKcpView() {
                 <tr key={item.id} className="border-b border-slate-100 last:border-0">
                   <td className="px-7 py-6">{(safePage - 1) * PAGE_SIZE + index + 1}</td>
                   <td className="whitespace-nowrap px-5 py-6">{formatDate(item.date)}</td>
-                  <td className="max-w-[240px] truncate px-5 py-6 font-medium">{item.title}</td>
-                  <td className="max-w-[220px] truncate px-5 py-6">{item.place}</td>
+                  <td className="max-w-[240px] truncate px-5 py-6 font-medium">
+                    {item.locationName}
+                  </td>
+                  <td className="max-w-[220px] truncate px-5 py-6">{item.address}</td>
                   <td className="whitespace-nowrap px-5 py-6 tabular-nums">
-                    {item.leadsTarget ?? 10}
+                    {item.leadsCount}/{item.leadsTarget}
                   </td>
                   <td className="whitespace-nowrap px-5 py-6 tabular-nums">
-                    {item.leadIds.length}
+                    {item.closingCount}
                   </td>
                   <td className="whitespace-nowrap px-5 py-6">
                     <StatusBadge status={item.status} />
@@ -257,16 +250,8 @@ function FilterSelect({
   );
 }
 
-function StatusBadge({ status }: { status: KepalaKcpActivity["status"] }) {
-  const done = status === "Selesai";
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 text-[14px] ${done ? "text-green-700" : "text-amber-600"}`}
-    >
-      {done ? <CircleCheck className="h-4 w-4" /> : <Clock3 className="h-4 w-4" />}
-      {status}
-    </span>
-  );
+function StatusBadge({ status }: { status: ActivityStatus }) {
+  return <span className={`text-[14px] font-medium ${STATUS_META[status].className}`}>{STATUS_META[status].label}</span>;
 }
 
 function formatDate(iso: string) {
@@ -275,7 +260,7 @@ function formatDate(iso: string) {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
-  }).format(new Date(`${iso}T00:00:00`));
+  }).format(new Date(iso));
 }
 
 function InfoCell({ label, value }: { label: string; value: React.ReactNode }) {
@@ -303,12 +288,9 @@ function StatusPill({ status }: { status: Contact["status"] }) {
   );
 }
 
-function ActivityDetailModal({ item, onClose }: { item: KepalaKcpActivity; onClose: () => void }) {
+function ActivityDetailModal({ item, onClose }: { item: Activity; onClose: () => void }) {
   const [photoOpen, setPhotoOpen] = useState(false);
-  const nasabah = useMemo(
-    () => resolveLeadIds(item.leadIds, item.leadContacts),
-    [item.leadIds, item.leadContacts],
-  );
+  const leads = useLeads(item.id, item.type);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
@@ -320,39 +302,24 @@ function ActivityDetailModal({ item, onClose }: { item: KepalaKcpActivity; onClo
           </button>
         </div>
 
-        <div className="max-h-[calc(100vh-280px)] overscroll-contain overflow-y-auto px-8 py-6">
+        <div className="max-h-[calc(100vh-280px)] overflow-y-auto px-8 py-6">
           <div className="overflow-hidden rounded-xl border border-slate-200">
             <div className="grid grid-cols-2 divide-x divide-slate-200 border-b border-slate-200 md:grid-cols-4">
               <InfoCell label="Tanggal" value={formatDate(item.date)} />
-              <InfoCell label="Aktivitas" value={item.title} />
-              <InfoCell label="Tanggal" value={formatDate(item.date)} />
-              <InfoCell label="Nama Lokasi" value={item.place} />
+              <InfoCell label="Aktivitas" value={item.locationName} />
+              <InfoCell label="Waktu" value={`${item.timeRange} WIB`} />
+              <InfoCell label="Lokasi" value={item.address} />
             </div>
-            <div className="grid grid-cols-2 divide-x divide-slate-200 border-b border-slate-200 md:grid-cols-4">
-              <InfoCell label="Alamat" value={item.address ?? item.place} />
-              <InfoCell label="Kelurahan" value={item.kelurahan ?? item.region} />
-              <InfoCell label="Target Leads" value={String(item.leadsTarget ?? 10)} />
-              <InfoCell label="Realisasi Leads" value={String(nasabah.length)} />
-            </div>
-            <div className="grid grid-cols-2 divide-x divide-slate-200">
-              <InfoCell
-                label="Foto"
-                value={
-                  <button
-                    type="button"
-                    onClick={() => setPhotoOpen(true)}
-                    className="inline-flex items-center gap-2 rounded-lg border border-[#292663] px-4 py-2 text-[14px] font-medium text-[#292663]"
-                  >
-                    <Eye className="h-5 w-5" /> Foto Kegiatan
-                  </button>
-                }
-              />
+            <div className="grid grid-cols-2 divide-x divide-slate-200 md:grid-cols-4">
+              <InfoCell label="Leads" value={`${item.leadsCount}/${item.leadsTarget}`} />
+              <InfoCell label="Closing Leads" value={String(item.closingCount)} />
               <InfoCell label="Status" value={<StatusBadge status={item.status} />} />
+              <InfoCell label="Jenis" value={item.kind === "digital" ? "Digital" : "Lapangan"} />
             </div>
           </div>
 
-          <h3 className="mt-6 text-[16px] font-semibold">Daftar Leads ({nasabah.length})</h3>
-          {nasabah.length > 0 ? (
+          <h3 className="mt-6 text-[16px] font-semibold">Daftar Leads ({leads.length})</h3>
+          {leads.length > 0 ? (
             <div className="mt-3 overflow-x-auto rounded-xl border border-slate-200">
               <table className="w-full min-w-[860px] border-collapse text-left text-[14px]">
                 <thead className="bg-slate-50 text-slate-500">
@@ -375,64 +342,40 @@ function ActivityDetailModal({ item, onClose }: { item: KepalaKcpActivity; onClo
                     <th scope="col" className="px-4 py-3 font-medium">
                       Status Nasabah
                     </th>
-                    <th scope="col" className="px-4 py-3 text-right font-medium">
-                      Kontak
-                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {nasabah.map((contact, index) => {
-                    const digits = contact.phone.replace(/\D/g, "");
-                    return (
-                      <tr key={contact.id} className="border-b border-slate-100 last:border-0">
-                        <td className="px-4 py-4 text-slate-500">{index + 1}</td>
-                        <td className="whitespace-nowrap px-4 py-4 font-medium text-slate-900">
-                          {contact.name}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-4 tabular-nums">
-                          {contact.phone}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-4">
-                          {contact.kelurahan ?? "-"}
-                        </td>
-                        <td className="max-w-[160px] truncate px-4 py-4 text-slate-600">
-                          {contact.job ?? "-"}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-4">
-                          <StatusPill status={contact.status} />
-                        </td>
-                        <td className="px-4 py-4">
-                          <span className="flex justify-end gap-2">
-                            <a
-                              href={`tel:${contact.phone}`}
-                              aria-label={`Telepon ${contact.name}`}
-                              className="flex h-11 w-11 items-center justify-center rounded-full bg-[#eef5fd] text-[#2953A4]"
-                            >
-                              <Phone className="h-[22px] w-[22px]" />
-                            </a>
-                            <a
-                              href={`https://wa.me/${digits}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              aria-label={`WhatsApp ${contact.name}`}
-                              className="flex h-11 w-11 items-center justify-center rounded-full bg-[#e6f7ed] text-[#18a957]"
-                            >
-                              <MessageCircle className="h-6 w-6" />
-                            </a>
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {leads.map((lead, index) => (
+                    <tr key={lead.id} className="border-b border-slate-100 last:border-0">
+                      <td className="px-4 py-4 text-slate-500">{index + 1}</td>
+                      <td className="whitespace-nowrap px-4 py-4 font-medium text-slate-900">
+                        {lead.name}
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-4 tabular-nums">{lead.phone}</td>
+                      <td className="whitespace-nowrap px-4 py-4">{lead.kelurahan ?? "-"}</td>
+                      <td className="max-w-[160px] truncate px-4 py-4 text-slate-600">
+                        {lead.job ?? "-"}
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-4">
+                        <StatusPill status={lead.status} />
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
           ) : (
             <p className="mt-3 rounded-xl border border-dashed border-slate-200 px-4 py-6 text-center text-[14px] text-slate-400">
-              Belum ada nasabah tercatat untuk activity ini.
+              Belum ada leads tercatat untuk activity ini.
             </p>
           )}
 
+          <button
+            onClick={() => setPhotoOpen(true)}
+            className="mt-5 flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#2953A4] py-4 text-[16px] font-medium text-white"
+          >
+            <Eye className="h-5 w-5" /> Lihat Foto
+          </button>
         </div>
 
         <div className="flex justify-end gap-3 border-t border-slate-200 px-8 py-4">
@@ -446,7 +389,7 @@ function ActivityDetailModal({ item, onClose }: { item: KepalaKcpActivity; onClo
       </div>
       {photoOpen && (
         <PhotoModal
-          title={item.title}
+          title={item.locationName}
           photoUrl={item.photoUrl}
           onClose={() => setPhotoOpen(false)}
         />

@@ -21,6 +21,7 @@ import {
 import { TargetFilters } from "../components/target-filters";
 import { KepalaKcpView } from "../components/kepala-kcp-view";
 import { PenaksirView } from "../components/penaksir-view";
+import { SalesOfficerView } from "../components/sales-officer-view";
 import { formatRupiah } from "../lib/mock-data";
 
 export const Route = createFileRoute("/dashboard")({
@@ -228,7 +229,9 @@ function Dashboard() {
   const [edit, setEdit] = useState<EditTarget | null>(null);
   const [successUnit, setSuccessUnit] = useState<string | null>(null);
   const [targetMenuOpen, setTargetMenuOpen] = useState(true);
-  const [menu, setMenu] = useState<"target" | "kepala-kcp" | "penaksir">("target");
+  const [menu, setMenu] = useState<"target" | "kepala-kcp" | "penaksir" | "sales-officer">(
+    "target",
+  );
   const [salesGrade, setSalesGrade] = useState("Semua Grade");
   const visible = useMemo(() => targets, [targets]);
   const configured = targets.filter((item) => item.configured).length;
@@ -332,7 +335,11 @@ function Dashboard() {
                 active={menu === "penaksir"}
                 onClick={() => setMenu("penaksir")}
               />
-              <SidebarSubItem label="Pencapaian Sales Officer" muted />
+              <SidebarSubItem
+                label="Pencapaian Sales Officer"
+                active={menu === "sales-officer"}
+                onClick={() => setMenu("sales-officer")}
+              />
               <SidebarSubItem label="Pencapaian Sales Agent" muted />
             </div>
           )}
@@ -372,6 +379,15 @@ function Dashboard() {
               </div>
               <div className="mt-10">
                 <PenaksirView />
+              </div>
+            </>
+          ) : menu === "sales-officer" ? (
+            <>
+              <div className="mt-5">
+                <h1 className="text-[32px] font-bold tracking-tight">Pencapaian Sales Officer</h1>
+              </div>
+              <div className="mt-10">
+                <SalesOfficerView />
               </div>
             </>
           ) : (
