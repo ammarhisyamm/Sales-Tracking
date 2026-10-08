@@ -340,10 +340,13 @@ function ActivityDetailModal({ item, onClose }: { item: KepalaKcpActivity; onClo
                 value={
                   <button
                     type="button"
-                    onClick={() => setPhotoOpen(true)}
+                    onClick={() => setPhotoOpen((value) => !value)}
                     className="inline-flex items-center gap-2 rounded-lg border border-[#292663] px-4 py-2 text-[14px] font-medium text-[#292663]"
                   >
-                    <Eye className="h-5 w-5" /> Foto Kegiatan
+                    <Eye className="h-5 w-5" /> {photoOpen ? "Sembunyikan" : "Foto Kegiatan"}
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${photoOpen ? "rotate-180" : ""}`}
+                    />
                   </button>
                 }
               />
@@ -433,6 +436,26 @@ function ActivityDetailModal({ item, onClose }: { item: KepalaKcpActivity; onClo
             </p>
           )}
 
+          {photoOpen && (
+            <div className="mt-4 overflow-hidden rounded-xl border border-slate-200">
+              <div className="bg-slate-50 px-4 py-3 text-[14px] font-medium text-slate-500">
+                Foto Kegiatan
+              </div>
+              <div className="flex min-h-[220px] items-center justify-center bg-[#eef2f7] p-4">
+                {item.photoUrl ? (
+                  <img
+                    src={item.photoUrl}
+                    alt={`Foto kegiatan ${item.title}`}
+                    className="max-h-[360px] w-full rounded-lg object-contain"
+                  />
+                ) : (
+                  <p className="px-6 py-8 text-center text-[14px] text-slate-400">
+                    Foto kegiatan belum tersedia.
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex justify-end gap-3 border-t border-slate-200 px-8 py-4">
@@ -442,51 +465,6 @@ function ActivityDetailModal({ item, onClose }: { item: KepalaKcpActivity; onClo
           >
             Tutup
           </button>
-        </div>
-      </div>
-      {photoOpen && (
-        <PhotoModal
-          title={item.title}
-          photoUrl={item.photoUrl}
-          onClose={() => setPhotoOpen(false)}
-        />
-      )}
-    </div>
-  );
-}
-
-function PhotoModal({
-  title,
-  photoUrl,
-  onClose,
-}: {
-  title: string;
-  photoUrl?: string;
-  onClose: () => void;
-}) {
-  return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/35 p-4">
-      <div className="relative w-full max-w-[560px] overflow-hidden rounded-xl bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-slate-200 px-8 py-5">
-          <h2 className="text-[22px] font-bold">Foto Kegiatan</h2>
-          <button onClick={onClose} aria-label="Tutup">
-            <X className="h-6 w-6 text-slate-500" />
-          </button>
-        </div>
-        <div className="px-8 py-6">
-          <div className="flex min-h-[280px] items-center justify-center overflow-hidden rounded-xl bg-[#eef2f7] p-4">
-            {photoUrl ? (
-              <img
-                src={photoUrl}
-                alt={`Foto kegiatan ${title}`}
-                className="max-h-[420px] w-full rounded-lg object-contain"
-              />
-            ) : (
-              <p className="px-6 py-8 text-center text-[14px] text-slate-400">
-                Foto kegiatan belum tersedia.
-              </p>
-            )}
-          </div>
         </div>
       </div>
     </div>

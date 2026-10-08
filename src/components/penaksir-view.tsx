@@ -298,6 +298,8 @@ function FollowUpDetailModal({
   onClose: () => void;
 }) {
   const [photoOpen, setPhotoOpen] = useState(false);
+  const storedPhoto = usePenaksirPhoto(item.cif);
+  const photo = item.photoUrl || storedPhoto;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
@@ -355,10 +357,13 @@ function FollowUpDetailModal({
                 value={
                   <button
                     type="button"
-                    onClick={() => setPhotoOpen(true)}
+                    onClick={() => setPhotoOpen((value) => !value)}
                     className="inline-flex items-center gap-2 rounded-lg border border-[#292663] px-4 py-2 text-[14px] font-medium text-[#292663]"
                   >
-                    <Eye className="h-5 w-5" /> Lihat Foto
+                    <Eye className="h-5 w-5" /> {photoOpen ? "Sembunyikan" : "Lihat Foto"}
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${photoOpen ? "rotate-180" : ""}`}
+                    />
                   </button>
                 }
               />
@@ -418,6 +423,28 @@ function FollowUpDetailModal({
               </tbody>
             </table>
           </div>
+
+          {photoOpen && (
+            <div className="mt-4 overflow-hidden rounded-xl border border-slate-200">
+              <div className="bg-slate-50 px-4 py-3 text-[14px] font-medium text-slate-500">
+                Foto Realisasi
+              </div>
+              <div className="flex min-h-[220px] items-center justify-center bg-[#eef2f7] p-4">
+                {photo ? (
+                  <img
+                    src={photo}
+                    alt={`Foto realisasi ${item.kegiatan} ${item.nama}`}
+                    className="max-h-[360px] w-full rounded-lg object-contain"
+                  />
+                ) : (
+                  <p className="flex flex-col items-center gap-2 px-6 py-8 text-center text-[14px] text-slate-400">
+                    <Eye className="h-8 w-8 text-slate-300" />
+                    Foto realisasi {item.kegiatan} belum tersedia.
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex justify-end gap-3 border-t border-slate-200 px-8 py-4">
@@ -429,7 +456,6 @@ function FollowUpDetailModal({
           </button>
         </div>
       </div>
-      {photoOpen && <PhotoModal item={item} onClose={() => setPhotoOpen(false)} />}
     </div>
   );
 }
@@ -443,59 +469,4 @@ function DetailCell({ label, value }: { label: string; value: React.ReactNode })
   );
 }
 
-function PhotoModal({ item, onClose }: { item: PenaksirFollowUp; onClose: () => void }) {
-  const storedPhoto = usePenaksirPhoto(item.cif);
-  const photo = item.photoUrl || storedPhoto;
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
-      <div className="relative max-h-[calc(100vh-32px)] w-full max-w-[560px] overflow-hidden rounded-xl bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-slate-200 px-8 py-5">
-          <div>
-            <h2 className="text-[22px] font-bold">Foto Realisasi</h2>
-            <p className="mt-0.5 text-[14px] text-slate-400">
-              {item.cif} · {item.nama} · {formatPelaksanaan(item)}
-            </p>
-          </div>
-          <button onClick={onClose} aria-label="Tutup">
-            <X className="h-6 w-6 text-slate-500" />
-          </button>
-        </div>
-        <div className="px-8 py-6">
-          <div className="flex min-h-[280px] items-center justify-center overflow-hidden rounded-xl bg-[#eef2f7] p-4">
-            {photo ? (
-              <img
-                src={photo}
-                alt={`Foto realisasi ${item.kegiatan} ${item.nama}`}
-                className="max-h-[420px] w-full rounded-lg object-contain"
-              />
-            ) : (
-              <p className="flex flex-col items-center gap-2 px-6 py-10 text-center text-[14px] text-slate-400">
-                <Eye className="h-8 w-8 text-slate-300" />
-                Foto realisasi {item.kegiatan} belum tersedia.
-              </p>
-            )}
-          </div>
-          <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-1 text-[14px] text-slate-500">
-            <span>
-              Kegiatan: <strong className="text-slate-700">{item.kegiatan}</strong>
-            </span>
-            <span>
-              Media: <strong className="text-slate-700">{item.media}</strong>
-            </span>
-            <span>
-              Hasil: <strong className="text-slate-700">{item.hasil}</strong>
-            </span>
-          </div>
-        </div>
-        <div className="flex justify-end gap-3 border-t border-slate-200 px-8 py-4">
-          <button
-            onClick={onClose}
-            className="rounded-lg border-2 border-[#199900] px-5 py-2.5 text-[14px] font-medium text-[#199900]"
-          >
-            Tutup
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+
