@@ -14,13 +14,12 @@ import {
   X,
 } from "lucide-react";
 import { useActivities } from "../lib/activity-store";
-import { useAllLeads } from "../lib/leads-store";
-import type { Contact } from "../lib/mock-data";
 import {
   KCP_ACTIVITY_SEEDS,
   KCP_MONTHS,
   filterByPeriod,
   fromSalesActivity,
+  resolveLeadIds,
   type KepalaKcpActivity,
 } from "../lib/kepala-kcp";
 
@@ -28,7 +27,6 @@ const PAGE_SIZE = 10;
 
 export function KepalaKcpView() {
   const salesActivities = useActivities();
-  const leads = useAllLeads();
   const [month, setMonth] = useState("Februari");
   const [year, setYear] = useState("2026");
   const [page, setPage] = useState(1);
@@ -60,8 +58,8 @@ export function KepalaKcpView() {
   );
   const scheduledCount = visible.length - doneCount;
   const nasabahCount = useMemo(
-    () => visible.reduce((sum, item) => sum + activityLeadCount(item, leads), 0),
-    [visible, leads],
+    () => visible.reduce((sum, item) => sum + item.leadIds.length, 0),
+    [visible],
   );
 
   const pageCount = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
@@ -142,7 +140,7 @@ export function KepalaKcpView() {
                   <td className="whitespace-nowrap px-5 py-6">{formatDate(item.date)}</td>
                   <td className="max-w-[220px] truncate px-5 py-6">{item.place}</td>
                   <td className="whitespace-nowrap px-5 py-6 tabular-nums">
-                    {activityLeadCount(item, leads)} Nasabah
+                    {item.leadIds.length} Nasabah
                   </td>
                   <td className="whitespace-nowrap px-5 py-6">
                     <StatusBadge status={item.status} />
@@ -194,13 +192,7 @@ export function KepalaKcpView() {
         </div>
       </section>
 
-      {detail && (
-        <ActivityDetailModal
-          item={detail}
-          leads={activityLeads(detail, leads)}
-          onClose={() => setDetail(null)}
-        />
-      )}
+      {detail && <ActivityDetailModal item={detail} onClose={() => setDetail(null)} />}
     </div>
   );
 }
@@ -281,25 +273,10 @@ function formatDate(iso: string) {
   }).format(new Date(`${iso}T00:00:00`));
 }
 
-function activityLeads(item: KepalaKcpActivity, leads: Contact[]) {
-  const types = item.activityTypes?.length ? item.activityTypes : [item.title];
-  return leads.filter((lead) => types.includes(lead.source));
-}
-
-function activityLeadCount(item: KepalaKcpActivity, leads: Contact[]) {
-  return activityLeads(item, leads).length;
-}
-
-function ActivityDetailModal({
-  item,
-  leads,
-  onClose,
-}: {
-  item: KepalaKcpActivity;
-  leads: Contact[];
-  onClose: () => void;
-}) {
+function ActivityDetailModal({ item, onClose }: { item: KepalaKcpActivity; onClose: () => void }) {
   const [showPhoto, setShowPhoto] = useState(false);
+  const nasabah = useMemo(() => resolveLeadIds(item.leadIds), [item.leadIds]);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
       <div className="relative max-h-[calc(100vh-32px)] w-full max-w-[720px] overflow-hidden rounded-xl bg-white shadow-2xl">
@@ -337,16 +314,47 @@ function ActivityDetailModal({
             </table>
           </div>
 
-          <h3 className="mt-6 text-[16px] font-semibold">Daftar Nasabah ({leads.length})</h3>
-          {leads.length > 0 ? (
-            <div className="mt-3 space-y-3">
-              {leads.map((lead) => (
-                <LeadContactCard key={lead.id} lead={lead} />
-              ))}
-            </div>
+          <h3 className="mt-6 text-[16px] font-semibold">Daftar Nasabah ({nasabah.length})</h3>
+          {nasabah.length > 0 ? (
+            <ul className="mt-3 space-y-3">
+              {nasabah.map((contact) => {
+                const digits = contact.phone.replace(/\D/g, "");
+                return (
+                  <li
+                    key={contact.id}
+                    className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 px-4 py-3"
+                  >
+                    <span className="min-w-0">
+                      <span className="block truncate text-[16px] font-medium">{contact.name}</span>
+                      <span className="mt-1 block truncate text-[13px] text-slate-400">
+                        {contact.job ?? "-"} | {contact.status}
+                      </span>
+                    </span>
+                    <span className="flex shrink-0 items-center gap-2">
+                      <a
+                        href={`tel:${contact.phone}`}
+                        aria-label={`Telepon ${contact.name}`}
+                        className="flex h-11 w-11 items-center justify-center rounded-full bg-[#eef5fd] text-[#2953A4]"
+                      >
+                        <Phone className="h-[22px] w-[22px]" />
+                      </a>
+                      <a
+                        href={`https://wa.me/${digits}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`WhatsApp ${contact.name}`}
+                        className="flex h-11 w-11 items-center justify-center rounded-full bg-[#e6f7ed] text-[#18a957]"
+                      >
+                        <MessageCircle className="h-6 w-6" />
+                      </a>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
           ) : (
             <p className="mt-3 rounded-xl border border-dashed border-slate-200 px-4 py-6 text-center text-[14px] text-slate-400">
-              Belum ada leads tercatat untuk activity ini.
+              Belum ada nasabah tercatat untuk activity ini.
             </p>
           )}
 
@@ -387,35 +395,78 @@ function ActivityDetailModal({
   );
 }
 
-function LeadContactCard({ lead }: { lead: Contact }) {
-  const phoneNumber = lead.phone.replace(/\D/g, "");
+function SummaryCard({
+  icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  hint: string;
+}) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-      <div className="min-w-0">
-        <p className="truncate text-[15px] font-medium text-slate-900">{lead.name}</p>
-        <p className="mt-1 truncate text-[13px] text-slate-500">
-          {lead.job || "Pekerjaan belum diisi"} | {lead.status}
-        </p>
-      </div>
-      <div className="mt-3 flex items-center gap-2">
-        <a
-          href={`tel:${lead.phone}`}
-          aria-label={`Telepon ${lead.name}`}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#eef5fd] text-[#2953A4]"
-        >
-          <Phone className="h-4 w-4" />
-        </a>
-        <a
-          href={`https://wa.me/${phoneNumber}`}
-          target="_blank"
-          rel="noreferrer"
-          aria-label={`WhatsApp ${lead.name}`}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#e6f7ed] text-[#18a957]"
-        >
-          <MessageCircle className="h-4 w-4" />
-        </a>
-        <span className="ml-1 text-[13px] tabular-nums text-slate-400">{lead.phone}</span>
-      </div>
+    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <p className="flex items-center gap-2 text-[14px] text-slate-500">
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#e8f5e9]">
+          {icon}
+        </span>
+        {label}
+      </p>
+      <p className="mt-3 truncate text-[22px] font-bold tabular-nums">{value}</p>
+      <p className="mt-1 text-[13px] text-slate-400">{hint}</p>
     </div>
   );
+}
+
+function FilterSelect({
+  icon,
+  value,
+  options,
+  onChange,
+}: {
+  icon: React.ReactNode;
+  value: string;
+  options: readonly string[];
+  onChange: (value: string) => void;
+}) {
+  return (
+    <span className="relative inline-flex items-center">
+      <span className="pointer-events-none absolute left-4">{icon}</span>
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="appearance-none rounded-xl border border-slate-200 bg-white py-3 pl-12 pr-10 text-[15px] font-medium text-slate-700 outline-none"
+      >
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+      <ChevronDown className="pointer-events-none absolute right-4 h-4 w-4 text-slate-500" />
+    </span>
+  );
+}
+
+function StatusBadge({ status }: { status: KepalaKcpActivity["status"] }) {
+  const done = status === "Selesai";
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 text-[14px] ${done ? "text-green-700" : "text-amber-600"}`}
+    >
+      {done ? <CircleCheck className="h-4 w-4" /> : <Clock3 className="h-4 w-4" />}
+      {status}
+    </span>
+  );
+}
+
+function formatDate(iso: string) {
+  return new Intl.DateTimeFormat("id-ID", {
+    weekday: "long",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(new Date(`${iso}T00:00:00`));
 }
