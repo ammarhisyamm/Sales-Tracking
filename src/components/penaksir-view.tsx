@@ -278,6 +278,16 @@ function FilterSelect({
   );
 }
 
+const HASIL_PILL: Record<string, string> = {
+  "Deal Transaksi": "bg-green-100 text-green-800",
+  "Bersedia Bayar / Perpanjang": "bg-green-100 text-green-800",
+  "Masih Dipertimbangkan": "bg-amber-100 text-amber-800",
+  "Belum Bisa Bayar": "bg-amber-100 text-amber-800",
+  "Belum Ada Respon": "bg-slate-100 text-slate-500",
+  "Tidak Dapat Dihubungi": "bg-[#ffe0e0] text-[#e5484d]",
+  "Menolak / Tidak Bersedia Melanjutkan": "bg-[#ffe0e0] text-[#e5484d]",
+};
+
 function FollowUpDetailModal({
   item,
   hasilTone,
@@ -288,8 +298,6 @@ function FollowUpDetailModal({
   onClose: () => void;
 }) {
   const [photoOpen, setPhotoOpen] = useState(false);
-  const isOvd = item.kegiatan === "Follow Up OVD";
-  const hasManySbg = item.sbg.length > 1;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
@@ -307,11 +315,29 @@ function FollowUpDetailModal({
         </div>
 
         <div className="max-h-[calc(100vh-280px)] overflow-y-auto px-8 py-6">
-          <p className="text-[18px] font-bold leading-snug text-slate-900">
-            {item.kegiatan}
-            {item.sbg[0] && <span className="font-normal text-slate-400">/{item.sbg[0].followUp}</span>}
-          </p>
-          <p className={`mt-1 text-[19px] font-medium ${hasilTone(item.hasil)}`}>{item.hasil}</p>
+          <div className="flex flex-wrap items-center gap-4 rounded-xl bg-[#f3f6fb] px-5 py-4">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#292663] text-[18px] font-bold text-white">
+              {item.nama
+                .split(" ")
+                .map((word) => word[0])
+                .slice(0, 2)
+                .join("")
+                .toUpperCase()}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[18px] font-bold text-slate-900">
+                {item.nama}
+              </span>
+              <span className="mt-0.5 block truncate text-[13px] text-slate-500">
+                {item.cif} · {item.kegiatan} · {item.media}
+              </span>
+            </span>
+            <span
+              className={`shrink-0 rounded-full px-4 py-1.5 text-[13px] font-semibold ${HASIL_PILL[item.hasil] ?? "bg-slate-100 text-slate-600"}`}
+            >
+              {item.hasil}
+            </span>
+          </div>
 
           <div className="mt-5 overflow-hidden rounded-xl border border-slate-200">
             <div className="grid grid-cols-2 divide-x divide-slate-200 border-b border-slate-200 md:grid-cols-4">
@@ -339,55 +365,59 @@ function FollowUpDetailModal({
             </div>
           </div>
 
-          {isOvd && hasManySbg ? (
-            <>
-              <h3 className="mt-6 text-[16px] font-semibold">
-                Daftar Nomor SBG ({item.sbg.length})
-              </h3>
-              <div className="mt-3 rounded-xl bg-[#e5ebf8] p-3">
-                <ul className="space-y-2.5 pb-1 pt-1">
-                  {item.sbg.map((sbg, index) => (
-                    <li key={sbg.number} className="flex items-center gap-3">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-[16px] font-medium text-black">
-                        {index + 1}
-                      </span>
-                      <span className="text-[16px] text-slate-700">
-                        {sbg.number} - {sbg.followUp}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </>
-          ) : (
-            <>
-              <h3 className="mt-6 text-[16px] font-semibold">Nomor SBG</h3>
-              <div className="mt-3 overflow-hidden rounded-xl border border-slate-200">
-                <table className="w-full border-collapse text-left text-[14px]">
-                  <thead className="bg-slate-50 text-slate-500">
-                    <tr className="border-b border-slate-200">
-                      <th scope="col" className="px-4 py-3 font-medium">
-                        No. SBG
-                      </th>
-                      <th scope="col" className="px-4 py-3 font-medium">
-                        Follow Up Ke
-                      </th>
+          <h3 className="mt-6 text-[16px] font-semibold">
+            Daftar Nomor SBG ({item.sbg.length})
+          </h3>
+          <div className="mt-3 overflow-x-auto rounded-xl border border-slate-200">
+            <table className="w-full min-w-[520px] border-collapse text-left text-[14px]">
+              <thead className="bg-slate-50 text-slate-500">
+                <tr className="border-b border-slate-200">
+                  <th scope="col" className="px-4 py-3 font-medium">
+                    No
+                  </th>
+                  <th scope="col" className="px-4 py-3 font-medium">
+                    No. SBG
+                  </th>
+                  <th scope="col" className="px-4 py-3 font-medium">
+                    Follow Up Ke
+                  </th>
+                  <th scope="col" className="px-4 py-3 font-medium">
+                    Progres
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {item.sbg.map((sbg, index) => {
+                  const total = item.sbg.length;
+                  const done = Math.min(index + 1, total);
+                  return (
+                    <tr key={sbg.number} className="border-b border-slate-100 last:border-0">
+                      <td className="px-4 py-3 text-slate-500">{index + 1}</td>
+                      <td className="whitespace-nowrap px-4 py-3 font-medium tabular-nums text-slate-900">
+                        {sbg.number}
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-3 text-slate-600">
+                        {sbg.followUp}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="flex items-center gap-2">
+                          <span className="h-1.5 w-24 overflow-hidden rounded-full bg-slate-100">
+                            <span
+                              className="block h-full rounded-full bg-[#199900]"
+                              style={{ width: `${Math.round((done / total) * 100)}%` }}
+                            />
+                          </span>
+                          <span className="text-[12px] tabular-nums text-slate-400">
+                            {done}/{total}
+                          </span>
+                        </span>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {item.sbg.map((sbg) => (
-                      <tr key={sbg.number} className="border-b border-slate-100 last:border-0">
-                        <td className="whitespace-nowrap px-4 py-3 tabular-nums">
-                          {sbg.number}
-                        </td>
-                        <td className="px-4 py-3">{sbg.followUp}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </>
-          )}
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div className="flex justify-end gap-3 border-t border-slate-200 px-8 py-4">
