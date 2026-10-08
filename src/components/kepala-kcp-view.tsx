@@ -287,8 +287,7 @@ function activityLeads(item: KepalaKcpActivity, leads: Contact[]) {
 }
 
 function activityLeadCount(item: KepalaKcpActivity, leads: Contact[]) {
-  const matchingLeads = activityLeads(item, leads);
-  return matchingLeads.length > 0 ? matchingLeads.length : item.entries.length;
+  return activityLeads(item, leads).length;
 }
 
 function ActivityDetailModal({
@@ -338,43 +337,13 @@ function ActivityDetailModal({
             </table>
           </div>
 
-          <h3 className="mt-6 text-[16px] font-semibold">
-            Daftar Nasabah ({leads.length > 0 ? leads.length : item.entries.length})
-          </h3>
+          <h3 className="mt-6 text-[16px] font-semibold">Daftar Nasabah ({leads.length})</h3>
           {leads.length > 0 ? (
             <div className="mt-3 space-y-3">
               {leads.map((lead) => (
                 <LeadContactCard key={lead.id} lead={lead} />
               ))}
             </div>
-          ) : item.entries.length > 0 ? (
-            <ul className="mt-3 space-y-3">
-              {item.entries.map((entry, index) => (
-                <li
-                  key={entry.sbg}
-                  className="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3"
-                >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#eef2f7] text-[15px] font-semibold text-[#292663]">
-                    {index + 1}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[15px] font-medium">{entry.nama}</span>
-                    <span className="block text-[13px] tabular-nums text-slate-400">
-                      {entry.sbg}
-                    </span>
-                  </span>
-                  <span
-                    className={`shrink-0 rounded-full px-3 py-1 text-[12px] font-semibold ${
-                      entry.tipe === "ADO"
-                        ? "bg-amber-100 text-amber-800"
-                        : "bg-green-100 text-green-800"
-                    }`}
-                  >
-                    {entry.tipe}
-                  </span>
-                </li>
-              ))}
-            </ul>
           ) : (
             <p className="mt-3 rounded-xl border border-dashed border-slate-200 px-4 py-6 text-center text-[14px] text-slate-400">
               Belum ada leads tercatat untuk activity ini.
