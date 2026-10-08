@@ -14,13 +14,12 @@ import {
   X,
 } from "lucide-react";
 import { useActivities } from "../lib/activity-store";
-import { useLeads } from "../lib/leads-store";
 import {
   KCP_ACTIVITY_SEEDS,
   KCP_MONTHS,
   filterByPeriod,
   fromSalesActivity,
-  resolveNasabah,
+  resolveLeadIds,
   type KepalaKcpActivity,
 } from "../lib/kepala-kcp";
 
@@ -59,7 +58,7 @@ export function KepalaKcpView() {
   );
   const scheduledCount = visible.length - doneCount;
   const nasabahCount = useMemo(
-    () => visible.reduce((sum, item) => sum + item.entries.length, 0),
+    () => visible.reduce((sum, item) => sum + item.leadIds.length, 0),
     [visible],
   );
 
@@ -141,7 +140,7 @@ export function KepalaKcpView() {
                   <td className="whitespace-nowrap px-5 py-6">{formatDate(item.date)}</td>
                   <td className="max-w-[220px] truncate px-5 py-6">{item.place}</td>
                   <td className="whitespace-nowrap px-5 py-6 tabular-nums">
-                    {item.entries.length} Nasabah
+                    {item.leadIds.length} Nasabah
                   </td>
                   <td className="whitespace-nowrap px-5 py-6">
                     <StatusBadge status={item.status} />
@@ -287,10 +286,7 @@ function ActivityDetailModal({
   onClose: () => void;
 }) {
   const [showPhoto, setShowPhoto] = useState(false);
-  const source = item.activityTypes?.[0] ?? item.title;
-  const leads = useLeads(item.id, source);
-  const nasabah = useMemo(() => resolveNasabah(item.entries), [item.entries]);
-  const allNasabah = leads.length > 0 ? leads : nasabah;
+  const nasabah = useMemo(() => resolveLeadIds(item.leadIds), [item.leadIds]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
@@ -334,11 +330,11 @@ function ActivityDetailModal({
           </div>
 
           <h3 className="mt-6 text-[16px] font-semibold">
-            Daftar Nasabah ({allNasabah.length})
+            Daftar Nasabah ({nasabah.length})
           </h3>
-          {allNasabah.length > 0 ? (
+          {nasabah.length > 0 ? (
             <ul className="mt-3 space-y-3">
-              {allNasabah.map((contact) => {
+              {nasabah.map((contact) => {
                 const digits = contact.phone.replace(/\D/g, "");
                 return (
                   <li
@@ -357,7 +353,7 @@ function ActivityDetailModal({
                         aria-label={`Telepon ${contact.name}`}
                         className="flex h-11 w-11 items-center justify-center rounded-full bg-[#eef5fd] text-[#2953A4]"
                       >
-                        <Phone size={22} weight="regular" />
+                        <Phone className="h-[22px] w-[22px]" />
                       </a>
                       <a
                         href={`https://wa.me/${digits}`}
@@ -366,7 +362,7 @@ function ActivityDetailModal({
                         aria-label={`WhatsApp ${contact.name}`}
                         className="flex h-11 w-11 items-center justify-center rounded-full bg-[#e6f7ed] text-[#18a957]"
                       >
-                        <MessageCircle size={24} weight="regular" />
+                        <MessageCircle className="h-6 w-6" />
                       </a>
                     </span>
                   </li>
