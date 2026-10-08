@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { useActivities } from "../lib/activity-store";
+import { getLeadsForActivity } from "../lib/leads-store";
 import {
   KCP_ACTIVITY_SEEDS,
   KCP_MONTHS,
@@ -34,7 +35,9 @@ export function KepalaKcpView() {
 
   const all = useMemo(() => {
     const seeds = KCP_ACTIVITY_SEEDS;
-    const mapped = salesActivities.map(fromSalesActivity);
+    const mapped = salesActivities.map((activity) =>
+      fromSalesActivity(activity, getLeadsForActivity(activity.id, activity.type)),
+    );
     const seen = new Set(seeds.map((item) => item.id));
     return [...seeds, ...mapped.filter((item) => !seen.has(item.id))];
   }, [salesActivities]);
@@ -275,7 +278,10 @@ function formatDate(iso: string) {
 
 function ActivityDetailModal({ item, onClose }: { item: KepalaKcpActivity; onClose: () => void }) {
   const [showPhoto, setShowPhoto] = useState(false);
-  const nasabah = useMemo(() => resolveLeadIds(item.leadIds), [item.leadIds]);
+  const nasabah = useMemo(
+    () => resolveLeadIds(item.leadIds, item.leadContacts),
+    [item.leadIds, item.leadContacts],
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">

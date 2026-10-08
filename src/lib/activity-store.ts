@@ -75,14 +75,16 @@ function persistCustoms() {
 
 /** Simpan aktivitas baru dari form (status awal Segera). */
 export function createActivity(
-  data: Omit<Activity, "id" | "status" | "leadsCount" | "leadsTarget" | "closingCount">
+  data: Omit<Activity, "id" | "status" | "leadsCount" | "leadsTarget" | "closingCount"> & {
+    leadsTarget?: number;
+  },
 ): Activity {
   const a: Activity = {
     ...data,
     id: `u-${Date.now()}`,
     status: "planned",
     leadsCount: 0,
-    leadsTarget: 10,
+    leadsTarget: data.leadsTarget ?? 10,
     closingCount: 0,
   };
   customs = [a, ...loadCustoms()];
@@ -141,7 +143,11 @@ export function resetActivities() {
 
 /** Satu aktivitas (data statis + override check-in/out). */
 export function useActivity(id: string): Activity | undefined {
-  return useSyncExternalStore(subscribe, () => merged(id), () => base(id));
+  return useSyncExternalStore(
+    subscribe,
+    () => merged(id),
+    () => base(id),
+  );
 }
 
 /** Semua aktivitas — untuk list/home agar status selalu sinkron. */

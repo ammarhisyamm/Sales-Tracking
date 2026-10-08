@@ -1,12 +1,10 @@
 import { createFileRoute, Outlet, useRouterState } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
-import { CameraModal } from "@/components/camera-modal";
-import { OverlayPortal, toast } from "@/components/motion";
 import { useActivities } from "@/lib/activity-store";
 import { KCP_ACTIVITY_SEEDS } from "@/lib/kepala-kcp";
 import type { Activity } from "@/lib/mock-data";
 import { useMemo, useState } from "react";
-import { Building2, Camera, ChevronDown, ChevronUp, Eye, MapPin, Plus, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Crosshair, MapPin, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/kacab-aktivitas")({
   head: () => ({ meta: [{ title: "Aktivitas KACAB" }] }),
@@ -18,12 +16,14 @@ type KacabActivityItem = {
   id: string;
   kcp: string;
   date: string;
-  time: string;
   title: string;
+  ptm?: string;
   activityTypes?: string[];
   place: string;
   region: string;
-  priority: string;
+  leadsCount?: number;
+  leadsTarget?: number;
+  leadIds?: string[];
   photoUrl?: string;
 };
 /** Sumber data sama dengan dashboard Pencapaian Kepala KCP. */
@@ -39,9 +39,6 @@ function KacabActivityList() {
   const [tab, setTab] = useState<(typeof TABS)[number]>("Custom");
   const [from, setFrom] = useState("2026-01-01");
   const [to, setTo] = useState("2026-12-31");
-  const [cameraItem, setCameraItem] = useState<string | null>(null);
-  const [photos, setPhotos] = useState<Record<string, string>>({});
-  const [viewerItem, setViewerItem] = useState<string | null>(null);
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const activities = useActivities();
   const activityItems = useMemo(
@@ -84,30 +81,22 @@ function KacabActivityList() {
             const key = item.id;
             const additionalActivities = item.activityTypes?.slice(1) ?? [];
             const expanded = expandedItem === key;
+            const leadsCount = item.leadsCount ?? item.leadIds?.length ?? 0;
+            const leadsTarget = item.leadsTarget ?? 10;
             return (
-              <section
-                key={key}
-                className="overflow-hidden rounded-lg border border-[#e2e8f0] bg-[#eff6ff]"
-              >
-                <h2 className="flex items-center gap-2 px-3 py-3 text-[13px] font-medium text-slate-900">
-                  <Building2 className="h-5 w-5" />
-                  {item.kcp}
-                </h2>
-                <article className="rounded-lg border border-[#e2e8f0] bg-white p-3">
+              <section key={key} className="rounded-xl border border-[#dce6f3] bg-white p-3">
+                <article>
                   <div className="flex items-start justify-between gap-3">
                     <p className="text-[14px] font-bold text-[#2953A4]">
-                      {formatDate(item.date)} | {item.time}
+                      {item.title}
+                      <span className="mx-1.5 font-normal text-slate-300">•</span>
+                      <span className="font-normal text-slate-600">{item.ptm || "Dalam PTM"}</span>
                     </p>
-                    <span
-                      className={`flex-shrink-0 text-[14px] font-semibold ${item.priority === "High" ? "text-red-500" : "text-amber-600"}`}
-                    >
-                      {item.priority}
+                    <span className="flex-shrink-0 text-[14px] text-slate-600">
+                      {formatDate(item.date)}
                     </span>
                   </div>
                   <div className="my-3 border-t border-slate-100" />
-                  <h3 className="text-[18px] font-bold leading-tight text-slate-950">
-                    {formatActivityTitle(item.title, item.activityTypes)}
-                  </h3>
                   {additionalActivities.length > 0 && (
                     <>
                       <button
@@ -150,13 +139,22 @@ function KacabActivityList() {
                       <p className="mt-0.5 text-[14px] text-slate-500">{item.region}</p>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setViewerItem(key)}
-                    className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#315bac] py-3 text-[15px] font-semibold text-white"
-                  >
-                    <Eye className="h-5 w-5" /> Lihat Foto
-                  </button>
+                  <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-100 pt-3">
+                    <div className="flex items-center gap-2 text-[15px] text-slate-600">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#eef5ff] text-[#2953A4]">
+                        <Crosshair className="h-5 w-5" />
+                      </span>
+                      <span>
+                        {leadsCount}/{leadsTarget} Leads
+                      </span>
+                    </div>
+                    <a
+                      href={`/tambah-leads/${item.id}`}
+                      className="inline-flex items-center gap-2 rounded-xl bg-[#315bac] px-4 py-3 text-[15px] font-semibold text-white"
+                    >
+                      <Plus className="h-5 w-5" /> Tambah Leads
+                    </a>
+                  </div>
                 </article>
               </section>
             );
@@ -176,57 +174,6 @@ function KacabActivityList() {
           </a>
         </div>
       </main>
-      {viewerItem && (
-        <OverlayPortal>
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-            <div className="w-full max-w-[360px] rounded-2xl bg-white px-5 pb-8 pt-7 shadow-2xl">
-              <div className="flex items-center justify-between">
-                <h2 className="text-[24px] font-bold text-slate-950">Foto Kegiatan</h2>
-                <button type="button" onClick={() => setViewerItem(null)} aria-label="Tutup">
-                  <X className="h-8 w-8 text-slate-950" />
-                </button>
-              </div>
-              <div className="mt-6 flex h-[390px] items-center justify-center overflow-hidden rounded-xl bg-[#eeeeee] p-3">
-                {photos[viewerItem] ||
-                activityItems.find((item) => item.id === viewerItem)?.photoUrl ? (
-                  <img
-                    src={
-                      photos[viewerItem] ||
-                      activityItems.find((item) => item.id === viewerItem)?.photoUrl
-                    }
-                    alt="Foto kegiatan"
-                    className="max-h-full max-w-full rounded-lg object-contain"
-                  />
-                ) : (
-                  <p className="text-[14px] text-slate-500">Foto kegiatan belum tersedia</p>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setCameraItem(viewerItem);
-                  setViewerItem(null);
-                }}
-                className="mx-auto mt-6 inline-flex items-center gap-2 rounded-xl bg-[#315bac] px-6 py-3 text-[15px] font-semibold text-white"
-              >
-                <Camera className="h-5 w-5" /> Foto Ulang
-              </button>
-            </div>
-          </div>
-        </OverlayPortal>
-      )}
-      {cameraItem && (
-        <CameraModal
-          mode="photo"
-          onClose={() => setCameraItem(null)}
-          onSave={(url) => {
-            if (url) setPhotos((items) => ({ ...items, [cameraItem]: url }));
-            toast("Foto aktivitas berhasil diperbarui");
-            setCameraItem(null);
-          }}
-          onSkip={() => setCameraItem(null)}
-        />
-      )}
     </MobileShell>
   );
 }
@@ -258,7 +205,6 @@ function DateField({
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("id-ID", {
-    weekday: "long",
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -271,17 +217,14 @@ function toKacabActivityItem(activity: Activity): KacabActivityItem {
     id: activity.id,
     kcp: activity.locationName,
     date: activity.date.slice(0, 10),
-    time: `${activity.timeRange} WIB`,
     title: activityTypes[0],
+    ptm: activity.ptm,
     activityTypes,
     place: activity.address,
     region: activity.wilayah || activity.kelurahan || "Wilayah belum tersedia",
-    priority: "Medium",
+    leadsCount: activity.leadsCount,
+    leadsTarget: activity.leadsTarget,
+    leadIds: [],
     photoUrl: activity.photoUrl,
   };
-}
-
-function formatActivityTitle(fallback: string, activityTypes?: string[]) {
-  if (!activityTypes?.length) return fallback;
-  return activityTypes[0];
 }

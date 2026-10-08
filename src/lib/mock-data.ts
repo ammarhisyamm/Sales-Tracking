@@ -1,6 +1,17 @@
 // Mock data for the sales tracking app
 
-export type ActivityType = "Canvassing" | "Sosialisasi" | "Open Booth" | "Event" | "Market ke instansi" | "Penyelesaian Case Outlet" | "Visit Nasabah One Obligor" | "Evaluasi Pencapaian Target Unit & Sales" | "Other";
+export type ActivityType =
+  | "Canvassing"
+  | "Sosialisasi"
+  | "Open Booth"
+  | "Event"
+  | "Market ke instansi"
+  | "Market Sore/Malam"
+  | "Video Konten Promosi"
+  | "Penyelesaian Case Outlet"
+  | "Visit Nasabah One Obligor"
+  | "Evaluasi Pencapaian Target Unit & Sales"
+  | "Other";
 
 export type LeadStatus = "Hot" | "Warm" | "Cold" | "Closing";
 
@@ -96,10 +107,26 @@ export const profile: SalesProfile = {
 };
 
 export const targets = {
-  leads: { today: { current: 90, target: 100 }, week: { current: 240, target: 500 }, month: { current: 880, target: 2000 } },
-  closingLeads: { today: { current: 12, target: 24 }, week: { current: 42, target: 120 }, month: { current: 165, target: 480 } },
-  ado: { today: { current: 16000000, target: 32000000 }, week: { current: 14250000, target: 22000000 }, month: { current: 14250000, target: 22000000 } },
-  grams: { today: { current: 42, target: 100 }, week: { current: 180, target: 400 }, month: { current: 320, target: 1000 } },
+  leads: {
+    today: { current: 90, target: 100 },
+    week: { current: 240, target: 500 },
+    month: { current: 880, target: 2000 },
+  },
+  closingLeads: {
+    today: { current: 12, target: 24 },
+    week: { current: 42, target: 120 },
+    month: { current: 165, target: 480 },
+  },
+  ado: {
+    today: { current: 16000000, target: 32000000 },
+    week: { current: 14250000, target: 22000000 },
+    month: { current: 14250000, target: 22000000 },
+  },
+  grams: {
+    today: { current: 42, target: 100 },
+    week: { current: 180, target: 400 },
+    month: { current: 320, target: 1000 },
+  },
 };
 
 export const activities: Activity[] = [
@@ -203,12 +230,89 @@ export const activities: Activity[] = [
 ];
 
 export const contacts: Contact[] = [
-  { id: "c1", name: "Agustinus Nugroho Setiyani", phone: "+6281234567890", status: "Hot", source: "Market ke instansi", lastContact: "Hari ini", hasGold: true, interested: true, note: "Tertarik gadai 10gr, follow up besok", job: "Karyawan Swasta", gender: "Laki-Laki", address: "Jl. Kemayoran Gempol No. 12", kelurahan: "Kemayoran", wilayah: "Kec. Kemayoran, Jakarta Pusat, DKI Jakarta, 10620" },
-  { id: "c2", name: "Made Wirawan", phone: "+6281298765432", status: "Warm", source: "Open Booth", lastContact: "2 hari lalu", hasGold: true, interested: false, job: "Wiraswasta", kelurahan: "Rawamangun", wilayah: "Kec. Pulogadung, Jakarta Timur, DKI Jakarta, 13220" },
-  { id: "c3", name: "Putu Ayu Lestari", phone: "+6285712340987", status: "Closing", source: "Canvassing", lastContact: "Kemarin", hasGold: true, interested: true, note: "Sudah closing 5gr", job: "Karyawan Swasta", kelurahan: "Kemayoran", wilayah: "Kec. Kemayoran, Jakarta Pusat, DKI Jakarta, 10620" },
-  { id: "c4", name: "Bagus Santoso", phone: "+6282111223344", status: "Cold", source: "Canvassing", lastContact: "1 minggu lalu", hasGold: false, interested: false, job: "Pelajar / Mahasiswa", kelurahan: "Jatinegara", wilayah: "Kec. Jatinegara, Jakarta Timur, DKI Jakarta, 13310" },
-  { id: "c5", name: "Ni Luh Diah", phone: "+6287722334411", status: "Warm", source: "Sosialisasi", lastContact: "3 hari lalu", hasGold: true, interested: true, note: "Minta dijelaskan ulang skema bunga", job: "Ibu Rumah Tangga", kelurahan: "Kelapa Gading", wilayah: "Kec. Kelapa Gading, Jakarta Utara, DKI Jakarta, 14240" },
-  { id: "c6", name: "Komang Arta", phone: "+6281355667788", status: "Hot", source: "Market ke instansi", lastContact: "Hari ini", hasGold: true, interested: true, job: "PNS", kelurahan: "Kemayoran", wilayah: "Kec. Kemayoran, Jakarta Pusat, DKI Jakarta, 10620" },
+  {
+    id: "c1",
+    name: "Agustinus Nugroho Setiyani",
+    phone: "+6281234567890",
+    status: "Hot",
+    source: "Market ke instansi",
+    lastContact: "Hari ini",
+    hasGold: true,
+    interested: true,
+    note: "Tertarik gadai 10gr, follow up besok",
+    job: "Karyawan Swasta",
+    gender: "Laki-Laki",
+    address: "Jl. Kemayoran Gempol No. 12",
+    kelurahan: "Kemayoran",
+    wilayah: "Kec. Kemayoran, Jakarta Pusat, DKI Jakarta, 10620",
+  },
+  {
+    id: "c2",
+    name: "Made Wirawan",
+    phone: "+6281298765432",
+    status: "Warm",
+    source: "Open Booth",
+    lastContact: "2 hari lalu",
+    hasGold: true,
+    interested: false,
+    job: "Wiraswasta",
+    kelurahan: "Rawamangun",
+    wilayah: "Kec. Pulogadung, Jakarta Timur, DKI Jakarta, 13220",
+  },
+  {
+    id: "c3",
+    name: "Putu Ayu Lestari",
+    phone: "+6285712340987",
+    status: "Closing",
+    source: "Canvassing",
+    lastContact: "Kemarin",
+    hasGold: true,
+    interested: true,
+    note: "Sudah closing 5gr",
+    job: "Karyawan Swasta",
+    kelurahan: "Kemayoran",
+    wilayah: "Kec. Kemayoran, Jakarta Pusat, DKI Jakarta, 10620",
+  },
+  {
+    id: "c4",
+    name: "Bagus Santoso",
+    phone: "+6282111223344",
+    status: "Cold",
+    source: "Canvassing",
+    lastContact: "1 minggu lalu",
+    hasGold: false,
+    interested: false,
+    job: "Pelajar / Mahasiswa",
+    kelurahan: "Jatinegara",
+    wilayah: "Kec. Jatinegara, Jakarta Timur, DKI Jakarta, 13310",
+  },
+  {
+    id: "c5",
+    name: "Ni Luh Diah",
+    phone: "+6287722334411",
+    status: "Warm",
+    source: "Sosialisasi",
+    lastContact: "3 hari lalu",
+    hasGold: true,
+    interested: true,
+    note: "Minta dijelaskan ulang skema bunga",
+    job: "Ibu Rumah Tangga",
+    kelurahan: "Kelapa Gading",
+    wilayah: "Kec. Kelapa Gading, Jakarta Utara, DKI Jakarta, 14240",
+  },
+  {
+    id: "c6",
+    name: "Komang Arta",
+    phone: "+6281355667788",
+    status: "Hot",
+    source: "Market ke instansi",
+    lastContact: "Hari ini",
+    hasGold: true,
+    interested: true,
+    job: "PNS",
+    kelurahan: "Kemayoran",
+    wilayah: "Kec. Kemayoran, Jakarta Pusat, DKI Jakarta, 10620",
+  },
 ];
 
 export const programs: Program[] = [
@@ -280,15 +384,64 @@ export const programHero: ProgramHero = {
     { label: "Leads", desc: "Calon nasabah masuk", value: 24 },
   ],
   leaderboard: [
-    { rank: 1, name: "Miftahul Jannah", branch: "MAS Monta", company: "PT.Gadai Mas NTB", score: 14 },
-    { rank: 2, name: "Miftahul Jannah", branch: "MAS Monta", company: "PT.Gadai Mas NTB", score: 14 },
-    { rank: 3, name: "Rizky Pratama", branch: "Cabang Denpasar", company: "PT.Gadai Mas Bali", score: 13, isSelf: true },
+    {
+      rank: 1,
+      name: "Miftahul Jannah",
+      branch: "MAS Monta",
+      company: "PT.Gadai Mas NTB",
+      score: 14,
+    },
+    {
+      rank: 2,
+      name: "Miftahul Jannah",
+      branch: "MAS Monta",
+      company: "PT.Gadai Mas NTB",
+      score: 14,
+    },
+    {
+      rank: 3,
+      name: "Rizky Pratama",
+      branch: "Cabang Denpasar",
+      company: "PT.Gadai Mas Bali",
+      score: 13,
+      isSelf: true,
+    },
     { rank: 4, name: "Siti Sarah", branch: "MAS Kuta", company: "PT.Gadai Mas Bali", score: 12 },
-    { rank: 5, name: "Made Wirawan", branch: "MAS Gianyar", company: "PT.Gadai Mas Bali", score: 11 },
-    { rank: 6, name: "Putu Ayu Lestari", branch: "MAS Tabanan", company: "PT.Gadai Mas Bali", score: 10 },
-    { rank: 7, name: "Bagus Santoso", branch: "MAS Mataram", company: "PT.Gadai Mas NTB", score: 9 },
-    { rank: 8, name: "Ni Luh Diah", branch: "MAS Singaraja", company: "PT.Gadai Mas Bali", score: 8 },
-    { rank: 9, name: "Komang Arta", branch: "MAS Klungkung", company: "PT.Gadai Mas Bali", score: 7 },
+    {
+      rank: 5,
+      name: "Made Wirawan",
+      branch: "MAS Gianyar",
+      company: "PT.Gadai Mas Bali",
+      score: 11,
+    },
+    {
+      rank: 6,
+      name: "Putu Ayu Lestari",
+      branch: "MAS Tabanan",
+      company: "PT.Gadai Mas Bali",
+      score: 10,
+    },
+    {
+      rank: 7,
+      name: "Bagus Santoso",
+      branch: "MAS Mataram",
+      company: "PT.Gadai Mas NTB",
+      score: 9,
+    },
+    {
+      rank: 8,
+      name: "Ni Luh Diah",
+      branch: "MAS Singaraja",
+      company: "PT.Gadai Mas Bali",
+      score: 8,
+    },
+    {
+      rank: 9,
+      name: "Komang Arta",
+      branch: "MAS Klungkung",
+      company: "PT.Gadai Mas Bali",
+      score: 7,
+    },
     { rank: 10, name: "Agus Setiawan", branch: "MAS Bima", company: "PT.Gadai Mas NTB", score: 6 },
   ],
 };
@@ -374,7 +527,9 @@ export const notifications: NotificationItem[] = [
       { t: "20", b: true },
       { t: " dari " },
       { t: "50", b: true },
-      { t: " leads. Masih ada waktu untuk mengejar! Tingkatkan follow-up dan manfaatkan database." },
+      {
+        t: " leads. Masih ada waktu untuk mengejar! Tingkatkan follow-up dan manfaatkan database.",
+      },
     ],
     date: "15 November 2025, 11:15",
     unread: false,
@@ -394,7 +549,11 @@ export const notifications: NotificationItem[] = [
 ];
 
 export const formatRupiah = (n: number) =>
-  new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
+  new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0,
+  }).format(n);
 
 export const getShareCode = (a: Pick<Activity, "id" | "shareCode">) =>
   a.shareCode ?? `CT-${a.id.toUpperCase()}-2026`;
@@ -427,8 +586,18 @@ export const formatJadwal = (a: Pick<Activity, "date" | "timeRange" | "startTime
 };
 
 const BULAN_ID = [
-  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+  "Januari",
+  "Februari",
+  "Maret",
+  "April",
+  "Mei",
+  "Juni",
+  "Juli",
+  "Agustus",
+  "September",
+  "Oktober",
+  "November",
+  "Desember",
 ] as const;
 
 /** "Sabtu, 28 Juni 2026 | 08:00" */
@@ -439,8 +608,18 @@ export const formatTanggalPanjang = (iso: string, time?: string) => {
 };
 
 const BULAN_EN = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ] as const;
 
 /** ["January 2026", ... "December 2026"] */
@@ -463,6 +642,7 @@ export const shortLocation = (c: { kelurahan?: string; wilayah?: string; address
 
 export const KELURAHAN_WILAYAH: Record<string, string> = {
   Rawamangun: "Kec. Pulogadung, Jakarta Timur, DKI Jakarta, 13220",
+  Pilumpanua: "Kec. Wajo, Sulawesi Selatan, 17133",
   Kemayoran: "Kec. Kemayoran, Jakarta Pusat, DKI Jakarta, 10620",
   "Kelapa Gading": "Kec. Kelapa Gading, Jakarta Utara, DKI Jakarta, 14240",
   Jatinegara: "Kec. Jatinegara, Jakarta Timur, DKI Jakarta, 13310",
@@ -512,7 +692,13 @@ export const WA_TEMPLATES: WaTemplate[] = [
 
 export const fillWaTemplate = (
   tpl: string,
-  vars: { nama_customer: string; nama_sales: string; nama_event: string; tanggal_event: string; kode_kupon: string },
+  vars: {
+    nama_customer: string;
+    nama_sales: string;
+    nama_event: string;
+    tanggal_event: string;
+    kode_kupon: string;
+  },
 ) =>
   tpl
     .replaceAll("{{nama_customer}}", vars.nama_customer)

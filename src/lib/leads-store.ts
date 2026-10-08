@@ -75,6 +75,11 @@ export function addLead(activityId: string, source: string, lead: Contact) {
   listeners.forEach((l) => l());
 }
 
+/** Ambil leads yang terkait langsung dengan satu activity untuk dashboard KCP. */
+export function getLeadsForActivity(activityId: string, source: string): Contact[] {
+  return ensure(activityId, source);
+}
+
 export function useLeads(activityId: string, source: string): Contact[] {
   return useSyncExternalStore(
     subscribe,

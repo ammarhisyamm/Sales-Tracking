@@ -34,20 +34,23 @@ export interface KepalaKcpActivity {
   time: string;
   title: string;
   activityTypes?: string[];
+  ptm?: "Dalam PTM" | "Luar PTM";
+  leadsTarget?: number;
   place: string;
   region: string;
   priority: string;
   status: KcpActivityStatus;
   /** ID kontak (data leads) yang terdaftar pada activity ini. */
   leadIds: string[];
+  /** Leads baru dari local activity store, bila activity dibuat dari mobile. */
+  leadContacts?: Contact[];
   photoUrl?: string;
 }
 
 /** Kembalikan data kontak untuk daftar ID — urutan mengikuti IDs. */
-export function resolveLeadIds(ids: string[]): Contact[] {
-  return ids
-    .map((id) => contacts.find((item) => item.id === id))
-    .filter((item): item is Contact => Boolean(item));
+export function resolveLeadIds(ids: string[], extraContacts: Contact[] = []): Contact[] {
+  const contactsById = new Map([...contacts, ...extraContacts].map((item) => [item.id, item]));
+  return ids.map((id) => contactsById.get(id)).filter((item): item is Contact => Boolean(item));
 }
 
 export const KCP_ACTIVITY_SEEDS: KepalaKcpActivity[] = [
@@ -204,7 +207,7 @@ export function filterByPeriod(
 }
 
 /** Aktivitas sales (mobile) yang tampil di list KCP — belum punya daftar nasabah. */
-export function fromSalesActivity(a: Activity): KepalaKcpActivity {
+export function fromSalesActivity(a: Activity, leadContacts: Contact[] = []): KepalaKcpActivity {
   const types = a.activityTypes?.length ? a.activityTypes : [a.type];
   return {
     id: a.id,
@@ -213,11 +216,14 @@ export function fromSalesActivity(a: Activity): KepalaKcpActivity {
     time: `${a.timeRange} WIB`,
     title: types[0],
     activityTypes: types,
+    ptm: a.ptm,
+    leadsTarget: a.leadsTarget,
     place: a.address,
     region: a.wilayah || a.kelurahan || "Wilayah belum tersedia",
     priority: "Medium",
     status: a.status === "completed" ? "Selesai" : "Terjadwal",
-    leadIds: [],
+    leadIds: leadContacts.map((lead) => lead.id),
+    leadContacts,
     photoUrl: a.photoUrl,
   };
 }
