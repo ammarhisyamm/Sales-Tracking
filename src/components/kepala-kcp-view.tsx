@@ -281,77 +281,127 @@ function ActivityDetailModal({ item, onClose }: { item: KepalaKcpActivity; onClo
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
       <div className="relative max-h-[calc(100vh-32px)] w-full max-w-[720px] overflow-hidden rounded-xl bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-slate-200 px-8 py-5">
-          <div>
-            <h2 className="text-[22px] font-bold">Detail Activity</h2>
-            <p className="mt-0.5 text-[14px] text-slate-400">
-              {item.kcp} · {formatDate(item.date)} | {item.time}
-            </p>
-          </div>
+          <h2 className="text-[22px] font-bold">Detail Activity</h2>
           <button onClick={onClose} aria-label="Tutup">
             <X className="h-6 w-6 text-slate-500" />
           </button>
         </div>
 
-        <div className="max-h-[calc(100vh-280px)] overflow-y-auto px-8 py-6">
-          <p className="text-[18px] font-semibold">{item.title}</p>
-          <div className="mt-2">
-            <StatusBadge status={item.status} />
-          </div>
-
-          <h3 className="mt-6 text-[16px] font-semibold">Lokasi Kegiatan</h3>
+        <div className="max-h-[calc(100vh-280px)] overscroll-contain overflow-y-auto px-8 py-6">
+          <h3 className="text-[16px] font-semibold">Informasi Activity</h3>
           <div className="mt-3 overflow-hidden rounded-xl border border-slate-200">
             <table className="w-full border-collapse text-left text-[14px]">
               <tbody>
                 <tr className="border-b border-slate-100">
-                  <td className="w-32 bg-slate-50 px-4 py-3 font-medium text-slate-500">Tempat</td>
+                  <th scope="row" className="w-40 bg-slate-50 px-4 py-3 font-medium text-slate-500">
+                    Aktivitas
+                  </th>
+                  <td className="px-4 py-3 font-medium text-slate-900">{item.title}</td>
+                </tr>
+                <tr className="border-b border-slate-100">
+                  <th scope="row" className="bg-slate-50 px-4 py-3 font-medium text-slate-500">
+                    KCP
+                  </th>
+                  <td className="px-4 py-3">{item.kcp}</td>
+                </tr>
+                <tr className="border-b border-slate-100">
+                  <th scope="row" className="bg-slate-50 px-4 py-3 font-medium text-slate-500">
+                    Tanggal
+                  </th>
+                  <td className="px-4 py-3">{formatDate(item.date)}</td>
+                </tr>
+                <tr className="border-b border-slate-100">
+                  <th scope="row" className="bg-slate-50 px-4 py-3 font-medium text-slate-500">
+                    Waktu
+                  </th>
+                  <td className="px-4 py-3">{item.time}</td>
+                </tr>
+                <tr className="border-b border-slate-100">
+                  <th scope="row" className="bg-slate-50 px-4 py-3 font-medium text-slate-500">
+                    Lokasi
+                  </th>
                   <td className="px-4 py-3">{item.place}</td>
                 </tr>
-                <tr>
-                  <td className="w-32 bg-slate-50 px-4 py-3 font-medium text-slate-500">Wilayah</td>
+                <tr className="border-b border-slate-100">
+                  <th scope="row" className="bg-slate-50 px-4 py-3 font-medium text-slate-500">
+                    Wilayah
+                  </th>
                   <td className="px-4 py-3">{item.region}</td>
+                </tr>
+                <tr>
+                  <th scope="row" className="bg-slate-50 px-4 py-3 font-medium text-slate-500">
+                    Status
+                  </th>
+                  <td className="px-4 py-3">
+                    <StatusBadge status={item.status} />
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <h3 className="mt-6 text-[16px] font-semibold">Daftar Nasabah ({nasabah.length})</h3>
+          <h3 className="mt-6 text-[16px] font-semibold">Daftar Leads ({nasabah.length})</h3>
           {nasabah.length > 0 ? (
-            <ul className="mt-3 space-y-3">
-              {nasabah.map((contact) => {
-                const digits = contact.phone.replace(/\D/g, "");
-                return (
-                  <li
-                    key={contact.id}
-                    className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 px-4 py-3"
-                  >
-                    <span className="min-w-0">
-                      <span className="block truncate text-[16px] font-medium">{contact.name}</span>
-                      <span className="mt-1 block truncate text-[13px] text-slate-400">
-                        {contact.job ?? "-"} | {contact.status}
-                      </span>
-                    </span>
-                    <span className="flex shrink-0 items-center gap-2">
-                      <a
-                        href={`tel:${contact.phone}`}
-                        aria-label={`Telepon ${contact.name}`}
-                        className="flex h-11 w-11 items-center justify-center rounded-full bg-[#eef5fd] text-[#2953A4]"
-                      >
-                        <Phone className="h-[22px] w-[22px]" />
-                      </a>
-                      <a
-                        href={`https://wa.me/${digits}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label={`WhatsApp ${contact.name}`}
-                        className="flex h-11 w-11 items-center justify-center rounded-full bg-[#e6f7ed] text-[#18a957]"
-                      >
-                        <MessageCircle className="h-6 w-6" />
-                      </a>
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
+            <div className="mt-3 overflow-x-auto rounded-xl border border-slate-200">
+              <table className="w-full min-w-[680px] border-collapse text-left text-[14px]">
+                <thead className="bg-slate-50 text-slate-500">
+                  <tr className="border-b border-slate-200">
+                    <th scope="col" className="px-4 py-3 font-medium">
+                      No
+                    </th>
+                    <th scope="col" className="px-4 py-3 font-medium">
+                      Nasabah
+                    </th>
+                    <th scope="col" className="px-4 py-3 font-medium">
+                      Pekerjaan
+                    </th>
+                    <th scope="col" className="px-4 py-3 font-medium">
+                      Status
+                    </th>
+                    <th scope="col" className="px-4 py-3 text-right font-medium">
+                      Kontak
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {nasabah.map((contact, index) => {
+                    const digits = contact.phone.replace(/\D/g, "");
+                    return (
+                      <tr key={contact.id} className="border-b border-slate-100 last:border-0">
+                        <td className="px-4 py-4 text-slate-500">{index + 1}</td>
+                        <td className="px-4 py-4 font-medium text-slate-900">{contact.name}</td>
+                        <td className="px-4 py-4 text-slate-600">{contact.job ?? "-"}</td>
+                        <td className="px-4 py-4">
+                          <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-[12px] font-medium text-slate-600">
+                            {contact.status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4">
+                          <span className="flex justify-end gap-2">
+                            <a
+                              href={`tel:${contact.phone}`}
+                              aria-label={`Telepon ${contact.name}`}
+                              className="flex h-11 w-11 items-center justify-center rounded-full bg-[#eef5fd] text-[#2953A4]"
+                            >
+                              <Phone className="h-[22px] w-[22px]" />
+                            </a>
+                            <a
+                              href={`https://wa.me/${digits}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              aria-label={`WhatsApp ${contact.name}`}
+                              className="flex h-11 w-11 items-center justify-center rounded-full bg-[#e6f7ed] text-[#18a957]"
+                            >
+                              <MessageCircle className="h-6 w-6" />
+                            </a>
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           ) : (
             <p className="mt-3 rounded-xl border border-dashed border-slate-200 px-4 py-6 text-center text-[14px] text-slate-400">
               Belum ada nasabah tercatat untuk activity ini.
