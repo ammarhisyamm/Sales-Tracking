@@ -61,9 +61,22 @@ export function PenaksirView() {
     setPage(1);
   };
 
+  const hasilTone = (hasil: string) =>
+    hasil === "Deal Transaksi" || hasil === "Bersedia Bayar / Perpanjang"
+      ? "text-[#008236]"
+      : hasil === "Masih Dipertimbangkan" || hasil === "Belum Bisa Bayar"
+        ? "text-amber-700"
+        : hasil === "Belum Ada Respon"
+          ? "text-slate-500"
+          : "text-[#e7000b]";
+
   return (
     <div>
-      <div className="grid gap-4 md:grid-cols-3">
+      <h2 className="text-[17px] font-bold text-slate-900">Summary Aktivitas</h2>
+      <p className="mt-1 text-[13px] text-slate-500">
+        Pantau progres dan pencapaian target aktivitas
+      </p>
+      <div className="mt-3 grid gap-4 md:grid-cols-3">
         <SummaryCard
           icon={<ListChecks className="h-5 w-5 text-[#199900]" />}
           label="Total Follow Up"
@@ -107,7 +120,7 @@ export function PenaksirView() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[1150px] border-collapse text-left">
+          <table className="w-full min-w-[1280px] border-collapse text-left">
             <thead className="border-y border-slate-200 text-[14px] text-slate-400">
               <tr>
                 <th className="px-7 py-5 font-medium">No</th>
@@ -116,7 +129,8 @@ export function PenaksirView() {
                 <th className="px-5 py-5 font-medium">Kegiatan</th>
                 <th className="px-5 py-5 font-medium">Media FU</th>
                 <th className="px-5 py-5 font-medium">Tanggal Pelaksanaan</th>
-                <th className="px-7 py-5 text-right font-medium">Foto Realisasi</th>
+                <th className="px-5 py-5 font-medium">Hasil</th>
+                <th className="px-7 py-5 text-right font-medium">Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -147,12 +161,15 @@ export function PenaksirView() {
                     <td className="whitespace-nowrap px-5 py-6 tabular-nums">
                       {formatPelaksanaan(item)}
                     </td>
+                    <td className={`whitespace-nowrap px-5 py-6 font-medium ${hasilTone(item.hasil)}`}>
+                      {item.hasil}
+                    </td>
                     <td className="px-7 py-6 text-right">
                       <button
                         onClick={() => setDetail(item)}
                         className="inline-flex items-center gap-2 rounded-lg border border-[#292663] px-5 py-2.5 text-[14px] font-medium text-[#292663]"
                       >
-                        View
+                        Detail
                       </button>
                     </td>
                   </tr>
@@ -160,7 +177,7 @@ export function PenaksirView() {
               })}
               {rows.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-7 py-12 text-center text-[14px] text-slate-400">
+                  <td colSpan={8} className="px-7 py-12 text-center text-[14px] text-slate-400">
                     Belum ada follow up pada {month} {year}.
                   </td>
                 </tr>
@@ -195,7 +212,13 @@ export function PenaksirView() {
         </div>
       </section>
 
-      {detail && <PhotoModal item={detail} onClose={() => setDetail(null)} />}
+      {detail && (
+        <FollowUpDetailModal
+          item={detail}
+          hasilTone={hasilTone}
+          onClose={() => setDetail(null)}
+        />
+      )}
     </div>
   );
 }
@@ -252,6 +275,141 @@ function FilterSelect({
       </select>
       <ChevronDown className="pointer-events-none absolute right-4 h-4 w-4 text-slate-500" />
     </span>
+  );
+}
+
+function FollowUpDetailModal({
+  item,
+  hasilTone,
+  onClose,
+}: {
+  item: PenaksirFollowUp;
+  hasilTone: (hasil: string) => string;
+  onClose: () => void;
+}) {
+  const [photoOpen, setPhotoOpen] = useState(false);
+  const isOvd = item.kegiatan === "Follow Up OVD";
+  const hasManySbg = item.sbg.length > 1;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
+      <div className="relative max-h-[calc(100vh-32px)] w-full max-w-[880px] overflow-hidden rounded-xl bg-white shadow-2xl">
+        <div className="flex items-center justify-between border-b border-slate-200 px-8 py-5">
+          <div>
+            <h2 className="text-[22px] font-bold">Detail Follow Up</h2>
+            <p className="mt-0.5 text-[14px] text-slate-400">
+              {item.cif} · {item.nama} · {formatPelaksanaan(item)}
+            </p>
+          </div>
+          <button onClick={onClose} aria-label="Tutup">
+            <X className="h-6 w-6 text-slate-500" />
+          </button>
+        </div>
+
+        <div className="max-h-[calc(100vh-280px)] overflow-y-auto px-8 py-6">
+          <p className="text-[18px] font-bold leading-snug text-slate-900">
+            {item.kegiatan}
+            {item.sbg[0] && <span className="font-normal text-slate-400">/{item.sbg[0].followUp}</span>}
+          </p>
+          <p className={`mt-1 text-[19px] font-medium ${hasilTone(item.hasil)}`}>{item.hasil}</p>
+
+          <div className="mt-5 overflow-hidden rounded-xl border border-slate-200">
+            <div className="grid grid-cols-2 divide-x divide-slate-200 border-b border-slate-200 md:grid-cols-4">
+              <DetailCell label="CIF" value={item.cif} />
+              <DetailCell label="Nama" value={item.nama} />
+              <DetailCell label="Kegiatan" value={item.kegiatan} />
+              <DetailCell label="Media FU" value={item.media} />
+            </div>
+            <div className="grid grid-cols-2 divide-x divide-slate-200 md:grid-cols-4">
+              <DetailCell label="Tanggal Pelaksanaan" value={formatPelaksanaan(item)} />
+              <DetailCell label="Follow Up Ke" value={item.sbg[0]?.followUp ?? "-"} />
+              <DetailCell label="Hasil" value={item.hasil} />
+              <DetailCell
+                label="Foto"
+                value={
+                  <button
+                    type="button"
+                    onClick={() => setPhotoOpen(true)}
+                    className="inline-flex items-center gap-2 rounded-lg border border-[#292663] px-4 py-2 text-[14px] font-medium text-[#292663]"
+                  >
+                    <Eye className="h-5 w-5" /> Lihat Foto
+                  </button>
+                }
+              />
+            </div>
+          </div>
+
+          {isOvd && hasManySbg ? (
+            <>
+              <h3 className="mt-6 text-[16px] font-semibold">
+                Daftar Nomor SBG ({item.sbg.length})
+              </h3>
+              <div className="mt-3 rounded-xl bg-[#e5ebf8] p-3">
+                <ul className="space-y-2.5 pb-1 pt-1">
+                  {item.sbg.map((sbg, index) => (
+                    <li key={sbg.number} className="flex items-center gap-3">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-[16px] font-medium text-black">
+                        {index + 1}
+                      </span>
+                      <span className="text-[16px] text-slate-700">
+                        {sbg.number} - {sbg.followUp}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </>
+          ) : (
+            <>
+              <h3 className="mt-6 text-[16px] font-semibold">Nomor SBG</h3>
+              <div className="mt-3 overflow-hidden rounded-xl border border-slate-200">
+                <table className="w-full border-collapse text-left text-[14px]">
+                  <thead className="bg-slate-50 text-slate-500">
+                    <tr className="border-b border-slate-200">
+                      <th scope="col" className="px-4 py-3 font-medium">
+                        No. SBG
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-medium">
+                        Follow Up Ke
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {item.sbg.map((sbg) => (
+                      <tr key={sbg.number} className="border-b border-slate-100 last:border-0">
+                        <td className="whitespace-nowrap px-4 py-3 tabular-nums">
+                          {sbg.number}
+                        </td>
+                        <td className="px-4 py-3">{sbg.followUp}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="flex justify-end gap-3 border-t border-slate-200 px-8 py-4">
+          <button
+            onClick={onClose}
+            className="rounded-lg border-2 border-[#199900] px-5 py-2.5 text-[14px] font-medium text-[#199900]"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
+      {photoOpen && <PhotoModal item={item} onClose={() => setPhotoOpen(false)} />}
+    </div>
+  );
+}
+
+function DetailCell({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="min-w-0 px-5 py-4">
+      <p className="text-[15px] font-medium text-slate-700">{label}</p>
+      <div className="mt-1 truncate text-[15px] text-slate-400">{value}</div>
+    </div>
   );
 }
 
