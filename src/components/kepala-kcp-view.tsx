@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useActivities } from "../lib/activity-store";
 import { getLeadsForActivity } from "../lib/leads-store";
+import type { Contact } from "../lib/mock-data";
 import {
   KCP_ACTIVITY_SEEDS,
   KCP_MONTHS,
@@ -276,6 +277,31 @@ function formatDate(iso: string) {
   }).format(new Date(`${iso}T00:00:00`));
 }
 
+function InfoCell({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="min-w-0 px-5 py-4">
+      <p className="text-[15px] font-medium text-slate-700">{label}</p>
+      <div className="mt-1 truncate text-[15px] text-slate-400">{value}</div>
+    </div>
+  );
+}
+
+function StatusPill({ status }: { status: Contact["status"] }) {
+  const styles: Record<Contact["status"], string> = {
+    Hot: "bg-[#ffe0e0] text-[#e5484d]",
+    Cold: "bg-[#e0f0ff] text-[#2b7cd3]",
+    Warm: "bg-[#ffefd6] text-[#e8930c]",
+    Closing: "bg-green-100 text-green-800",
+  };
+  return (
+    <span
+      className={`inline-block min-w-[72px] rounded-full px-4 py-1.5 text-center text-[14px] font-medium ${styles[status]}`}
+    >
+      {status}
+    </span>
+  );
+}
+
 function ActivityDetailModal({ item, onClose }: { item: KepalaKcpActivity; onClose: () => void }) {
   const [showPhoto, setShowPhoto] = useState(false);
   const nasabah = useMemo(
@@ -285,7 +311,7 @@ function ActivityDetailModal({ item, onClose }: { item: KepalaKcpActivity; onClo
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
-      <div className="relative max-h-[calc(100vh-32px)] w-full max-w-[720px] overflow-hidden rounded-xl bg-white shadow-2xl">
+      <div className="relative max-h-[calc(100vh-32px)] w-full max-w-[880px] overflow-hidden rounded-xl bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-slate-200 px-8 py-5">
           <h2 className="text-[22px] font-bold">Detail Activity</h2>
           <button onClick={onClose} aria-label="Tutup">
@@ -294,75 +320,44 @@ function ActivityDetailModal({ item, onClose }: { item: KepalaKcpActivity; onClo
         </div>
 
         <div className="max-h-[calc(100vh-280px)] overscroll-contain overflow-y-auto px-8 py-6">
-          <h3 className="text-[16px] font-semibold">Informasi Activity</h3>
-          <div className="mt-3 overflow-hidden rounded-xl border border-slate-200">
-            <table className="w-full border-collapse text-left text-[14px]">
-              <tbody>
-                <tr className="border-b border-slate-100">
-                  <th scope="row" className="w-40 bg-slate-50 px-4 py-3 font-medium text-slate-500">
-                    Aktivitas
-                  </th>
-                  <td className="px-4 py-3 font-medium text-slate-900">{item.title}</td>
-                </tr>
-                <tr className="border-b border-slate-100">
-                  <th scope="row" className="bg-slate-50 px-4 py-3 font-medium text-slate-500">
-                    KCP
-                  </th>
-                  <td className="px-4 py-3">{item.kcp}</td>
-                </tr>
-                <tr className="border-b border-slate-100">
-                  <th scope="row" className="bg-slate-50 px-4 py-3 font-medium text-slate-500">
-                    Tanggal
-                  </th>
-                  <td className="px-4 py-3">{formatDate(item.date)}</td>
-                </tr>
-                <tr className="border-b border-slate-100">
-                  <th scope="row" className="bg-slate-50 px-4 py-3 font-medium text-slate-500">
-                    Waktu
-                  </th>
-                  <td className="px-4 py-3">{item.time}</td>
-                </tr>
-                <tr className="border-b border-slate-100">
-                  <th scope="row" className="bg-slate-50 px-4 py-3 font-medium text-slate-500">
-                    Lokasi
-                  </th>
-                  <td className="px-4 py-3">{item.place}</td>
-                </tr>
-                <tr className="border-b border-slate-100">
-                  <th scope="row" className="bg-slate-50 px-4 py-3 font-medium text-slate-500">
-                    Wilayah
-                  </th>
-                  <td className="px-4 py-3">{item.region}</td>
-                </tr>
-                <tr>
-                  <th scope="row" className="bg-slate-50 px-4 py-3 font-medium text-slate-500">
-                    Status
-                  </th>
-                  <td className="px-4 py-3">
-                    <StatusBadge status={item.status} />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="overflow-hidden rounded-xl border border-slate-200">
+            <div className="grid grid-cols-2 divide-x divide-slate-200 border-b border-slate-200 md:grid-cols-4">
+              <InfoCell label="Tanggal" value={formatDate(item.date)} />
+              <InfoCell label="Aktivitas" value={item.title} />
+              <InfoCell label="Tanggal" value={formatDate(item.date)} />
+              <InfoCell label="Nama Lokasi" value={item.place} />
+            </div>
+            <div className="grid grid-cols-2 divide-x divide-slate-200 md:grid-cols-4">
+              <InfoCell label="Alamat" value={item.address ?? item.place} />
+              <InfoCell label="Kelurahan" value={item.kelurahan ?? item.region} />
+              <InfoCell label="Target Leads" value={String(item.leadsTarget ?? 10)} />
+              <InfoCell label="Status" value={<StatusBadge status={item.status} />} />
+            </div>
           </div>
 
           <h3 className="mt-6 text-[16px] font-semibold">Daftar Leads ({nasabah.length})</h3>
           {nasabah.length > 0 ? (
             <div className="mt-3 overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full min-w-[680px] border-collapse text-left text-[14px]">
+              <table className="w-full min-w-[860px] border-collapse text-left text-[14px]">
                 <thead className="bg-slate-50 text-slate-500">
                   <tr className="border-b border-slate-200">
                     <th scope="col" className="px-4 py-3 font-medium">
                       No
                     </th>
                     <th scope="col" className="px-4 py-3 font-medium">
-                      Nasabah
+                      Calon Nama Nasabah
+                    </th>
+                    <th scope="col" className="px-4 py-3 font-medium">
+                      Nomor Telepon
+                    </th>
+                    <th scope="col" className="px-4 py-3 font-medium">
+                      Kelurahan
                     </th>
                     <th scope="col" className="px-4 py-3 font-medium">
                       Pekerjaan
                     </th>
                     <th scope="col" className="px-4 py-3 font-medium">
-                      Status
+                      Status Nasabah
                     </th>
                     <th scope="col" className="px-4 py-3 text-right font-medium">
                       Kontak
@@ -375,12 +370,20 @@ function ActivityDetailModal({ item, onClose }: { item: KepalaKcpActivity; onClo
                     return (
                       <tr key={contact.id} className="border-b border-slate-100 last:border-0">
                         <td className="px-4 py-4 text-slate-500">{index + 1}</td>
-                        <td className="px-4 py-4 font-medium text-slate-900">{contact.name}</td>
-                        <td className="px-4 py-4 text-slate-600">{contact.job ?? "-"}</td>
-                        <td className="px-4 py-4">
-                          <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-[12px] font-medium text-slate-600">
-                            {contact.status}
-                          </span>
+                        <td className="whitespace-nowrap px-4 py-4 font-medium text-slate-900">
+                          {contact.name}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-4 tabular-nums">
+                          {contact.phone}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-4">
+                          {contact.kelurahan ?? "-"}
+                        </td>
+                        <td className="max-w-[160px] truncate px-4 py-4 text-slate-600">
+                          {contact.job ?? "-"}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-4">
+                          <StatusPill status={contact.status} />
                         </td>
                         <td className="px-4 py-4">
                           <span className="flex justify-end gap-2">
