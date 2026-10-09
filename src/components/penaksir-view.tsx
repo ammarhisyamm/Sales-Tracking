@@ -160,7 +160,9 @@ export function PenaksirView() {
                     </td>
                     <td className="whitespace-nowrap px-5 py-6">{item.kegiatan}</td>
                     <td className="whitespace-nowrap px-5 py-6 text-slate-500">
-                      {item.sbg[0]?.followUp ?? "-"}
+                      {item.kegiatan === "Follow Up OVD" && item.sbg.length > 1
+                        ? "-"
+                        : (item.sbg[0]?.followUp ?? "-")}
                     </td>
                     <td className="whitespace-nowrap px-5 py-6">{item.media}</td>
                     <td className="whitespace-nowrap px-5 py-6 tabular-nums">
@@ -356,7 +358,14 @@ function FollowUpDetailModal({
             </span>
           </div>
 
-          <div className="mt-5 overflow-hidden rounded-xl border border-slate-200">
+          <p className="mt-5 text-[18px] font-bold text-slate-900">
+            {item.kegiatan}
+            {item.kegiatan === "Follow Up RO" && item.sbg[0] && (
+              <span className="font-normal text-slate-400"> | {item.sbg[0].followUp}</span>
+            )}
+          </p>
+
+          <div className="mt-3 overflow-hidden rounded-xl border border-slate-200">
             <div className="grid grid-cols-2 divide-x divide-slate-200 border-b border-slate-200 md:grid-cols-4">
               <DetailCell label="CIF" value={item.cif} />
               <DetailCell label="Nama" value={item.nama} />
@@ -365,7 +374,14 @@ function FollowUpDetailModal({
             </div>
             <div className="grid grid-cols-2 divide-x divide-slate-200 md:grid-cols-4">
               <DetailCell label="Tanggal Pelaksanaan" value={formatPelaksanaan(item)} />
-              <DetailCell label="Follow Up Ke" value={item.sbg[0]?.followUp ?? "-"} />
+              <DetailCell
+                label="Follow Up Ke"
+                value={
+                  item.kegiatan === "Follow Up OVD" && item.sbg.length > 1
+                    ? "-"
+                    : (item.sbg[0]?.followUp ?? "-")
+                }
+              />
               <DetailCell label="Hasil" value={item.hasil} />
               <DetailCell label="No. SBG" value={`${item.sbg.length} nomor`} />
             </div>
