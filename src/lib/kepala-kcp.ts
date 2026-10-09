@@ -25,7 +25,7 @@ export const KCP_MONTHS = [
   "Desember",
 ] as const;
 
-export type KcpActivityStatus = "Selesai" | "Terjadwal";
+export type KcpActivityStatus = "Selesai" | "Berjalan" | "Terjadwal";
 
 export interface KepalaKcpActivity {
   id: string;
@@ -255,7 +255,8 @@ export function fromSalesActivity(a: Activity, leadContacts: Contact[] = []): Ke
     place: a.address,
     region: a.wilayah || a.kelurahan || "Wilayah belum tersedia",
     priority: "Medium",
-    status: a.status === "completed" ? "Selesai" : "Terjadwal",
+    status:
+      a.status === "completed" ? "Selesai" : a.status === "checked_in" ? "Berjalan" : "Terjadwal",
     leadIds: leadContacts.map((lead) => lead.id),
     leadContacts,
     photoUrl: a.photoUrl,

@@ -4,7 +4,9 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  CircleCheck,
   ClipboardCheck,
+  Clock3,
   Eye,
   ListChecks,
   ScanEye,
@@ -18,6 +20,7 @@ import {
   filterFollowUpByPeriod,
   formatPelaksanaan,
   primarySbg,
+  type FollowUpStatus,
   type PenaksirFollowUp,
 } from "../lib/penaksir-followup";
 
@@ -121,7 +124,7 @@ export function PenaksirView() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[1500px] border-collapse text-left">
+          <table className="w-full min-w-[1600px] border-collapse text-left">
             <thead className="border-y border-slate-200 text-[14px] text-slate-400">
               <tr>
                 <th className="px-7 py-5 font-medium">No</th>
@@ -133,6 +136,7 @@ export function PenaksirView() {
                 <th className="px-5 py-5 font-medium">Media FU</th>
                 <th className="px-5 py-5 font-medium">Tanggal Pelaksanaan</th>
                 <th className="px-5 py-5 font-medium">Hasil</th>
+                <th className="px-5 py-5 font-medium">Status</th>
                 <th className="px-7 py-5 text-right font-medium">Aksi</th>
               </tr>
             </thead>
@@ -165,6 +169,9 @@ export function PenaksirView() {
                     <td className={`whitespace-nowrap px-5 py-6 font-medium ${hasilTone(item.hasil)}`}>
                       {item.hasil}
                     </td>
+                    <td className="whitespace-nowrap px-5 py-6">
+                      <StatusBadge status={item.status} />
+                    </td>
                     <td className="whitespace-nowrap px-7 py-6 text-right">
                       <span className="inline-flex items-center gap-2">
                         <button
@@ -188,7 +195,7 @@ export function PenaksirView() {
               })}
               {rows.length === 0 && (
                 <tr>
-                  <td colSpan={10} className="px-7 py-12 text-center text-[14px] text-slate-400">
+                  <td colSpan={11} className="px-7 py-12 text-center text-[14px] text-slate-400">
                     Belum ada follow up pada {month} {year}.
                   </td>
                 </tr>
@@ -476,6 +483,26 @@ function PhotoViewerModal({ item, onClose }: { item: PenaksirFollowUp; onClose: 
         </div>
       </div>
     </div>
+  );
+}
+
+function StatusBadge({ status }: { status: FollowUpStatus }) {
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 text-[14px] font-medium ${status === "Selesai" ? "text-green-700" : status === "Berjalan" ? "text-[#2953A4]" : "text-amber-600"}`}
+    >
+      {status === "Selesai" ? (
+        <CircleCheck className="h-4 w-4" />
+      ) : status === "Berjalan" ? (
+        <span className="relative flex h-4 w-4 items-center justify-center">
+          <span className="absolute h-full w-full animate-ping rounded-full bg-[#2953A4] opacity-40" />
+          <span className="h-2 w-2 rounded-full bg-[#2953A4]" />
+        </span>
+      ) : (
+        <Clock3 className="h-4 w-4" />
+      )}
+      {status}
+    </span>
   );
 }
 

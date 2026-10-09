@@ -27,6 +27,8 @@ export interface FollowUpSbg {
   followUp: string;
 }
 
+export type FollowUpStatus = "Selesai" | "Berjalan" | "Terjadwal";
+
 export interface PenaksirFollowUp {
   id: string;
   cif: string;
@@ -37,6 +39,7 @@ export interface PenaksirFollowUp {
   date: string; // ISO yyyy-mm-dd
   timeRange: string; // "10:00 - 11:00"
   hasil: string;
+  status: FollowUpStatus;
   photoUrl?: string;
 }
 
@@ -56,6 +59,7 @@ export const FOLLOW_UP_SEEDS: PenaksirFollowUp[] = [
     date: "2026-10-10",
     timeRange: "10:00 - 11:00",
     hasil: "Deal Transaksi",
+    status: "Selesai",
   },
   {
     id: "fu-ro-pertimbang",
@@ -67,6 +71,7 @@ export const FOLLOW_UP_SEEDS: PenaksirFollowUp[] = [
     date: "2026-10-10",
     timeRange: "10:00 - 11:00",
     hasil: "Masih Dipertimbangkan",
+    status: "Selesai",
   },
   {
     id: "fu-ro-tidak-hubungi",
@@ -78,6 +83,7 @@ export const FOLLOW_UP_SEEDS: PenaksirFollowUp[] = [
     date: "2026-10-10",
     timeRange: "10:00 - 11:00",
     hasil: "Tidak Dapat Dihubungi",
+    status: "Selesai",
   },
   {
     id: "fu-sep-ro-visit",
@@ -89,6 +95,7 @@ export const FOLLOW_UP_SEEDS: PenaksirFollowUp[] = [
     date: "2026-09-14",
     timeRange: "09:00 - 10:00",
     hasil: "Bersedia Bayar / Perpanjang",
+    status: "Selesai",
   },
   {
     id: "fu-sep-ovd-telp",
@@ -103,6 +110,7 @@ export const FOLLOW_UP_SEEDS: PenaksirFollowUp[] = [
     date: "2026-09-22",
     timeRange: "13:00 - 14:00",
     hasil: "Belum Ada Respon",
+    status: "Selesai",
   },
   {
     id: "fu-nov-ro-wa",
@@ -114,6 +122,7 @@ export const FOLLOW_UP_SEEDS: PenaksirFollowUp[] = [
     date: "2026-11-05",
     timeRange: "10:00 - 11:00",
     hasil: "Belum Bisa Bayar",
+    status: "Terjadwal",
   },
   {
     id: "fu-nov-ovd-visit",
@@ -125,6 +134,7 @@ export const FOLLOW_UP_SEEDS: PenaksirFollowUp[] = [
     date: "2026-11-18",
     timeRange: "15:00 - 16:00",
     hasil: "Menolak / Tidak Bersedia Melanjutkan",
+    status: "Terjadwal",
   },
 ];
 

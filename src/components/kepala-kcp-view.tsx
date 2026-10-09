@@ -61,6 +61,10 @@ export function KepalaKcpView() {
     () => visible.filter((item) => item.status === "Selesai").length,
     [visible],
   );
+  const runningCount = useMemo(
+    () => visible.filter((item) => item.status === "Berjalan").length,
+    [visible],
+  );
   const totalLeads = useMemo(
     () => visible.reduce((sum, item) => sum + item.leadIds.length, 0),
     [visible],
@@ -89,7 +93,11 @@ export function KepalaKcpView() {
           icon={<CircleCheck className="h-5 w-5 text-[#199900]" />}
           label="Aktivitas Selesai"
           value={`${doneCount}`}
-          hint={`${month} ${year} · KCP MAS RAWAMANGUN`}
+          hint={
+            runningCount > 0
+              ? `${runningCount} berjalan · ${month} ${year}`
+              : `${month} ${year} · KCP MAS RAWAMANGUN`
+          }
         />
         <SummaryCard
           icon={<UserRound className="h-5 w-5 text-[#199900]" />}
@@ -276,12 +284,20 @@ function FilterSelect({
 }
 
 function StatusBadge({ status }: { status: KepalaKcpActivity["status"] }) {
-  const done = status === "Selesai";
   return (
     <span
-      className={`inline-flex items-center gap-1.5 text-[14px] ${done ? "text-green-700" : "text-amber-600"}`}
+      className={`inline-flex items-center gap-1.5 text-[14px] font-medium ${status === "Selesai" ? "text-green-700" : status === "Berjalan" ? "text-[#2953A4]" : "text-amber-600"}`}
     >
-      {done ? <CircleCheck className="h-4 w-4" /> : <Clock3 className="h-4 w-4" />}
+      {status === "Selesai" ? (
+        <CircleCheck className="h-4 w-4" />
+      ) : status === "Berjalan" ? (
+        <span className="relative flex h-4 w-4 items-center justify-center">
+          <span className="absolute h-full w-full animate-ping rounded-full bg-[#2953A4] opacity-40" />
+          <span className="h-2 w-2 rounded-full bg-[#2953A4]" />
+        </span>
+      ) : (
+        <Clock3 className="h-4 w-4" />
+      )}
       {status}
     </span>
   );
