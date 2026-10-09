@@ -403,15 +403,10 @@ function FollowUpDetailModal({
                   <th scope="col" className="px-4 py-3 font-medium">
                     Follow Up Ke
                   </th>
-                  <th scope="col" className="px-4 py-3 font-medium">
-                    Progres
-                  </th>
                 </tr>
               </thead>
               <tbody>
                 {item.sbg.map((sbg, index) => {
-                  const total = item.sbg.length;
-                  const done = Math.min(index + 1, total);
                   return (
                     <tr key={sbg.number} className="border-b border-slate-100 last:border-0">
                       <td className="px-4 py-3 text-slate-500">{index + 1}</td>
@@ -420,19 +415,6 @@ function FollowUpDetailModal({
                       </td>
                       <td className="whitespace-nowrap px-4 py-3 text-slate-600">
                         {sbg.followUp}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="flex items-center gap-2">
-                          <span className="h-1.5 w-24 overflow-hidden rounded-full bg-slate-100">
-                            <span
-                              className="block h-full rounded-full bg-[#199900]"
-                              style={{ width: `${Math.round((done / total) * 100)}%` }}
-                            />
-                          </span>
-                          <span className="text-[12px] tabular-nums text-slate-400">
-                            {done}/{total}
-                          </span>
-                        </span>
                       </td>
                     </tr>
                   );
