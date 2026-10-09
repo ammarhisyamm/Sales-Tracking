@@ -33,6 +33,7 @@ export function KepalaKcpView() {
   const [year, setYear] = useState("2026");
   const [page, setPage] = useState(1);
   const [detail, setDetail] = useState<KepalaKcpActivity | null>(null);
+  const [photoItem, setPhotoItem] = useState<KepalaKcpActivity | null>(null);
 
   const all = useMemo(() => {
     const seeds = KCP_ACTIVITY_SEEDS;
@@ -150,13 +151,23 @@ export function KepalaKcpView() {
                   <td className="whitespace-nowrap px-5 py-6">
                     <StatusBadge status={item.status} />
                   </td>
-                  <td className="px-7 py-6 text-right">
-                    <button
-                      onClick={() => setDetail(item)}
-                      className="inline-flex items-center gap-2 rounded-lg border border-[#292663] px-5 py-2.5 text-[14px] font-medium text-[#292663]"
-                    >
-                      Detail
-                    </button>
+                  <td className="whitespace-nowrap px-7 py-6 text-right">
+                    <span className="inline-flex items-center gap-2">
+                      <button
+                        onClick={() => setDetail(item)}
+                        className="inline-flex items-center gap-2 rounded-lg border border-[#292663] px-5 py-2.5 text-[14px] font-medium text-[#292663]"
+                      >
+                        Detail
+                      </button>
+                      <button
+                        onClick={() => setPhotoItem(item)}
+                        aria-label={`Lihat foto kegiatan ${item.title}`}
+                        title="Lihat foto"
+                        className="inline-flex items-center justify-center rounded-lg border border-[#292663] p-2.5 text-[#292663]"
+                      >
+                        <Eye className="h-5 w-5" />
+                      </button>
+                    </span>
                   </td>
                 </tr>
               ))}
@@ -198,6 +209,13 @@ export function KepalaKcpView() {
       </section>
 
       {detail && <ActivityDetailModal item={detail} onClose={() => setDetail(null)} />}
+      {photoItem && (
+        <PhotoModal
+          title={photoItem.title}
+          photoUrl={photoItem.photoUrl}
+          onClose={() => setPhotoItem(null)}
+        />
+      )}
     </div>
   );
 }
@@ -304,7 +322,6 @@ function StatusPill({ status }: { status: Contact["status"] }) {
 }
 
 function ActivityDetailModal({ item, onClose }: { item: KepalaKcpActivity; onClose: () => void }) {
-  const [photoOpen, setPhotoOpen] = useState(false);
   const nasabah = useMemo(
     () => resolveLeadIds(item.leadIds, item.leadContacts),
     [item.leadIds, item.leadContacts],
@@ -334,22 +351,7 @@ function ActivityDetailModal({ item, onClose }: { item: KepalaKcpActivity; onClo
               <InfoCell label="Target Leads" value={String(item.leadsTarget ?? 10)} />
               <InfoCell label="Realisasi Leads" value={String(nasabah.length)} />
             </div>
-            <div className="grid grid-cols-2 divide-x divide-slate-200">
-              <InfoCell
-                label="Foto"
-                value={
-                  <button
-                    type="button"
-                    onClick={() => setPhotoOpen((value) => !value)}
-                    className="inline-flex items-center gap-2 rounded-lg border border-[#292663] px-4 py-2 text-[14px] font-medium text-[#292663]"
-                  >
-                    <Eye className="h-5 w-5" /> {photoOpen ? "Sembunyikan" : "Foto Kegiatan"}
-                    <ChevronDown
-                      className={`h-4 w-4 transition-transform ${photoOpen ? "rotate-180" : ""}`}
-                    />
-                  </button>
-                }
-              />
+            <div className="grid grid-cols-2 divide-x divide-slate-200 md:grid-cols-4">
               <InfoCell label="Status" value={<StatusBadge status={item.status} />} />
             </div>
           </div>
@@ -436,28 +438,55 @@ function ActivityDetailModal({ item, onClose }: { item: KepalaKcpActivity; onClo
             </p>
           )}
 
-          {photoOpen && (
-            <div className="mt-4 overflow-hidden rounded-xl border border-slate-200">
-              <div className="bg-slate-50 px-4 py-3 text-[14px] font-medium text-slate-500">
-                Foto Kegiatan
-              </div>
-              <div className="flex min-h-[220px] items-center justify-center bg-[#eef2f7] p-4">
-                {item.photoUrl ? (
-                  <img
-                    src={item.photoUrl}
-                    alt={`Foto kegiatan ${item.title}`}
-                    className="max-h-[360px] w-full rounded-lg object-contain"
-                  />
-                ) : (
-                  <p className="px-6 py-8 text-center text-[14px] text-slate-400">
-                    Foto kegiatan belum tersedia.
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
         </div>
 
+        <div className="flex justify-end gap-3 border-t border-slate-200 px-8 py-4">
+          <button
+            onClick={onClose}
+            className="rounded-lg border-2 border-[#199900] px-5 py-2.5 text-[14px] font-medium text-[#199900]"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+function PhotoModal({
+  title,
+  photoUrl,
+  onClose,
+}: {
+  title: string;
+  photoUrl?: string;
+  onClose: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
+      <div className="relative w-full max-w-[560px] overflow-hidden rounded-xl bg-white shadow-2xl">
+        <div className="flex items-center justify-between border-b border-slate-200 px-8 py-5">
+          <h2 className="text-[22px] font-bold">Foto Kegiatan</h2>
+          <button onClick={onClose} aria-label="Tutup">
+            <X className="h-6 w-6 text-slate-500" />
+          </button>
+        </div>
+        <div className="px-8 py-6">
+          <div className="flex min-h-[280px] items-center justify-center overflow-hidden rounded-xl bg-[#eef2f7] p-4">
+            {photoUrl ? (
+              <img
+                src={photoUrl}
+                alt={`Foto kegiatan ${title}`}
+                className="max-h-[420px] w-full rounded-lg object-contain"
+              />
+            ) : (
+              <p className="px-6 py-8 text-center text-[14px] text-slate-400">
+                Foto kegiatan belum tersedia.
+              </p>
+            )}
+          </div>
+        </div>
         <div className="flex justify-end gap-3 border-t border-slate-200 px-8 py-4">
           <button
             onClick={onClose}

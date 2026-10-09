@@ -28,6 +28,7 @@ export function PenaksirView() {
   const [month, setMonth] = useState("Oktober");
   const [page, setPage] = useState(1);
   const [detail, setDetail] = useState<PenaksirFollowUp | null>(null);
+  const [photoItem, setPhotoItem] = useState<PenaksirFollowUp | null>(null);
 
   const years = useMemo(() => {
     const set = new Set(FOLLOW_UP_SEEDS.map((item) => item.date.slice(0, 4)));
@@ -120,13 +121,15 @@ export function PenaksirView() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[1280px] border-collapse text-left">
+          <table className="w-full min-w-[1500px] border-collapse text-left">
             <thead className="border-y border-slate-200 text-[14px] text-slate-400">
               <tr>
                 <th className="px-7 py-5 font-medium">No</th>
                 <th className="px-5 py-5 font-medium">CIF</th>
+                <th className="px-5 py-5 font-medium">Nama</th>
                 <th className="px-5 py-5 font-medium">No. SBG</th>
                 <th className="px-5 py-5 font-medium">Kegiatan</th>
+                <th className="px-5 py-5 font-medium">Follow Up Ke</th>
                 <th className="px-5 py-5 font-medium">Media FU</th>
                 <th className="px-5 py-5 font-medium">Tanggal Pelaksanaan</th>
                 <th className="px-5 py-5 font-medium">Hasil</th>
@@ -139,10 +142,10 @@ export function PenaksirView() {
                 return (
                   <tr key={item.id} className="border-b border-slate-100 last:border-0">
                     <td className="px-7 py-6">{(safePage - 1) * PAGE_SIZE + index + 1}</td>
-                    <td className="px-5 py-6">
-                      <p className="whitespace-nowrap font-medium tabular-nums">{item.cif}</p>
-                      <p className="mt-0.5 text-[13px] text-slate-400">{item.nama}</p>
+                    <td className="whitespace-nowrap px-5 py-6 font-medium tabular-nums">
+                      {item.cif}
                     </td>
+                    <td className="whitespace-nowrap px-5 py-6">{item.nama}</td>
                     <td className="whitespace-nowrap px-5 py-6 tabular-nums">
                       {primarySbg(item)}
                       {extra > 0 && (
@@ -151,11 +154,9 @@ export function PenaksirView() {
                         </span>
                       )}
                     </td>
-                    <td className="whitespace-nowrap px-5 py-6">
-                      {item.kegiatan}
-                      {item.sbg[0] && (
-                        <span className="text-slate-400">/{item.sbg[0].followUp}</span>
-                      )}
+                    <td className="whitespace-nowrap px-5 py-6">{item.kegiatan}</td>
+                    <td className="whitespace-nowrap px-5 py-6 text-slate-500">
+                      {item.sbg[0]?.followUp ?? "-"}
                     </td>
                     <td className="whitespace-nowrap px-5 py-6">{item.media}</td>
                     <td className="whitespace-nowrap px-5 py-6 tabular-nums">
@@ -164,20 +165,30 @@ export function PenaksirView() {
                     <td className={`whitespace-nowrap px-5 py-6 font-medium ${hasilTone(item.hasil)}`}>
                       {item.hasil}
                     </td>
-                    <td className="px-7 py-6 text-right">
-                      <button
-                        onClick={() => setDetail(item)}
-                        className="inline-flex items-center gap-2 rounded-lg border border-[#292663] px-5 py-2.5 text-[14px] font-medium text-[#292663]"
-                      >
-                        Detail
-                      </button>
+                    <td className="whitespace-nowrap px-7 py-6 text-right">
+                      <span className="inline-flex items-center gap-2">
+                        <button
+                          onClick={() => setDetail(item)}
+                          className="inline-flex items-center gap-2 rounded-lg border border-[#292663] px-5 py-2.5 text-[14px] font-medium text-[#292663]"
+                        >
+                          Detail
+                        </button>
+                        <button
+                          onClick={() => setPhotoItem(item)}
+                          aria-label={`Lihat foto ${item.kegiatan} ${item.nama}`}
+                          title="Lihat foto"
+                          className="inline-flex items-center justify-center rounded-lg border border-[#292663] p-2.5 text-[#292663]"
+                        >
+                          <Eye className="h-5 w-5" />
+                        </button>
+                      </span>
                     </td>
                   </tr>
                 );
               })}
               {rows.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="px-7 py-12 text-center text-[14px] text-slate-400">
+                  <td colSpan={10} className="px-7 py-12 text-center text-[14px] text-slate-400">
                     Belum ada follow up pada {month} {year}.
                   </td>
                 </tr>
@@ -219,6 +230,7 @@ export function PenaksirView() {
           onClose={() => setDetail(null)}
         />
       )}
+      {photoItem && <PhotoViewerModal item={photoItem} onClose={() => setPhotoItem(null)} />}
     </div>
   );
 }
@@ -297,10 +309,6 @@ function FollowUpDetailModal({
   hasilTone: (hasil: string) => string;
   onClose: () => void;
 }) {
-  const [photoOpen, setPhotoOpen] = useState(false);
-  const storedPhoto = usePenaksirPhoto(item.cif);
-  const photo = item.photoUrl || storedPhoto;
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
       <div className="relative max-h-[calc(100vh-32px)] w-full max-w-[880px] overflow-hidden rounded-xl bg-white shadow-2xl">
@@ -352,21 +360,7 @@ function FollowUpDetailModal({
               <DetailCell label="Tanggal Pelaksanaan" value={formatPelaksanaan(item)} />
               <DetailCell label="Follow Up Ke" value={item.sbg[0]?.followUp ?? "-"} />
               <DetailCell label="Hasil" value={item.hasil} />
-              <DetailCell
-                label="Foto"
-                value={
-                  <button
-                    type="button"
-                    onClick={() => setPhotoOpen((value) => !value)}
-                    className="inline-flex items-center gap-2 rounded-lg border border-[#292663] px-4 py-2 text-[14px] font-medium text-[#292663]"
-                  >
-                    <Eye className="h-5 w-5" /> {photoOpen ? "Sembunyikan" : "Lihat Foto"}
-                    <ChevronDown
-                      className={`h-4 w-4 transition-transform ${photoOpen ? "rotate-180" : ""}`}
-                    />
-                  </button>
-                }
-              />
+              <DetailCell label="No. SBG" value={`${item.sbg.length} nomor`} />
             </div>
           </div>
 
@@ -424,29 +418,54 @@ function FollowUpDetailModal({
             </table>
           </div>
 
-          {photoOpen && (
-            <div className="mt-4 overflow-hidden rounded-xl border border-slate-200">
-              <div className="bg-slate-50 px-4 py-3 text-[14px] font-medium text-slate-500">
-                Foto Realisasi
-              </div>
-              <div className="flex min-h-[220px] items-center justify-center bg-[#eef2f7] p-4">
-                {photo ? (
-                  <img
-                    src={photo}
-                    alt={`Foto realisasi ${item.kegiatan} ${item.nama}`}
-                    className="max-h-[360px] w-full rounded-lg object-contain"
-                  />
-                ) : (
-                  <p className="flex flex-col items-center gap-2 px-6 py-8 text-center text-[14px] text-slate-400">
-                    <Eye className="h-8 w-8 text-slate-300" />
-                    Foto realisasi {item.kegiatan} belum tersedia.
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
         </div>
 
+        <div className="flex justify-end gap-3 border-t border-slate-200 px-8 py-4">
+          <button
+            onClick={onClose}
+            className="rounded-lg border-2 border-[#199900] px-5 py-2.5 text-[14px] font-medium text-[#199900]"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PhotoViewerModal({ item, onClose }: { item: PenaksirFollowUp; onClose: () => void }) {
+  const storedPhoto = usePenaksirPhoto(item.cif);
+  const photo = item.photoUrl || storedPhoto;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
+      <div className="relative w-full max-w-[560px] overflow-hidden rounded-xl bg-white shadow-2xl">
+        <div className="flex items-center justify-between border-b border-slate-200 px-8 py-5">
+          <div>
+            <h2 className="text-[22px] font-bold">Foto Realisasi</h2>
+            <p className="mt-0.5 text-[14px] text-slate-400">
+              {item.cif} · {item.nama} · {formatPelaksanaan(item)}
+            </p>
+          </div>
+          <button onClick={onClose} aria-label="Tutup">
+            <X className="h-6 w-6 text-slate-500" />
+          </button>
+        </div>
+        <div className="px-8 py-6">
+          <div className="flex min-h-[280px] items-center justify-center overflow-hidden rounded-xl bg-[#eef2f7] p-4">
+            {photo ? (
+              <img
+                src={photo}
+                alt={`Foto realisasi ${item.kegiatan} ${item.nama}`}
+                className="max-h-[420px] w-full rounded-lg object-contain"
+              />
+            ) : (
+              <p className="flex flex-col items-center gap-2 px-6 py-10 text-center text-[14px] text-slate-400">
+                <Eye className="h-8 w-8 text-slate-300" />
+                Foto realisasi {item.kegiatan} belum tersedia.
+              </p>
+            )}
+          </div>
+        </div>
         <div className="flex justify-end gap-3 border-t border-slate-200 px-8 py-4">
           <button
             onClick={onClose}
